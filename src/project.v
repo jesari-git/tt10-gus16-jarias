@@ -5,8 +5,8 @@
 
 `default_nettype none
 
-`include "cpuV6.v"
-`include "uart_simple.v"
+//`include "cpuV6.v"
+//`include "uart_simple.v"
 
 module tt_um_gus16 (
     input  wire [7:0] ui_in,    // Dedicated inputs
