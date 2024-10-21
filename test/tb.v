@@ -16,6 +16,7 @@ reg reset;
 reg rxd;
 wire txd;
 wire pwmout;
+wire gpo;
 
 //-- Instanciamos
 wire [7:0]xd;
@@ -32,8 +33,10 @@ wire [7:0] uio_out;
 wire [7:0] uio_oe;
 
 assign {xlah,xlal,xbh}=uo_out[2:0];
-assign {txd,pwmout}=uo_out[4:3];
+assign {gpo,txd,pwmout}=uo_out[5:3];
 assign {xweb,xoeb}=uo_out[7:6];
+assign ui_in[3]=rxd;
+
 
 // EXT RAM + latches
 reg [15:0]la=0;
@@ -50,6 +53,7 @@ reg [7:0]sram[0:65535];
 always @(negedge xweb) sram[xa]<=uio_out;
 assign uio_in=sram[xa];
 
+/*
 // Reloj periódico
 always #5 clk=~clk;
 
@@ -180,7 +184,7 @@ initial begin
 	# 100000 $finish;
 	//# 1000 $finish;
 end
-
+*/
 
 
 endmodule
