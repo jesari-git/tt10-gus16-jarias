@@ -9,12 +9,12 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+This project includes a 16-bit experimental CPU (GUS16) with a serial port, memory has to be provided externally. An included bootloader allows the execution of programs through the serial port.
 
 ## How to test
 
-Explain how to use your project
+Carefully
 
 ## External hardware
 
-List external hardware used in your project (e.g. PMOD, LED display, etc), if any
+A memory board has to be attached to user PMOD connectors.
