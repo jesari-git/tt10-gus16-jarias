@@ -22,14 +22,14 @@ project:
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
   # Inputs
-  ui[0]: ""
-  ui[1]: ""
-  ui[2]: ""
+  ui[0]: "gpi[0]"
+  ui[1]: "gpi[1]"
+  ui[2]: "gpi[2]"
   ui[3]: "rxd"
-  ui[4]: ""
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+  ui[4]: "gpi[3]"
+  ui[5]: "gpi[4]"
+  ui[6]: "gpi[5]"
+  ui[7]: "gpi[6]"
 
   # Outputs
   uo[0]: "xbh"
@@ -37,7 +37,7 @@ pinout:
   uo[2]: "xlal"
   uo[3]: "pwmout"
   uo[4]: "txd"
-  uo[5]: ""
+  uo[5]: "gpo"
   uo[6]: "xoeb"
   uo[7]: "xweb"
 
