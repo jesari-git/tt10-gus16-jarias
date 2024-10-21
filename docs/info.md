@@ -22,5 +22,8 @@ A memory board has to be attached to user PMOD connectors (still pending design)
 
 ## More docs
 https://www.ele.uva.es/~jesus/cpu_v2.pdf  (older designs, spanish)
+
 https://www.ele.uva.es/~jesus/GUS16v6.pdf (current CPU version)
+
 https://www.ele.uva.es/~jesus/a2.pdf      (CPU usage in a floppy disk emulator for apple-IIs in FPGAs)
+
