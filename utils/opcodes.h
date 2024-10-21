@@ -1,0 +1,69 @@
+enum {
+	TIPO_END,
+	TIPO_3REG,
+	TIPO_IMM,
+	TIPO_RORI,
+	TIPO_2REG,
+	TIPO_LDPC,
+	TIPO_JIND,
+	TIPO_RETI,
+	TIPO_LD,
+	TIPO_ST,
+	TIPO_JR,
+};
+
+typedef struct {
+	const char *nemo;
+	const unsigned short opcode;
+	const unsigned short tipo;
+} insttype;
+
+const insttype instr[]={
+    "ADD", 0x0000,TIPO_3REG,
+    "SUB", 0x0001,TIPO_3REG,
+    "ADC", 0x0002,TIPO_3REG,
+    "SBC", 0x0003,TIPO_3REG,
+
+    "AND", 0x0800,TIPO_3REG,
+    "OR" , 0x0801,TIPO_3REG,
+    "XOR", 0x0802,TIPO_3REG,
+    "BIC", 0x0803,TIPO_3REG,
+
+    "ADDI", 0x1000,TIPO_IMM,
+    "SUBI", 0x1800,TIPO_IMM,
+    "ADCI", 0x2000,TIPO_IMM,
+    "SBCI", 0x2800,TIPO_IMM,
+    "ANDI", 0x3000,TIPO_IMM,
+    "ORI" , 0x3800,TIPO_IMM,
+    "XORI", 0x4000,TIPO_IMM,
+    "CMPI", 0x4800,TIPO_IMM,
+    "LDI" , 0x5000,TIPO_IMM,
+
+	"RORI", 0x5800,TIPO_RORI,
+    "RORC", 0x5880,TIPO_2REG,
+    "SHR" , 0x5881,TIPO_2REG,
+    "SHRA", 0x5882,TIPO_2REG,
+    "NOT" , 0x58A0,TIPO_2REG,
+    "NEG" , 0x58A1,TIPO_2REG,
+
+    "LDPC", 0x58E0,TIPO_LDPC,
+	"JIND", 0x58E2,TIPO_JIND,
+	"RETI", 0x58E3,TIPO_RETI,
+
+	"LD",  0x6000,TIPO_LD,
+	"ST",  0x6800,TIPO_ST,
+
+	"JAL", 0x7000,TIPO_JR,
+
+	"JZ",  0X8000,TIPO_JR,
+	"JNZ", 0X9000,TIPO_JR,
+	"JC",  0XA000,TIPO_JR,
+	"JNC", 0XB000,TIPO_JR,
+	"JMI", 0XC000,TIPO_JR,
+	"JPL", 0XD000,TIPO_JR,
+	"JV",  0XE000,TIPO_JR,
+	"JR",  0XF000,TIPO_JR,
+
+	"",    0X0000,TIPO_END
+};
+
