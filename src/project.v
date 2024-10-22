@@ -166,6 +166,7 @@ always @(posedge cclk or posedge reset )
 
 ///////////////////////////////
 // Timer
+`ifdef EN_TIMER
 // prescaler for 1MHz timer clk
 localparam PRESC=FCLK/4/1000000;
 localparam NBPRE=$clog2(PRESC);
@@ -189,6 +190,10 @@ always @(posedge cksys or posedge reset) begin
 		tflag <= (timetc & prestc) ? 1 : ((iowe3 | iore3)? 0 : tflag);
 	end 
 end
+`else
+wire tflag=0;
+wire [15:0]timer=16'hxxxx;
+`endif
 
 /////////////////////////////
 // PWM
