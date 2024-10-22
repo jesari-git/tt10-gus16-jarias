@@ -586,7 +586,9 @@ assign txrdy=~utxbusy;
 	
 ///////////////////// UART RX ////////////////////
 reg [1:0]rxreg; // two samples of RXD
-always @(posedge clk) rxreg<={rxreg[0],rxd};
+always @(posedge clk or posedge reset) 
+	if (reset) rxreg<=0; else rxreg<={rxreg[0],rxd};
+	
 reg [DBITS-1:0]rxdiv;
 always @(posedge clk)
 	if ((rxreg[1]^rxreg[0])|(rxdiv==(DIVIDER-1))) rxdiv<=0; // Reset if max or on any RXD edge
