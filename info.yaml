@@ -9,7 +9,7 @@ project:
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
   tiles: "1x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
-  density: 0.75
+  
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_gus16"
 
