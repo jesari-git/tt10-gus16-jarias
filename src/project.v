@@ -83,7 +83,7 @@ end
 // External SRAM (8bit + address latches)
 
 reg [1:0]ckd=0;
-always @(posedge clk) ckd<=ckd+1;
+always @(posedge clk or posedge reset) if (reset) ckd<=0; else ckd<=ckd+1;
 
 wire cksys = ~ckd[1];			// System clock
 
@@ -172,15 +172,22 @@ localparam NBPRE=$clog2(PRESC);
 reg [NBPRE-1:0]presc=0;
 wire prestc = &(presc | (~(PRESC-1)) );
 
-reg [15:0]tmax=16'hffff;
-reg [15:0]timer=0;
-reg tflag=0;
+reg [15:0]tmax;
+reg [15:0]timer;
+reg tflag;
 wire timetc = (timer==tmax);
-always @(posedge cksys) begin
-	presc <= (iowe3 |prestc) ? 0 : presc+1;
-	timer <= (iowe3 | (timetc & prestc)) ? 0 : timer + prestc;
-	tmax  <=  iowe3 ? cdo : tmax;
-	tflag <= (timetc & prestc) ? 1 : ((iowe3 | iore3)? 0 : tflag);
+always @(posedge cksys or posedge reset) begin
+	if (reset) begin 
+		presc<=0;
+		timer<=0;
+		tmax<=16'hffff;
+		tflag<=0;
+	end else begin
+		presc <= (iowe3 |prestc) ? 0 : presc+1;
+		timer <= (iowe3 | (timetc & prestc)) ? 0 : timer + prestc;
+		tmax  <=  iowe3 ? cdo : tmax;
+		tflag <= (timetc & prestc) ? 1 : ((iowe3 | iore3)? 0 : tflag);
+	end 
 end
 
 /////////////////////////////
@@ -190,18 +197,24 @@ parameter PWMBITS=8;
 reg [PWMBITS-1:0]pwmhold;
 always @(posedge cclk) if (iowe1) pwmhold<=cdo[PWMBITS-1:0];
 
-reg [PWMBITS-1:0]pwmc=0;
+reg [PWMBITS-1:0]pwmc;
 reg [PWMBITS-1:0]pwmbuf;
 reg pwmout;
 reg pwmirq;
 wire pwmtc = &pwmc[PWMBITS-1:1];	// terminal count: 2^n - 2
 wire pwmzc = (pwmc==0);				// zero count
 
-always @(posedge clk) begin
-	pwmc<=pwmtc ? 0 : pwmc+1;
-	if (pwmzc) pwmbuf<=pwmhold;
-	pwmout<= (pwmc==pwmbuf) ? 0 : (pwmzc ? 1 : pwmout);
-	pwmirq<= pwmzc ? 1 : (iowe1  ? 0 : pwmirq);
+always @(posedge clk or posedge reset) begin
+	if (reset) begin
+		pwmc<=0;
+		pwmout<=0;
+		pwmirq<=0;
+	end else begin
+		pwmc<=pwmtc ? 0 : pwmc+1;
+		if (pwmzc) pwmbuf<=pwmhold;
+		pwmout<= (pwmc==pwmbuf) ? 0 : (pwmzc ? 1 : pwmout);
+		pwmirq<= pwmzc ? 1 : (iowe1  ? 0 : pwmirq);
+	end
 end
 
 /////////////////////////////
@@ -235,7 +248,8 @@ wire [3:0]uflags;
 wire txd,rxd;
 
 UART_core #(.DIVIDER(DIVIDER)) uart0 
-	( .clk(cksys), .d(cdo[7:0]), .wr(iowe2&(~stopcpu)), .rd(iore2&(~stopcpu)), .q(urxdata),
+	( .clk(cksys), .reset(reset), .d(cdo[7:0]), .wr(iowe2&(~stopcpu)),
+		.rd(iore2&(~stopcpu)), .q(urxdata),
 		.rxvalid(uflags[0]), .txrdy(uflags[1]),
 		.rxoverr(uflags[2]), .rxframeer(uflags[3]),
 		.nstop(1'b0),
@@ -388,7 +402,7 @@ always @(posedge clk) if (wrcv) cv[mode]<={cd,vd};
 wire opvali= ~(ld | ldpc | st | jmp | irqstart);	// Entrada de IR-code válido
 
 reg [15:0]IR;
-reg opval=0;
+reg opval;
 always @(posedge clk) IR<= cdi;
 always @(posedge clk or posedge reset) 
 	if (reset) 	opval<=1'b0;
@@ -406,7 +420,7 @@ assign busimm[15:8]=(IR[15]|jal) ? {IR[11],IR[11],IR[11],IR[11],IR[11:8]} : 8'h0
 //---------------------------
 // Interrupts
 //---------------------------
-reg irqq0=0, mode=0;
+reg irqq0, mode;
 wire ireti=reti&(~irq);
 always @(posedge clk or posedge reset ) 
 	begin
@@ -511,6 +525,7 @@ endmodule
 ///////////////////////////////////////////////////////////////////////////////
 module UART_core (
 	input	clk,		// System clock
+	input   reset,
 	input	[7:0]d,		// Input bus for TX
 	input	wr,			// write strobe: starts TX
 	input	rd,			// read strobe: clears RX flags
@@ -527,51 +542,58 @@ parameter DIVIDER= 217;	// BAUD = f_clk / DIVIDER
 localparam DBITS = $clog2(DIVIDER);	// number of bits for clock counters
 
 ///////////////////// UART TX ////////////////////
-reg [DBITS-1:0]txdiv=0;
+reg [DBITS-1:0]txdiv;
 wire txdivmax=(txdiv==(DIVIDER-1));
 always @(posedge clk) 
 	if (wr | txdivmax) txdiv<=0; // Reset if max or on writes
 	else txdiv<=txdiv+1;
 
-reg [8:0]txsh=10'h1FF;	// 9-bit shift register
-always @(posedge clk)
-	if (wr) begin 
-		`ifdef SIMULATION
-	        $write ("%c",d); $fflush ( );
-		`endif
-		 txsh<={d,1'b0}; // Load data plus START bit
-	end	else if (txdivmax) txsh<={1'b1,txsh[8:1]}; // shift 1'b1 in for future STOP bit
+reg [8:0]txsh;	// 9-bit shift register
+always @(posedge clk or posedge reset)
+	if (reset) txsh<=9'h1FF; 
+	else begin
+		if (wr) begin 
+			`ifdef SIMULATION
+		        $write ("%c",d); $fflush ( );
+			`endif
+			 txsh<={d,1'b0}; // Load data plus START bit
+		end	else if (txdivmax) txsh<={1'b1,txsh[8:1]}; // shift 1'b1 in for future STOP bit
+	end
+	
 assign txd = txsh[0];
 
-reg [3:0]txbitcnt=0;	// Bit counter (0000 means idle)
+reg [3:0]txbitcnt;	// Bit counter (0000 means idle)
 wire utxbusy=|txbitcnt;
-always @(posedge clk) 
-	if (wr) txbitcnt<={3'b101,nstop}; // set to eleven for 2 STOP bits, ten for 1 STOP bit
-	else if (utxbusy&txdivmax) txbitcnt<=txbitcnt-1;
+always @(posedge clk or posedge reset)
+	if (reset) txbitcnt<=0;
+	else
+		if (wr) txbitcnt<={3'b101,nstop}; // set to eleven for 2 STOP bits, ten for 1 STOP bit
+		else if (utxbusy&txdivmax) txbitcnt<=txbitcnt-1;
 	
 assign txrdy=~utxbusy;
 	
 ///////////////////// UART RX ////////////////////
-reg [1:0]rxreg=0; // two samples of RXD
+reg [1:0]rxreg; // two samples of RXD
 always @(posedge clk) rxreg<={rxreg[0],rxd};
-reg [DBITS-1:0]rxdiv=0;
+reg [DBITS-1:0]rxdiv;
 always @(posedge clk)
 	if ((rxreg[1]^rxreg[0])|(rxdiv==(DIVIDER-1))) rxdiv<=0; // Reset if max or on any RXD edge
 	else rxdiv<=rxdiv+1;
 wire rxsample = (rxdiv==(DIVIDER/2-1)); // sample at the middle of the bit
 
-reg [9:0]urxsh=10'h3FF; // 10-bit shift register
+reg [9:0]urxsh; // 10-bit shift register
 reg [8:0]urxbuffer;		// 9-bit buffer: data + STOP
-reg [1:0]urxval=0;		// received data flags (00: no data, 01: data available, 11: overrun)
 always @(posedge clk) begin
 	if (~urxsh[0]) urxsh<=10'h3FF;  // if START bit at LSB set to all ones and copy results
 	else if (rxsample) urxsh<={rxreg[1],urxsh[9:1]};
-	
 	if (~urxsh[0]) urxbuffer<=urxsh[9:1]; 	  // store the received data plus STOP
-	
-	if (~urxsh[0]) urxval<={urxval[0],1'b1};  // set data valid and (maybe) overrun
-	else if (rd) urxval<=0;  // clear data valid and overrun flags on reads
 end
+reg [1:0]urxval;		// received data flags (00: no data, 01: data available, 11: overrun)
+always @(posedge clk or posedge reset)
+	if (reset) urxval<=0;
+	else if (~urxsh[0]) urxval<={urxval[0],1'b1};  // set data valid and (maybe) overrun
+	else if (rd) urxval<=0;  // clear data valid and overrun flags on reads
+
 assign q = urxbuffer[7:0];	
 assign rxframeer = ~urxbuffer[8];	// STOP bit in 0 means Frame error
 assign rxvalid = urxval[0];
