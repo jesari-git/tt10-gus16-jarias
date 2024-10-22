@@ -17,7 +17,7 @@ async def test_project(dut):
     # Reset
     dut._log.info("Reset")
     # dut.ena.value = 1
-    dut.ui_in.value = 0
+    dut.ui_in.value = 8
     dut.uio_in.value = 0
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 10)
@@ -28,6 +28,219 @@ async def test_project(dut):
     # Set the input values you want to test
     #dut.ui_in.value = 20
     #dut.uio_in.value = 30
+
+    await ClockCycles(dut.clk, 300)
+    
+    dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+	
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 0
+	await ClockCycles(dut.clk, 208)
+	dut.ui_in.value = 8
+	await ClockCycles(dut.clk, 208)
+		
 
     # Wait for one clock cycle to see the output values
     await ClockCycles(dut.clk, 10000)
