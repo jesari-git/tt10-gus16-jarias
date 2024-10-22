@@ -331,15 +331,16 @@ assign pcinc = ~(ld|st|(irqstart&(~ldpc))); // Incrementa PC
 
 wire [15:0]li= jmp ? busd : regpc + pcinc;		// entrada a PC (normal o IRQ)
 
-reg [15:0]PC [0:1];
+reg [15:0]PC0;
 always @(posedge clk or posedge reset )
-	if (reset) PC[0]<=16'h0000;
-	else PC[0]<= mode ? PC[0] : li;
+	if (reset) PC0<=16'h0000;
+	else PC0<= mode ? PC0 : li;
 // registro PC modo IRQ
+reg [15:0]PC1;
 always @(posedge clk ) 
-	PC[1]<= (mode&(~reti)) ? li : vector;
+	PC1<= (mode&(~reti)) ? li : vector;
 
-assign regpc=PC[mode];
+assign regpc=mode ? PC1 : PC0;
 
 //------------------------------------------------------------------------------------------
 // ALU
