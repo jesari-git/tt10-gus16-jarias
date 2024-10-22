@@ -192,7 +192,7 @@ end
 
 /////////////////////////////
 // PWM
-
+`ifdef EN_PWM
 parameter PWMBITS=8;
 reg [PWMBITS-1:0]pwmhold;
 always @(posedge cclk) if (iowe1) pwmhold<=cdo[PWMBITS-1:0];
@@ -216,6 +216,10 @@ always @(posedge clk or posedge reset) begin
 		pwmirq<= pwmzc ? 1 : (iowe1  ? 0 : pwmirq);
 	end
 end
+`else
+wire pwmout=0;
+wire pwmirq=0;
+`endif
 
 /////////////////////////////
 // GPOUT
