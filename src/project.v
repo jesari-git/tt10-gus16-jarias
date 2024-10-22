@@ -6,6 +6,7 @@
 `default_nettype none
 
 `define EN_PWM
+
 //`include "cpuV6.v"
 //`include "uart_simple.v"
 
@@ -210,7 +211,7 @@ reg pwmirq;
 wire pwmtc = &pwmc[PWMBITS-1:1];	// terminal count: 2^n - 2
 wire pwmzc = (pwmc==0);				// zero count
 
-always @(posedge clk or posedge reset) begin
+always @(posedge cksys or posedge reset) begin
 	if (reset) begin
 		pwmc<=0;
 		pwmout<=0;
