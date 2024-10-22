@@ -5,6 +5,7 @@
 
 `default_nettype none
 
+`define EN_PWM
 //`include "cpuV6.v"
 //`include "uart_simple.v"
 
