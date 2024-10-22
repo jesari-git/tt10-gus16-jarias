@@ -594,11 +594,17 @@ wire rxsample = (rxdiv==(DIVIDER/2-1)); // sample at the middle of the bit
 
 reg [9:0]urxsh; // 10-bit shift register
 reg [8:0]urxbuffer;		// 9-bit buffer: data + STOP
-always @(posedge clk) begin
-	if (~urxsh[0]) urxsh<=10'h3FF;  // if START bit at LSB set to all ones and copy results
-	else if (rxsample) urxsh<={rxreg[1],urxsh[9:1]};
-	if (~urxsh[0]) urxbuffer<=urxsh[9:1]; 	  // store the received data plus STOP
+always @(posedge clk or posedge reset) begin
+	if (reset)  urxsh<=10'h3FF; 
+	else begin
+		if (~urxsh[0]) urxsh<=10'h3FF;  // if START bit at LSB set to all ones and copy results
+		else if (rxsample) urxsh<={rxreg[1],urxsh[9:1]};
+	end
 end
+
+always @(posedge clk) 
+	if (~urxsh[0]) urxbuffer<=urxsh[9:1]; 	  // store the received data plus STOP
+
 reg [1:0]urxval;		// received data flags (00: no data, 01: data available, 11: overrun)
 always @(posedge clk or posedge reset)
 	if (reset) urxval<=0;
