@@ -591,9 +591,11 @@ always @(posedge clk or posedge reset)
 	if (reset) rxreg<=0; else rxreg<={rxreg[0],rxd};
 	
 reg [DBITS-1:0]rxdiv;
-always @(posedge clk)
-	if ((rxreg[1]^rxreg[0])|(rxdiv==(DIVIDER-1))) rxdiv<=0; // Reset if max or on any RXD edge
-	else rxdiv<=rxdiv+1;
+always @(posedge clk or posedge reset)
+	if (reset) rxdiv<=0;
+	else 
+		if ((rxreg[1]^rxreg[0])|(rxdiv==(DIVIDER-1))) rxdiv<=0; // Reset if max or on any RXD edge
+			else rxdiv<=rxdiv+1;
 wire rxsample = (rxdiv==(DIVIDER/2-1)); // sample at the middle of the bit
 
 reg [9:0]urxsh; // 10-bit shift register
