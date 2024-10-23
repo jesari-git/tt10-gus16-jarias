@@ -556,9 +556,10 @@ localparam DBITS = $clog2(DIVIDER);	// number of bits for clock counters
 ///////////////////// UART TX ////////////////////
 reg [DBITS-1:0]txdiv;
 wire txdivmax=(txdiv==(DIVIDER-1));
-always @(posedge clk) 
-	if (wr | txdivmax) txdiv<=0; // Reset if max or on writes
-	else txdiv<=txdiv+1;
+always @(posedge clk or posedge reset) 
+	if (reset) txdiv<=0;
+	else if (wr | txdivmax) txdiv<=0; // Reset if max or on writes
+		else txdiv<=txdiv+1;
 
 reg [8:0]txsh;	// 9-bit shift register
 always @(posedge clk or posedge reset)
