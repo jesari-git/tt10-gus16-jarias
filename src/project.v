@@ -218,7 +218,7 @@ always @(posedge cksys or posedge reset) begin
 		pwmirq<=0;
 	end else begin
 		pwmc<=pwmtc ? 0 : pwmc+1;
-		if (pwmzc) pwmbuf<=pwmhold;
+		if (pwmtc) pwmbuf<=pwmhold;
 		pwmout<= (pwmc==pwmbuf) ? 0 : (pwmzc ? 1 : pwmout);
 		pwmirq<= pwmzc ? 1 : (iowe1  ? 0 : pwmirq);
 	end
