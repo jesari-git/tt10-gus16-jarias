@@ -53,7 +53,7 @@ pinit:
 		org		0x40
 bvar:
 
-		word	0xFFFF
+		;word	0xFFFF
 
 xp:		word	0		; Posición de la pieza
 yp:		word	0
@@ -65,7 +65,25 @@ del:	word	0
 dl:		word	0
 rndv:	word	0xFFFF
 nint:	word	0
+
+phase:	word	0		; tone generator phase
+freq:	word	0		; tone generator frequency (65536 => 23.529kHz)
+ndel:	word	0		; note delay
+pnota:	word	0		; note pointer
+onota:	word	0		; old note (2 notes stored on each word)
+
 pieza:	org		.+4*4	; pieza[4][4]
+
+fnotas:	word	1457	; 523.251 Hz DO
+		word	1636	; 587,330 Hz RE
+		word	1836	; 659,255 Hz MI
+		word	1945	; 698,456 Hz FA
+		word	2184	; 783,991 Hz SOL
+		word	2451	; 880.000 Hz LA
+		word	2751	; 987,767 Hz SI
+		word	2915	; 1046,50 Hz DO
+		word	0		; 0Hz (silencio)
+		
 
 ;-------------------------------------------------------------------
 ; Subrutinas I/O
@@ -92,31 +110,6 @@ d50m:	ld		r1,(r6)
 		addi	r7,4
 		jind	r6
 
-;----------------------------------------------------
-; Envía cadena de caracteres empaquetados al terminal
-; parámetros:
-;	R0: puntero a la cadena de caracteres
-;	R6: dirección de retorno
-; retorna:
-; 	R0-R2: modificados
-
-putsle:	ldi		r2,UARTDAT
-putsle1:
-		ld		r1,(r0)
-		andi	r1,0xff
-		jz		putsle3
-		st		(r2),r1
-		
-		ld		r1,(r0)
-		rori	r1,r1,8
-		andi	r1,0xff
-		jz		putsle3
-		st		(r2),r1
-		addi	r0,1
-		jr		putsle1
-
-putsle3:
-		jind	r6
 ;----------------------------------------------
 ; Envía caracter al terminal
 ; parámetros:
@@ -125,9 +118,47 @@ putsle3:
 ; retorna:
 ; 	R1: modificado
 
-putch:	ldi		r1,UARTDAT		
-		st		(r1),r0		; envía dato
+putch:	ldi		r1,IOBASE
+		ld		r1,(r1+PFLAGS-IOBASE)
+		andi	r1,2
+		jz		putch
+		ldi		r1,IOBASE	
+		st		(r1+UARTDAT-IOBASE),r0		; envía dato
 		jind	r6			; y retornamos
+
+;----------------------------------------------------
+; Envía cadena de caracteres empaquetados al terminal
+; parámetros:
+;	R0: puntero a la cadena de caracteres
+;	R6: dirección de retorno
+; retorna:
+; 	
+
+putsle: subi    r7,4
+        st      (r7+0),r0
+        st      (r7+1),r1
+        st      (r7+2),r2
+        st      (r7+3),r6
+                
+        or      r2,r0,r0
+ptsl1:  ld      r0,(r2)
+        andi    r0,255
+        jz      ptsl9
+        jal     putch
+        ld      r0,(r2)
+        rori    r0,r0,8
+        andi    r0,255
+        jz      ptsl9           
+        jal     putch
+        addi    r2,1
+        jr      ptsl1
+                
+ptsl9:  ld      r0,(r7+0)
+        ld      r1,(r7+1)
+        ld      r2,(r7+2)
+        ld      r6,(r7+3)
+        addi    r7,4
+        jind    r6
 
 ;----------------------------------------------
 ; Recibe caracter del terminal
@@ -195,21 +226,64 @@ irq2:
 		org	0x10C
 irq3:
 pwmIRQ:
-		subi	r7,2
+		subi	r7,3
 		st		(r7),r0
 		st		(r7+1),r1
+		st		(r7+2),r2
 
-		ldi		r1,nint
-		ld		r0,(r1)
+		ldi		r2,bvar				; nint++
+		ld		r0,(r2+nint-bvar)
 		addi	r0,1
-		st		(r1),r0
-
-		ldi		r1,IOBASE			; clear PWM IRQ
-		st		(r1+PWM-IOBASE),r1
+		st		(r2+nint-bvar),r0
 		
+		ld		r0,(r2+phase-bvar)	; phase+=freq
+		ld		r1,(r2+freq-bvar)
+		add		r0,r0,r1
+		st		(r2+phase-bvar),r0
+		jpl		ipw1				; level = (phase<0)? ~phase : phase;
+		not		r0,r0
+ipw1:	rori	r0,r0,7				; PWM = level>>7
+		andi	r0,0xff
+		ldi		r1,IOBASE			; also clear PWM IRQ
+		st		(r1+PWM-IOBASE),r0
+		ld		r0,(r2+ndel-bvar)	; if (ndel==0) {
+		jnz		ipw2
+		ld		r1,(r2+pnota-bvar)  ;   if (pnota) {
+		jz		iend
+		
+		ld		r0,(r2+onota-bvar)  ;   if ((nota=onota)==0) {
+		jnz		ipw5
+		
+ipw4:	ld		r0,(r1)				;     nota = *pnota
+		jnz		ipw3				;     if (nota==0) {
+		ldpc	r1					;       pnota = &mustab
+		word	mustab
+		ld		r0,(r1)				;		nota = *pnota
+ipw3:	addi	r1,1				;     pnota++
+		st		(r2+pnota-bvar),r1
+
+ipw5:	rori	r1,r0,8				;   onota = nota>>8
+		andi	r1,0xff
+		st		(r2+onota-bvar),r1
+		
+		or		r1,r0,r0			;   freq = fnotas[nota&0xF]
+		andi	r1,0xF
+		addi	r1,fnotas
+		ld		r1,(r1)
+		st		(r2+freq-bvar),r1
+		
+		andi	r0,0xF0				;   ndel= (nota>>4)*24*128 irqs
+		rori	r1,r0,1
+		add		r0,r0,r1
+		rori	r0,r0,16-7			;   (~128 ms/paso)
+		st		(r2+ndel-bvar),r0
+		
+ipw2:	subi	r0,1				; } else ndel--
+		st		(r2+ndel-bvar),r0
 iend:	ld		r0,(r7)
 		ld		r1,(r7+1)
-		addi	r7,2
+		ld		r2,(r7+2)
+		addi	r7,3
 		reti
 
 ;-------------------------------------------------------------------
@@ -288,13 +362,6 @@ str2:	asczle	"m\e[7m  \e[0m"
 ;void init()
 init:	subi	r7,1
 		st		(r7),r6
-		
-;		srand(time)
-		ldi		r1,TIMER
-		ld		r0,(r1)
-		ori		r0,1
-		ldi		r1,rndv
-		st		(r1),r0
 		
 ;	for (i=0;i<ALTO;i++) {
 ;		for (j=1;j<ANCHO+1;j++) campo[i][j]=0;
@@ -998,6 +1065,13 @@ mbuc100:
 		ldpc	r0
 		word	str7
 		jal		putsle
+		
+		; stop music
+		ldi		r0,0
+		ldi		r1,bvar
+		st		(r1+freq-bvar),r0
+		st		(r1+pnota-bvar),r0
+		
 mbuc101:
 		jal		rnd
 		ldi		r1,IOBASE	; repite mientras no hay datos en UART RX
@@ -1006,6 +1080,11 @@ mbuc101:
 		jz		mbuc101
 		; Borra flag de dato recibido
 		ld		r0,(r1+UARTDAT-IOBASE)
+		; start music
+		ldpc	r0
+		word	mustab
+		ldi		r1,bvar
+		st		(r1+pnota-bvar),r0
 
 		jr		mbuc0
 
@@ -1081,6 +1160,48 @@ piezas:	;piezas[7][2][4]
 	word 7
 	word 7
 	word 0
+
+; Melodias: Cada nota consta de 4 bits de duración (MSB)
+; y de 4 bits de selección de nota (LSB) 0=DO, 1=RE, ...
+; 2 notas por dato, LSB: primera nota
+; La melodía termina en 0
+mustab:	
+		word	0x1110
+		word	0x1422
+		word	0x3418
+		word	0x2415
+		word	0x3022
+		word	0x1211
+		word	0x2218
+		word	0x2021
+		word	0x1851
+		word	0x1110
+		word	0x1422
+		word	0x3418
+		word	0x2415
+		word	0x3022
+		word	0x1211
+		word	0x2218
+		word	0x1811
+		word	0x6021
+		word	0x3328
+		word	0x4318
+		word	0x1815
+		word	0x1835
+		word	0x3425
+		word	0x2415
+		word	0x5122
+		word	0x1018
+		word	0x2211
+		word	0x1814
+		word	0x1534
+		word	0x2224
+		word	0x1130
+		word	0x1812
+		word	0x1122
+		word	0x2118
+		word	0xF850
+		word	0
 
 pend:
 ;-------------------------------------------------------------------
