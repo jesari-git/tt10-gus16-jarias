@@ -1,13 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "dtypes.h"
+#include <stdint.h>
 #include "opcodes.h"
 
-int muestra_instr(uint16 cop, int pc)
+int muestra_instr(uint16_t cop, int pc)
 {
 	int ra,rb,rd,op,n,nof,nrori;
-	int16 desp;
+	int16_t desp;
 	int i,j;
 
 	if ((cop&0xF8E3)==0x58E3) {printf("RETI"); return 0;}

@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termio.h>
+#include <stdint.h>
 
-#include "dtypes.h"
 #include "opcodes.h"
 
 /*********************************************************************
@@ -82,10 +82,10 @@ struct {
 	int	flags0;	/* copia de flags (IRQ) */
 	int	vector;	/* vector de interrupción */
     /* Otras variables */
-    uint32 nciclos;	/* Contador de ciclos de reloj */
+    uint32_t nciclos;	/* Contador de ciclos de reloj */
 } cpu;
 
-uint16 MEM[0x10000];
+uint16_t MEM[0x10000];
 
 /*--------------------------------------------------------------------*/
 
@@ -93,10 +93,10 @@ void reset_cpu();	// prototipo (usado en Debug...)
 
 /*--------------------------------------------------------------------*/
 
-int muestra_instr(uint16 cop, int pc)
+int muestra_instr(uint16_t cop, int pc)
 {
 	int ra,rb,rd,op,n,nof,nrori;
-	int16 desp;
+	int16_t desp;
 	int i,j;
 
 	if ((cop&0xF8E3)==0x58E3) {printf("RETI"); return 0;}
@@ -170,7 +170,7 @@ unsigned short gpdir, gpout, gpin;
 extern inline int debug()
 {
     int i,j,k,n;
-    uint16 dir;
+    uint16_t dir;
     const char *fln="VNCZ";
     char buf[64];
 	static unsigned int tstamp;
@@ -363,7 +363,7 @@ goexe:
 /**********************************************************/
 
 
-uint16 rd_mem(uint16 dir)
+uint16_t rd_mem(uint16_t dir)
 {
 	if ((dir&0xffe0)!=0x0020) return MEM[dir];
 
@@ -388,7 +388,7 @@ uint16 rd_mem(uint16 dir)
 
 }
 
-void wr_mem(uint16 dir,uint16 dato)
+void wr_mem(uint16_t dir,uint16_t dato)
 {
     int x,y;
     unsigned char c;
@@ -446,7 +446,7 @@ void doflagsCV(int dd, int da, int db, int cy )
 extern inline int una_instr()
 {
 	int ra,rb,rd,op,fl,n,nof,nrori,db,da;
-	int16 desp;
+	int16_t desp;
 	int i,j;
 	unsigned int nc;
 
