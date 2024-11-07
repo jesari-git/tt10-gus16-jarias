@@ -343,7 +343,7 @@ uno:	scantok();
 		    if (delim==':') labtab[nlabel++].dir=cdir;
 			else {
 				scantok();
-				labtab[nlabel++].dir=chkexpr(tok);
+				labtab[nlabel++].dir=chkexpr(tok)&0xFFFF;
 				continue;
 			}
 		    goto uno; // seguimos buscando mnemonico
@@ -375,7 +375,7 @@ uno:	scantok();
 
 		if(strcmp(tok,"ORG")==0) {
 		    scantok();
-			i=chkexpr(tok);
+			i=chkexpr(tok)&0xFFFF;
 	    	cdir=i;
 	    	continue;
 		}
@@ -580,14 +580,14 @@ dos:
 
 		 	if (strcmp(tok,"ORG")==0) {
 			    scantok();
-			    i=chkexpr(tok);
+			    i=chkexpr(tok)&0xFFFF;
 				fprintf(fplst,"%04X  -         %s",cdir,buf);
 				cdir=i;
 			    break;
 			}
 		  	if (strcmp(tok,"WORD")==0) {
 			    scantok();
-				i=chkexpr(tok);
+				i=chkexpr(tok)&0xFFFF;
 			    emit(cdir,i,buf);
 			    cdir++;
 			    break;	    
@@ -638,7 +638,7 @@ dos:
 					   exit(1); 
 					}
 					scantok();
-					i=chkexpr(tok);
+					i=chkexpr(tok)&0xFFFF;
 					if (i>255) {if (ninc) fprintf(stderr,"%s ",&fnin[ninc-1][0]); 
 						fprintf(stderr,"(%d) Error: Value out of range: %s\n",nl,tok); exit(1);}
 					emit(cdir,op|(rd<<8)|i,buf);
@@ -657,7 +657,7 @@ dos:
 					   exit(1);
 					}
 					scantok();
-					i=chkexpr(tok);
+					i=chkexpr(tok)&0xFFFF;
 					if (i>15) {if (ninc) fprintf(stderr,"%s ",&fnin[ninc-1][0]); 
 						fprintf(stderr,"(%d) Error: Value out of range: %s\n",nl,tok); exit(1);}
 					emit(cdir,op|(rd<<8)|((i>>2)<<5)|(rb<<2)|(i&3),buf);
@@ -742,7 +742,7 @@ dos:
 					   exit(1);
 					}
 					emit(cdir,op|(rd<<8),buf);
-					//i=chkexpr(tok);
+					//i=chkexpr(tok)&0xFFFF;
 					//if (i>255) {fprintf(stderr,"(%d) Error: Valor fuera de rango: %s\n",nl,tok); exit(1);}
 					//emit(cdir,op|i,buf);
 					
@@ -750,7 +750,7 @@ dos:
 		
 				case TIPO_JR:
 					scantok();
-					i=chkexpr(tok);
+					i=chkexpr(tok)&0xFFFF;
 					disp=i-(cdir+1);	// con pipeline el PC va una posición por delante
 					if (disp>2047 || disp<-2048){
 					    if (ninc) fprintf(stderr,"%s ",&fnin[ninc-1][0]); 
