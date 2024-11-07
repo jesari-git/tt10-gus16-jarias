@@ -259,7 +259,7 @@ ckxpsh:
 		case 3:	i=~i; break;	// complemento a 1
 		case 4:	i=-i; break;	// complemento a 2
 	}
-	return i&0xFFFF;
+	return i; 
 }
 
 ///////////////////////////////////////////
