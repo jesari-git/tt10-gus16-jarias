@@ -20,6 +20,8 @@ PFLAGS=		0x21
 PWM=		0x21
 UARTDAT=	0x22
 TIMER=		0x23
+GPO=		0x24
+GPIN=		0x24
 
 ;--------- Interrupts --------
 IRQ0EN=		1
@@ -48,14 +50,14 @@ ALTO=20
 pinit:
 
 ;------------------------------------------------------------------------
-; Espacio para variables de acceso rápido (la dirección se carga con LDI)
+; Local variables (fast access: address < 256 => loaded with single LDI )
 ;------------------------------------------------------------------------
 		org		0x40
 bvar:
 
 		;word	0xFFFF
 
-xp:		word	0		; Posición de la pieza
+xp:		word	0		; tetromino position (piece)
 yp:		word	0
 max:	word	0
 sigp:	word	0
@@ -72,18 +74,18 @@ ndel:	word	0		; note delay
 pnota:	word	0		; note pointer
 onota:	word	0		; old note (2 notes stored on each word)
 
-pieza:	org		.+4*4	; pieza[4][4]
+pieza:	org		.+4*4	; pieza[4][4] 
 
-fnotas:	word	1457	; 523.251 Hz DO
-		word	1636	; 587,330 Hz RE
-		word	1836	; 659,255 Hz MI
-		word	1945	; 698,456 Hz FA
-		word	2184	; 783,991 Hz SOL
-		word	2451	; 880.000 Hz LA
-		word	2751	; 987,767 Hz SI
-		word	2915	; 1046,50 Hz DO
-		word	0		; 0Hz (silencio)
-		
+srate=  6000000/255
+fnotas:	word (5232<<16)/(srate*10) ; 523.251 Hz DO
+		word (5873<<16)/(srate*10) ; 587,330 Hz RE
+		word (6593<<16)/(srate*10) ; 659,255 Hz MI
+		word (6985<<16)/(srate*10) ; 698,456 Hz FA
+		word (7840<<16)/(srate*10) ; 783,991 Hz SOL
+		word (8800<<16)/(srate*10) ; 880.000 Hz LA
+		word (9878<<16)/(srate*10) ; 987,767 Hz SI
+		word (10465<<16)/(srate*10); 1046,50 Hz DO
+		word 0 					   ; 0Hz (silencio)
 
 ;-------------------------------------------------------------------
 ; Subrutinas I/O
@@ -111,12 +113,12 @@ d50m:	ld		r1,(r6)
 		jind	r6
 
 ;----------------------------------------------
-; Envía caracter al terminal
-; parámetros:
-;	R0: dato a enviar
-;	R6: dirección de retorno
-; retorna:
-; 	R1: modificado
+; Put character to terminal
+; parameter:
+;	R0: data to send
+;	R6: return addess
+; returns:
+; 	R1: modiffied
 
 putch:	ldi		r1,IOBASE
 		ld		r1,(r1+PFLAGS-IOBASE)
@@ -127,12 +129,12 @@ putch:	ldi		r1,IOBASE
 		jind	r6			; y retornamos
 
 ;----------------------------------------------------
-; Envía cadena de caracteres empaquetados al terminal
-; parámetros:
-;	R0: puntero a la cadena de caracteres
-;	R6: dirección de retorno
-; retorna:
-; 	
+; Put packed character string (little-endian) to terminal
+; parameter:
+;	R0: string address
+;	R6: return address
+; returns:
+; 	no register modiffied
 
 putsle: subi    r7,4
         st      (r7+0),r0
@@ -161,32 +163,27 @@ ptsl9:  ld      r0,(r7+0)
         jind    r6
 
 ;----------------------------------------------
-; Recibe caracter del terminal
-; parámetros:
-;	R6: dirección de retorno
-; retorna:
-;	R0: dato recibido
-; 	R1: modificado
-
-; getch:	ldi		r1,UARTDAT	; ahora apuntamos a registro RX
-; 		ld		r0,(r1)		; leemos dato
-; 		jind	r6			; y retornamos
+; Get character from terminal
+; parameters:
+;	R6: return address
+; returns:
+;	R0: received data
+; 	R1: modiffied
 
 ;----------------------------------------------
-; Imprime R0 en decimal
-; retorna: R0 y R1 modificados
-; usa la pila para el almacenamiento temporal de dígitos
+; Print R0 as decimal value
+; returns: R0 , R1 modiffied
+; stack space is used for temporary digit storage
 
 prtdec:
-		; prólogo
 		subi	r7,1
 		st		(r7),r6
 		;
-		ldi		r1,0		; marca de final de cadena
-		subi	r7,1		; a la pila
+		ldi		r1,0		; end of string mark
+		subi	r7,1		; push to stack
 		st		(r7),r1
-prtd0:	ldi		r1,0		; R0=R0/10, R1=resto
-		ldi		r6,16		; contador
+prtd0:	ldi		r1,0		; R0=R0/10, R1=remainder
+		ldi		r6,16		; R6: iteration counter
 prtd1:	add		r0,r0,r0
 		adc		r1,r1,r1
 		cmpi	r1,10
@@ -195,21 +192,20 @@ prtd1:	add		r0,r0,r0
 		addi	r0,1
 prtd2:	subi	r6,1
 		jnz		prtd1
-		ldi		r6,'0'		; resto a la pila
+		ldi		r6,'0'		; remainder to ASCII
 		add		r1,r1,r6
-		subi	r7,1
+		subi	r7,1		; and pushed to the stack
 		st		(r7),r1
-		or		r0,r0,r0	; hasta que el cociente sea 0
+		or		r0,r0,r0	; repeat until result is zero
 		jnz		prtd0
 
-prtd3:	ld		r0,(r7)		; caracter desde la pila
-		jz		prtd9		; final de cadena?
+prtd3:	ld		r0,(r7)		; character from stack
+		jz		prtd9		; end of string?
 		addi	r7,1
 		jal		putch
 		jr		prtd3
 
 prtd9:	addi	r7,1
-		; epílogo
 		ld		r6,(r7)
 		addi	r7,1
 		jind	r6
@@ -235,6 +231,9 @@ pwmIRQ:
 		ld		r0,(r2+nint-bvar)
 		addi	r0,1
 		st		(r2+nint-bvar),r0
+		rori	r0,r0,14
+		ldi		r1,IOBASE			; blinking LED
+		st		(r1+GPO-IOBASE),r0
 		
 		ld		r0,(r2+phase-bvar)	; phase+=freq
 		ld		r1,(r2+freq-bvar)
@@ -275,7 +274,7 @@ ipw5:	rori	r1,r0,8				;   onota = nota>>8
 		andi	r0,0xF0				;   ndel= (nota>>4)*24*128 irqs
 		rori	r1,r0,1
 		add		r0,r0,r1
-		rori	r0,r0,16-7			;   (~128 ms/paso)
+		rori	r0,r0,16-7			;   (~130 ms/paso)
 		st		(r2+ndel-bvar),r0
 		
 ipw2:	subi	r0,1				; } else ndel--
@@ -288,11 +287,11 @@ iend:	ld		r0,(r7)
 
 ;-------------------------------------------------------------------
 ;
-;		CODIGO PRINCIPAL
+;		GAME CODE
 ;
 ;-------------------------------------------------------------------
 
-; Genera números pseudoaleatorios en rndv
+; get a pseudorandom number in 'rndv'
 rnd:	subi	r7,2
 		st		(r7),r1
 		st		(r7+1),r6
@@ -309,6 +308,7 @@ rnd9:	st		(r6),r0
 		addi	r7,2
 		jind	r6
 
+; Draw an square block on the screen usign ANSI escapes
 ; void cuadro(int x,int y, int tipo)
 ; R0: x
 ; R1: y
@@ -359,6 +359,7 @@ cuadro:	subi	r7,4
 str1:	asczle	"\e[01;"
 str2:	asczle	"m\e[7m  \e[0m"
 
+;Init game ( playfield, score, ...)
 ;void init()
 init:	subi	r7,1
 		st		(r7),r6
@@ -423,6 +424,7 @@ ini5:	st		(r1),r0
 		jind	r6
 str3:	asczle	"\e[2J\e[H"
 
+;Display update
 ;void display()
 display:
 ;int i,j,ip,jp,ch;
@@ -514,6 +516,7 @@ disp5:	addi	r4,1
 		jind	r6
 str4:	asczle	"\e[12;31H"
 
+;Check if piece position is valid (not colliding with other blocks)
 ;int testpos(int x, int y)
 testpos:	; R0 = x  R1 = y
 		subi	r7,4
@@ -580,15 +583,16 @@ tpos9:	ld		r3,(r7+0)
 		addi	r7,4
 		jind	r6
 
+;Rotate the piece
 ;void rota(int giro)
-rota:	; R0: 0 horario,  !=0 antihorario
-		subi	r7,18	; espacio para tabla en la pila
+rota:	; R0: 0 clockwise,  !=0 anticlockwise
+		subi	r7,18	; allocate space in the stack
 		st		(r7+17),r6
 		st		(r7+16),r5
 		;	int i,j; R6=i, R5=i
 		;	uchar tmp[4][4];
 
-;	if (giro>0) {		//Giro antihorario de 90º
+;	if (giro>0) {		//anticlockwise, 90º
 		or		r0,r0,r0
 		jz		rotah
 ;		for (i=0;i<4;i++)
@@ -614,7 +618,7 @@ rota2:	ldi		r2,3
 ;			for (j=0;j<4;j++) pieza[i][j]=tmp[i][j];
 		jr		rota4
 ;	}
-;	if (giro<0) {		//Giro horario de 90º
+;	if (giro<0) {		//Clockwise, 90º
 ;		for (i=0;i<4;i++)
 ;			for (j=0;j<4;j++) tmp[j][3-i]=pieza[i][j];
 rotah:	ldi		r1,pieza
@@ -640,7 +644,7 @@ rota4:	ldi		r1,pieza
 rota3:	ld		r0,(r7)
 		st		(r1),r0
 		addi	r1,1
-		addi	r7,1		; Aprovechamos para reajustar pila
+		addi	r7,1		; Stack adjustment done here
 		subi	r6,1
 		jnz		rota3
 ;	}
@@ -652,12 +656,12 @@ rota3:	ld		r0,(r7)
 
 ;-------------------------------------------------------------------
 ;
-;		MAIN
+;		MAIN CODE
 ;
 ;-------------------------------------------------------------------
 pstart:	
 start:	
-		ldpc	r7			; Puntero de Pila al final de RAM
+		ldpc	r7			; Stack pointer at the end of RAM
 		word	0x8000
 		ldi		r1,IOBASE	
 		ldi		r0,8		; Enable PWM IRQ
@@ -742,7 +746,7 @@ mbuc2:	or		r0,r5,r5
 		addi	r5,1
 		cmpi	r5,8
 		jnz		mbuc2
-;		// Copiamos pieza actual a su bitmap
+;		// Copy current piece to its bitmap
 ;		for (i=0;i<4;i++)
 ;		    for (j=0;j<4;j++)
 ;			pieza[i][j]=(i==0 || i==3)?0:piezas[np][i-1][j];
@@ -777,7 +781,7 @@ mbuc4:	add		r1,r5,r5
 		addi	r5,1
 		cmpi	r5,4
 		jnz		mbuc5
-;		// Posiciones iniciales
+;		// Initial position
 ;		xp=4; yp=-2;
 		ldi		r1,bvar
 		ldi		r0,4
@@ -785,7 +789,7 @@ mbuc4:	add		r1,r5,r5
 		ldi		r0,2
 		neg		r0,r0
 		st		(r1+yp-bvar),r0
-;		// Si no se puede ni empezar a caer: Game Over
+;		// GAME OVER if not even the initial position is valid
 ;		if (testpos(xp,yp)) break;
 		ld		r0,(r1+xp-bvar)
 		ld		r1,(r1+yp-bvar)
@@ -923,7 +927,7 @@ ibuc21:
 
 		jr		ibuc0
 
-nuevapieza:	;// Añadimos la pieza al campo
+nuevapieza:	;// Add pieca to field
 ;		for (i=0;i<4;i++)
 ;		    for (j=0;j<4;j++)
 ;		    	if (yp+i>=0 && yp+i<ALTO && xp+j>0 && xp+j<ANCHO+1)
@@ -964,7 +968,7 @@ mbuc8:	addi	r5,1
 		cmpi	r6,4
 		jnz		mbuc6
 
-;		// Comprobamos si hay que "quemar" alguna línea
+;		// Do we have to "burn" a line?
 ;		xp=yp=-4;
 		ldi		r0,4
 		neg		r0,r0
@@ -1019,7 +1023,7 @@ mbuc14:	st		(r2),r0
 		ld		r0,(r1)
 		addi	r0,1
 		st		(r1),r0
-		or		r5,r6,r6	; Copia temporal
+		or		r5,r6,r6	; temp. copy
 ;			printf("\033[%d;%dH",10,28);
 ;			printf("%d",nlineas);
 		ldpc	r0
@@ -1072,13 +1076,13 @@ mbuc100:
 		st		(r1+freq-bvar),r0
 		st		(r1+pnota-bvar),r0
 		
-mbuc101:
-		jal		rnd
-		ldi		r1,IOBASE	; repite mientras no hay datos en UART RX
+mbuc101:	
+		jal		rnd			; iterate until new UART RX data
+		ldi		r1,IOBASE	
 		ld		r0,(r1+PFLAGS-IOBASE)
 		andi	r0,1
 		jz		mbuc101
-		; Borra flag de dato recibido
+		; Clear RX available flag
 		ld		r0,(r1+UARTDAT-IOBASE)
 		; start music
 		ldpc	r0
@@ -1094,11 +1098,11 @@ str5:	asczle "\e[12;28HMAX\e[13;28H"
 str6:	asczle "\e[10;28H"
 
 ;-------------------------------------------------------------------
-; Constantes
+; Constants
 ;-------------------------------------------------------------------
 
-piezas:	;piezas[7][2][4]
-	word 1	; 0 Barra ####
+piezas:	;piezas[7][2][4] (tetromins)
+	word 1	; 0 Bar   ####
 	word 1	;         .... 
     word 1
     word 1
@@ -1152,8 +1156,8 @@ piezas:	;piezas[7][2][4]
 	word 6
 	word 0
 
-	word 0	; 6 Cuadr .##.
-	word 7	;         .##.
+	word 0	; 6 Square .##.
+	word 7	;          .##.
 	word 7
 	word 0
 	word 0
@@ -1161,11 +1165,12 @@ piezas:	;piezas[7][2][4]
 	word 7
 	word 0
 
-; Melodias: Cada nota consta de 4 bits de duración (MSB)
-; y de 4 bits de selección de nota (LSB) 0=DO, 1=RE, ...
-; 2 notas por dato, LSB: primera nota
-; La melodía termina en 0
-mustab:	
+; Music: Each note is coded a 4 bits for lenght (MSB, len ~ val*125 ms)
+; and 4 bits for tone (LSB, #0 = C, #1 = D, ... #8 = silence)
+; And a word contains two notes (LSB: first note)
+; 0x0000: end of music
+
+mustab:	; (Susanna)
 		word	0x1110
 		word	0x1422
 		word	0x3418
@@ -1203,9 +1208,9 @@ mustab:
 		word	0xF850
 		word	0
 
-pend:
+pend:	; End of code
 ;-------------------------------------------------------------------
-; Variables y tablas
+; Data Arrays
 ;-------------------------------------------------------------------
 
 campo:	; campo[ALTO+1][ANCHO+2]
