@@ -19,7 +19,7 @@
 
 **********************************************************************/
 
-#define FCLK 36000000	// frecuencia de reloj de la CPU (Hz)
+#define FCLK 6000000	// frecuencia de reloj de la CPU (Hz)
 #define BAUD 115200		// velocidad de la UART (bps)
 
 /*********************************************************************
@@ -143,7 +143,7 @@ int muestra_instr(uint16_t cop, int pc)
 						else printf("R%d,(R%d)",rd,ra); 
 						break;
 		case TIPO_ST:	if (nof) printf("(R%d+%d),R%d",ra,nof,rd);
-						else printf("(R%d),R%d",ra,rb);
+						else printf("(R%d),R%d",ra,rd);
 						break;
 
 		case TIPO_JR:	printf("0x%04X",pc+desp+1); break;
@@ -161,7 +161,7 @@ unsigned char uart_tx, uart_rx;
 unsigned int uart_tx_stamp;
 unsigned short pflags=0x0006;
 unsigned short irqen;
-unsigned short timermax,timerval,hold,curr;
+unsigned short timermax,timerval,pwmval,hold,curr;
 unsigned short spitx, spirx, spicntl;
 unsigned int spi_stamp, spi_delay;
 unsigned short gpdir, gpout, gpin;
@@ -216,12 +216,10 @@ dupdate:
     	for (i=0;i<4;i++) {putchar((j&8)?fln[i]:'_'); j<<=1;}		
 	}
 	printf("\033[12;50HIRQEN  = %04X",irqen);
-	printf("\033[13;50HTIMER  = %04X / %04X",timerval,timermax);
-	printf("\033[14;50HPFLAGS = %04X",pflags);
-	printf("\033[15;50HPWM    = %03X / %03X",hold,curr); 
-	printf("\033[16;50HSPICTL = %04X",spicntl);
-	printf("\033[17;50HGPDIR  = %04X",gpdir);
-	printf("\033[18;50HGPOUT  = %04X",gpout);
+	printf("\033[13;50HPFLAGS = %04X",pflags);
+	printf("\033[14;50HPWM    = %02X",hold); 
+	printf("\033[15;50HTIMER  = %04X / %04X",timerval,timermax);
+	printf("\033[16;50HGPOUT  = %01X",gpout);
 
 
     //printf("\033[3;36HRH = ");
@@ -263,6 +261,7 @@ dupdate:
 			printf("B <addr> Breakpoint at <addr>\n");
 			printf("= <addr> Exec until <addr>\n");
 			printf("N        Exec until Next instruction\n");
+			printf("S <addr> Step into <addr> (set PC)\n");
 			printf("J <addr> Exec from <addr> (Jump)\n");
 			printf("C        Continue execution without Breakpoint\n");
 			printf("E        Continue execution with Breakpoint\n");
@@ -289,6 +288,12 @@ dupdate:
 	case 'N':  
 			Trap=cpu.pc+1;		// Ejecutar hasta PC+1
 			goto goexe;
+	case 'S':  
+			if(strlen(buf)>=2){		// Cambia PC (step into)
+				sscanf(buf+1,"%hX",&i);
+				cpu.pc=i;
+			}
+			goto dupdate;
 	case 'J':  
 			if(strlen(buf)>=2){		// Cambia PC y ejecuta
 				sscanf(buf+1,"%hX",&i);
@@ -370,18 +375,12 @@ uint16_t rd_mem(uint16_t dir)
 	// Periféricos
 	switch (dir&0x1F) {
 	case 0:	return irqen;
-	case 1:	pflags&=~(1<<15); return timerval;
+	case 1:	return pflags;
+	case 3:	pflags&=~(1<<15); return timerval;
 	case 2:	// UART RXD
 		pflags&=~1;	// borra flag DV
 		return uart_rx;
-	case 3:	// SPI RX
-		return (spicntl&0x8000) ? 0xfACE : 0xfC;
-	case 4:	// PFLAGS
-//		if ((cpu.nciclos-uart_tx_stamp)>UART_DEL) pflags|=6; // listo para TX
-//		if ((cpu.nciclos-spi_stamp)>spi_delay) pflags&=~(1<<3);	// borra SPI busy
-		return pflags;
-	case 6:	return gpdir;
-	case 7:	return gpout;
+	case 4:	return (gpin&0xFE)|gpout;
 	default:
 		return 0xffff;
 	}
@@ -397,23 +396,17 @@ void wr_mem(uint16_t dir,uint16_t dato)
 	if ((dir&0xffe0)==0x0020) {	// Periféricos
 		switch (dir&0x1F) {
 		case 0:	irqen=dato&0x000f; break;
-		case 1: timermax=dato; timerval=0; break;
+		case 3: timermax=dato; timerval=0; break;
 		case 2:	// UART TXD
 			pflags&=~6;	// borra flag THRE
 			uart_tx_stamp=cpu.nciclos; // retardo hasta siguiente caracter
 			putchar(dato); fflush(stdout); // imprime en stdout
 			videomod=1;		// marca para no borrar en debug
 			break;
-		case 3:	// SPI TX	
-			pflags|=1<<3;	// SPI busy
-			spi_stamp=cpu.nciclos;
-			spi_delay=((spicntl&0xff)+1)*2*8;
-			if (spicntl&(1<<15)) spi_delay*=2;
-			break;		
-		case 4: hold=dato&0x3FF; pflags&=~(1<<15); break;
-		case 5:	spicntl=dato; break;
-		case 6:	gpdir=dato; break;
-		case 7:	gpout=dato; break;
+		case 1:	hold=dato&0xff; // PWM
+			pflags&=~(1<<4);	// Borra flag IRQ
+			break; 
+		case 4:	gpout=dato&1; break;
 		}
 	}
 }
@@ -463,10 +456,10 @@ extern inline int una_instr()
 	//  1  :  FF 1
 	//  2  :  FF 2 = MODO (0=normal, 1=IRQ)
 	cpu.modo&=~1;	
-	if ((irqen&8) && (pflags&1)) {cpu.vector=0x0010; cpu.modo|=1;} // IRQ UART_RX
-	else if ((irqen&4) && (pflags&2)) {cpu.vector=0x000C; cpu.modo|=1;} // IRQ UART_TX
-	else if ((irqen&2) && (pflags&(1<<15))) {cpu.vector=0x0008; cpu.modo|=1;} // IRQ TIMER
-	//else if ((irqen&1) && eint) {cpu.vector=0x0004; cpu.modo|=1;} // IRQ externa
+	if      ((irqen&8) && (pflags&0x0010)) {cpu.vector=0x010C; cpu.modo|=1;} // IRQ PWM
+	else if ((irqen&4) && (pflags&0x8000)) {cpu.vector=0x0108; cpu.modo|=1;} // IRQ TIMER
+	else if ((irqen&2) && (pflags&0x0002)) {cpu.vector=0x0104; cpu.modo|=1;} // IRQ UART_TX
+	else if ((irqen&1) && (pflags&0x0001)) {cpu.vector=0x0100; cpu.modo|=1;} // IRQ UART RX
 
 	// actualiza modo (reg. de desplazamiento)
 	if (cpu.modo&6) cpu.modo|=4;
@@ -663,35 +656,30 @@ extern inline int una_instr()
 				doflagsZN(j);
 				break;
 			}
-		
-			switch ((op|(op>>3))&0x1F) {
-			case 0x00:	// SHR
+			i=op&0b11100011;
+			switch ((i|(i>>3))&0x1F) {
+			case 0x11:	// SHR
 				j=cpu.r[rb]&0xffff;
 				i=j&1; j>>=1;
 				cpu.r[rd]=j; doflagsCV(j,0,db,i); doflagsZN(j);
 				break;
-			case 0x01:	// SHRA
+			case 0x12:	// SHRA
 				j=cpu.r[rb]&0xffff;
 				if (j&0x8000) j|=0x10000;
 				i=j&1; j>>=1;
 				cpu.r[rd]=j; doflagsCV(j,0,db,i); doflagsZN(j);
 				break;
-			case 0x02:	// ROR
+			case 0x10:	// RORC
 				j=cpu.r[rb]&0xffff;
 				i=j&1; j>>=1; if (cpu.flags&CF) j|=0x8000;
 				cpu.r[rd]=j; doflagsCV(j,0,db,i); doflagsZN(j);
 				break;
-			case 0x03:	// SWAP
-				j=cpu.r[rb]&0xffff;
-				i=j>>8; j=(j<<8)|i;
-				cpu.r[rd]=j; 
-				break;
-			case 0x04:	// NOT
+			case 0x14:	// NOT
 				j=cpu.r[rb]&0xffff;
 				j=cpu.r[rd]=(~j)&0xffff;
 				doflagsZN(j);
 				break;
-			case 0x05:	// NEG
+			case 0x15:	// NEG
 				j=cpu.r[rb]&0xffff;
 				j=cpu.r[rd]=((~j)+1)&0xffff;
 				doflagsZN(j);
@@ -737,7 +725,7 @@ void reset_cpu()
 	// Periféricos que también se resetean
 	irqen=0;
 	gpdir=0;
-	pflags=0x6;
+	pflags=0x2;
 	timerval=0; timermax=0xffff;
 }
 
@@ -832,15 +820,15 @@ main(int argc, char **argv)
 			while (j>timermax) {	// Desbordamiemto 
 				j-=(timermax+1);	// ajuste de timer (se ha reiniciado)
 				pflags|=(1<<15);	// Activar flag de IRQ
-				curr=hold;			// Copiar registro PWM_HOLD a PWM_CURR
-				if (npwm<2000) {	// guardamos los valores de PWM_CURR en un archivo
-					npwm++; 		// hasta un límite...
-									// Formato: Tiempo (en segundos) valor PWM (en decimal)
-					fprintf(pfpwm,"%g %d\n",(float)(cpu.nciclos-j)/FCLK,curr);
-					fflush(pfpwm);
-				}
 			}
 			timerval=j;
+			// actualiza PWM
+			j=pwmval+nc;
+			while (j>254) {	// Desbordamiemto 
+				j-=255;	// ajuste de timer (se ha reiniciado)
+				pflags|=0x10;	// Activar flag de IRQ
+			}
+			pwmval=j;
 		}
 		i+=((FCLK+12)/25);	// Otros 40ms de simulación
 	    pause();

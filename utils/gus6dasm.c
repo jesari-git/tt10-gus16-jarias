@@ -54,7 +54,7 @@ int muestra_instr(uint16_t cop, int pc)
 						else printf("R%d,(R%d)",rd,ra); 
 						break;
 		case TIPO_ST:	if (nof) printf("(R%d+%d),R%d",ra,nof,rd);
-						else printf("(R%d),R%d",ra,rb);
+						else printf("(R%d),R%d",ra,rd);
 						break;
 
 		case TIPO_JR:	printf("0x%04X",pc+desp+1); break;
@@ -101,13 +101,13 @@ main(int argc, char **argv)
 	char *fn;
 
 	if (argc<2) {
-		printf("Uso: %s <-p 1/2> <-n> fichero.hex\n",argv[0]);
+		printf("Uso: %s fichero.hex\n",argv[0]);
 		exit(1);
 	}
 	for (i=1;i<argc;i++) {
 		if (argv[i][0]=='-' && argv[i][1]=='n') { modo=1; continue;}
 		if (argv[i][0]=='-' && argv[i][1]=='h') { 
-			printf("Uso: %s <-n> fichero.hex\n",argv[0]);
+			printf("Uso: %s <-n> file.hex\n",argv[0]);
 			exit(0);
 		}
 		fn=argv[i];
