@@ -140,7 +140,7 @@ wire [3:0]flag0;
 // Interrupts
 
 // IRQS
-wire [4:0]irqs={(~imode)&irqen[4], pwmirq&irqen[3] ,tflag& irqen[2],
+wire [4:0]irqs={(~imode) & irqen[4], pwmirq & irqen[3] ,tflag & irqen[2],
 				uflags[1] & irqen[1], uflags[0] & irqen[0]};
 wire irq = |irqs;
 wire [2:0]ivector = irqs[0] ? 3'd0 : (irqs[1]? 3'd1 : ( irqs[2]? 3'd2: (irqs[3] ? 3'd3: 3'd4)));
@@ -293,9 +293,9 @@ input  reset,		// async. Reset (ative high)
 input  irq,			// Interrupt Request
 input  [2:0]ivector,// Interrupt vector
 
-output imode,
-output [15:0]pc0,
-output [3:0]flag0
+output imode,		// Interrupt mode (0: normal, 1: Interrupt)
+output [15:0]pc0,	// PC of normal mode
+output [3:0]flag0	// Flags of normal mode
 );
 
 parameter VECTORBASE = 16'h0000;
