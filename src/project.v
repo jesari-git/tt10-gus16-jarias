@@ -122,22 +122,28 @@ assign cdi = iocs ? iodo : (iromcs ? romdo : xdi);
 wire stopcpu; // stop CPU if 1
 wire cclk = cksys | stopcpu;
 
-`ifdef SIM
-CPU_GUSV6 #(.VECTORBASE(16'h0000)) GUScpu0( 
-`else
+//`ifdef SIM
+//CPU_GUSV6 #(.VECTORBASE(16'h0000)) GUScpu0( 
+//`else
 CPU_GUSV6 #(.VECTORBASE(16'h0100)) GUScpu0( 
-`endif
+//`endif
 	.clk(cclk), .we(we), .ca(ca), .cdo(cdo), .cdi(cdi), 
-	.reset(reset), .irq(irq), .ivector(ivector)
+	.reset(reset), .irq(irq), .ivector(ivector),
+	.imode(imode), .pc0(pc0), .flag0(flag0)
 );
+
+wire imode;
+wire [15:0]pc0;
+wire [3:0]flag0;
 
 ///////////////////////////////
 // Interrupts
 
 // IRQS
-wire [3:0]irqs={pwmirq&irqen[3] ,tflag& irqen[2], uflags[1] & irqen[1], uflags[0] & irqen[0]};
+wire [4:0]irqs={(~imode)&irqen[4], pwmirq&irqen[3] ,tflag& irqen[2],
+				uflags[1] & irqen[1], uflags[0] & irqen[0]};
 wire irq = |irqs;
-wire [2:0]ivector = irqs[0] ? 3'd0 : (irqs[1]? 3'd1 : ( irqs[2]? 3'd2: 3'd3) );
+wire [2:0]ivector = irqs[0] ? 3'd0 : (irqs[1]? 3'd1 : ( irqs[2]? 3'd2: (irqs[3] ? 3'd3: 3'd4)));
 
 /////////////////////////////////////////////////////////
 ///////////////////// Peripherals ///////////////////////
@@ -161,10 +167,10 @@ wire iore3=(~stopcpu)&(~we)&(iocs)&(ca[2:0]==3);
 
 ///////////////////////////////
 // IRQEN reg
-reg [3:0]irqen=0;	
+reg [4:0]irqen=0;	
 always @(posedge cclk or posedge reset ) 
 	if (reset) irqen<=0;
-	else irqen <= iowe0 ? cdo[3:0] : irqen;
+	else irqen <= iowe0 ? cdo[4:0] : irqen;
 
 ///////////////////////////////
 // Timer
@@ -245,6 +251,8 @@ always@*
      2 : iodo <=  {8'h0,urxdata}; // UART data
      3 : iodo <=  timer;
      4 : iodo <=  {8'b0,ui_in[7:4],ui_in[2:0],gpo};
+	 6 : iodo <=  {12'h0,flag0};
+     7 : iodo <=  pc0;
      default : iodo <= 16'hxxxx;
   endcase
 
@@ -283,12 +291,19 @@ input  [15:0]cdi,	// Core Data Input
 input  clk,			// Clock
 input  reset,		// async. Reset (ative high)
 input  irq,			// Interrupt Request
-input  [2:0]ivector	// Interrupt vector
+input  [2:0]ivector,// Interrupt vector
+
+output imode,
+output [15:0]pc0,
+output [3:0]flag0
 );
 
 parameter VECTORBASE = 16'h0000;
 parameter REGLINK = 3'd6;
 assign we = st;
+assign imode=mode;
+assign pc0=PC0;
+assign flag0={cv[0][0],zn[0][0],cv[0][1],zn[0][1]}; // {V,N,C,Z}
 
 //------------------------------------------
 //------------ REGISTER BANK ---------------
