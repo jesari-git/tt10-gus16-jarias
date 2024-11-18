@@ -309,18 +309,19 @@ int ascizlen(char *p)
 // PASO 1
 // Buscamos los valores de las etiquetas
 ///////////////////////////////////////////
+#define BLEN (1023)
 void pass1(char *fname)
 {
     //FILE *fp;
     int i,op;
-    char *p,*pp,buf[256];
+    char *p,*pp,buf[BLEN+1];
     
     if ((fp=fopen(fname,"r"))==NULL) exit(0);
     
 	cdir=nl=0;
     for (;;) {
 		// lee línea
-        fgets(buf,255,fp);
+        fgets(buf,BLEN,fp);
 		if (feof(fp)) {
 			if (!ninc) break;
 		    else {fp=fpin[--ninc]; nl=nlin[ninc];}
@@ -351,15 +352,15 @@ uno:	scantok();
 	 
 		if(strcmp(tok,"INCLUDE")==0) {
 		    scantok();
-		    for (i=1;i<255;i++) if (tok[i]=='\"') break;
-		    if (i==255) {
+		    for (i=1;i<BLEN;i++) if (tok[i]=='\"') break;
+		    if (i==BLEN) {
 		    	if (ninc) fprintf(stderr,"%s ",&fnin[ninc-1][0]);
 		    	fprintf(stderr,"(%d) Error: include\n",nl); exit(1);
 		    }
 		    tok[i]=0;
 			//printf("include >%s<\n",&tok[1]);
 			nlin[ninc]=nl;
-			strncpy(&fnin[ninc][0], &tok[1], 255);
+			strncpy(&fnin[ninc][0], &tok[1], BLEN);
 			fpin[ninc++]=fp;
 			if (ninc>=MAXINC) {
 				fprintf(stderr,"%s (%d) Error: include stack overflow\n",&fnin[ninc-1][0],nl); 
@@ -500,7 +501,7 @@ void pass2(char *fname)
 {
     //FILE *fp,*fpo;
     int i,op,ra,rb,rd,n,disp;
-    char *p,*pp,buf[256],bf[256];
+    char *p,*pp,buf[BLEN+1],bf[BLEN+1];
     
     bzero (inststat,sizeof(inststat));
     
@@ -508,7 +509,7 @@ void pass2(char *fname)
 
 	cdir=0;  
     for (nl=0;;) {
-        fgets(buf,255,fp);
+        fgets(buf,BLEN,fp);
 		nl++;
 		//printf(">%s<\n",buf);
 		if (feof(fp)) {
@@ -555,15 +556,15 @@ dos:
 		  case '\t':	// instruccion/directiva
 			if(strcmp(tok,"INCLUDE")==0) {
 			    scantok();
-			    for (i=1;i<255;i++) if (tok[i]=='\"') break;
-			    if (i==255) {
+			    for (i=1;i<BLEN;i++) if (tok[i]=='\"') break;
+			    if (i==BLEN) {
 			    	if (ninc) fprintf(stderr,"%s ",&fnin[ninc-1][0]);
 			    	fprintf(stderr,"(%d) Error: include\n",nl); exit(1);
 			    }
 			    tok[i]=0;
 				//printf("include >%s<\n",&tok[1]);
 				nlin[ninc]=nl;
-				strncpy(&fnin[ninc][0], &tok[1], 255);
+				strncpy(&fnin[ninc][0], &tok[1], BLEN);
 				fpin[ninc++]=fp;
 				if (ninc>=MAXINC) {
 					fprintf(stderr,"%s (%d) Error: include stack overflow\n",&fnin[ninc-1][0],nl);
