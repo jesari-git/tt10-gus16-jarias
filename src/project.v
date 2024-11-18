@@ -142,7 +142,7 @@ wire [3:0]flag0;
 // IRQS
 wire [4:0]irqs={(~imode) & irqen[4], pwmirq & irqen[3] ,tflag & irqen[2],
 				uflags[1] & irqen[1], uflags[0] & irqen[0]};
-wire irq = |irqs;
+wire irq = (|irqs)&(~stopcpu); // some flags aren't synchronous with cclk
 wire [2:0]ivector = irqs[0] ? 3'd0 : (irqs[1]? 3'd1 : ( irqs[2]? 3'd2: (irqs[3] ? 3'd3: 3'd4)));
 
 /////////////////////////////////////////////////////////
