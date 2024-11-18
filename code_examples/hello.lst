@@ -1,0 +1,141 @@
+
+Processor: GUS16 v6
+
+; Label listing -----------------------------------
+
+0006   (    6)   CPUMODEL
+0020   (   32)   IOBASE
+0020   (   32)   IRQEN
+0021   (   33)   PFLAGS
+0022   (   34)   UARTDAT
+0023   (   35)   OUTPORT
+0000   (    0)   OIRQEN
+0001   (    1)   OPFLAGS
+0002   (    2)   OUARTDAT
+0003   (    3)   OOUTPORT
+0001   (    1)   IRQ0EN
+0001   (    1)   UARTDV
+0002   (    2)   UARTRDY
+0100   (  256)   PINIT
+0100   (  256)   PSTART
+0101   (  257)   MBUC
+0105   (  261)   PUTSLE
+0106   (  262)   PUTSLE1
+0111   (  273)   PUTSLE3
+0112   (  274)   TXTLE
+011E   (  286)   PEND
+
+; Program listing ----------------------------------
+
+0000  -         ;---------------------------------------------------------------------
+0000  -         ; PROGRAMMING CONVENTIONS:
+0000  -         ; STRICT:
+0000  -         ; - CORE REVISION 6
+0000  -         ; - R7 IS THE STACK POINTER	(SOFTWARE)
+0000  -         ; - R6 HOLDS THE RETURN ADDRESS FOR SUBROUTINES (CORE PARAMETER)
+0000  -         ; - FULL-DESCENDING STACK
+0000  -         ; LOOSE GUIDELINES:
+0000  -         ; - R0, R1, R2 ARE USED FOR ARGUMENTS / RESULTS
+0000  -         ;              VALUES MAY CHANGE ON SUBROUTINE CALLS
+0000  -         ; - R3, R4, R5 ARE USED FOR LOCAL VARIABLES
+0000  -         ;              VALUES ARE PRESERVED ON SUBROUTINE CALLS
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;----------- I/O MAP  -----------
+0000  -         
+0000  -         IOBASE=		0X20
+0000  -         IRQEN=		0X20
+0000  -         PFLAGS=		0X21
+0000  -         UARTDAT=	0X22
+0000  -         OUTPORT=	0X23
+0000  -         
+0000  -         ; OFFSETS RELATIVE TO IOBASE
+0000  -         OIRQEN=		0
+0000  -         OPFLAGS=	1
+0000  -         OUARTDAT=	2
+0000  -         OOUTPORT=   3
+0000  -         
+0000  -         ;--------- INTERRUPTS --------
+0000  -         IRQ0EN=		1
+0000  -         ;--------- PFLAGS REGISTER BITS -----------
+0000  -         UARTDV=		1		; DATA VALID (UART RX)
+0000  -         UARTRDY=	2		; TRANSMITTER BUSY (UART TX)
+0000  -         
+0000  -         ;--------------------------------------
+0000  -         ;----------- HEADER -----------------
+0000  -         ;--------------------------------------
+0000  -         
+0000  -         		ORG		0X100-4
+00FC  -         		
+00FC  -  4CFF   		WORD	0X4CFF	; MARK
+00FD  -  0100   		WORD	PINIT
+00FE  -  001E   		WORD	PEND-PINIT
+00FF  -  0100   		WORD	PSTART
+0100  -         
+0100  -         ;--------------------------------------
+0100  -         ;------------- CODE -----------------
+0100  -         ;--------------------------------------
+0100  -         PINIT:
+0100  -         PSTART:	
+0100  -         
+0100  -  5700   		LDI		R7,0
+0101  -         
+0101  -         MBUC:	; BUCLE PRINCIPAL DEL PROGRAMA
+0101  -         		; IMPRIMIMOS MENSAJE "Hello World"
+0101  -  58E0   		LDPC	R0		; IMPRIME CADENA DE CARACTERES TXT
+0102  -  0112   		WORD	TXTLE
+0103  -  7001   		JAL		PUTSLE		
+0104  -         
+0104  -  58FE   		JIND	R7
+0105  -         
+0105  -         ;----------------------------------------------------
+0105  -         ; ENVíA CADENA DE CARACTERES EMPAQUETADOS AL TERMINAL
+0105  -         ; PARáMETROS:
+0105  -         ;	R0: PUNTERO A LA CADENA DE CARACTERES
+0105  -         ;	R6: DIRECCIóN DE RETORNO
+0105  -         ; RETORNA:
+0105  -         ; 	R0-R2: MODIFICADOS
+0105  -         
+0105  -  5222   PUTSLE:	LDI		R2,UARTDAT
+0106  -         PUTSLE1:
+0106  -  6100   		LD		R1,(R0)
+0107  -  31FF   		ANDI	R1,0XFF
+0108  -  8008   		JZ		PUTSLE3
+0109  -  6940   		ST		(R2),R1
+010A  -         		
+010A  -  6100   		LD		R1,(R0)
+010B  -  5944   		RORI	R1,R1,8
+010C  -  31FF   		ANDI	R1,0XFF
+010D  -  8003   		JZ		PUTSLE3
+010E  -  6940   		ST		(R2),R1
+010F  -  1001   		ADDI	R0,1
+0110  -  FFF5   		JR		PUTSLE1
+0111  -         
+0111  -         PUTSLE3:
+0111  -  58FA   		JIND	R6
+0112  -         
+0112  -         ;---------------------------------------
+0112  -         ;------------- CONSTANTES --------------
+0112  -         ;---------------------------------------
+0112  -         
+0112  -  0A0A   TXTLE:	ASCZLE	"\n\n¡¡¡Hola Mundo!!!\n"
+0113  -  A1C2   
+0114  -  A1C2   
+0115  -  A1C2   
+0116  -  6F48   
+0117  -  616C   
+0118  -  4D20   
+0119  -  6E75   
+011A  -  6F64   
+011B  -  2121   
+011C  -  0A21   
+011D  -  0000   
+011E  -         
+011E  -         ;---------------------------------------
+011E  -         ;--------------- DATOS -----------------
+011E  -         ;---------------------------------------
+011E  -         
+011E  -         
+011E  -         
+011E  -         PEND:
+011E  -         

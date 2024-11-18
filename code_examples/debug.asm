@@ -64,13 +64,10 @@ SSTEPIRQ:
 JMPIRQ= ~(0x10110-SSTEPIRQ)		; opecode of: JR from 0x110 to here
 
 		subi	r7,7
-		st		(r7+0),r0
 		st		(r7+1),r1
-		st		(r7+2),r2
 		st		(r7+3),r3
 		st		(r7+4),r4
 		st		(r7+5),r5
-		st		(r7+6),r6
 
 db00:	ldi		r5,IOBASE
 		ldpc	r3
@@ -82,7 +79,10 @@ db00:	ldi		r5,IOBASE
 		jnz		db01
 		st		(r3+trace-bvar),r5	
 db01:	ld		r1,(r3+trace-bvar)	; if (!trace) return
-		jz		iend
+		jz		iend2
+		st		(r7+0),r0			; save rest of registers
+		st		(r7+2),r2
+		st		(r7+6),r6
 		jpl		db03				; if (trace<0) wait for return (JIND R6)
 		ld		r0,(r4)
 		ldpc	r2
@@ -238,24 +238,32 @@ db50:	cmpi	r0,'b'		; set breakpoint
 		jr		db00
 
 db60:	cmpi	r0,'m'		; dump memory
-		jnz		dbkey
+		jnz		db70
 		jal		gethex
 		or		r4,r0,r0
 		jal		mdump
 		jr		db45
 		
+db70:	cmpi	r0,'h'		; print help
+		jnz		dbkey
+		ldpc	r0
+		word	msghelp
+		jal		putsbe
+		jr		dbkey
+		
 iend:	ld		r0,(r7+0)
-		ld		r1,(r7+1)
 		ld		r2,(r7+2)
+		ld		r6,(r7+6)
+
+iend2:	ld		r1,(r7+1)
 		ld		r3,(r7+3)
 		ld		r4,(r7+4)
 		ld		r5,(r7+5)
-		ld		r6,(r7+6)
 		addi	r7,7
 		reti
 
 msgcls:	asczbe "\e[2J\e[H"
-msgflg:	asczbe "\e[1;32H<- PC\e[1;37HFlags: "
+msgflg:	asczbe "\e[1;32H<- PC\e[1;39HFlags: "
 flgtbl: word 'V'
 		word 'N'
 		word 'C'
@@ -263,7 +271,7 @@ flgtbl: word 'V'
 msgpos:	asczbe "\e["
 msgreg:	asczbe ";42HR"
 msgbrk:	asczbe "\e[13;39HBreak: "
-msgebrk:	asczbe "\e[22;1HcesnrRbdm>"
+msgebrk:	asczbe "\e[22;1HhcesnrRbdm>"
 
 ;------------------------------------------------------
 ; dissasemble 20 instr at (R4)
@@ -846,8 +854,23 @@ ptx2:	addi	r1,'0'
 		jind	r6
 
 ;-------------------------------------------------------------------
+; variables
+;-------------------------------------------------------------------
+bvar:
+ldpcf:	word	0
+trace:	word	0
+break:	word 	0
+rutsp:	word	0
+caddr:	word	0x100
+
+;-------------------------------------------------------------------
+; text (overwritable by the stack...maybe)
+;-------------------------------------------------------------------
+msghelp:	asczbe "\nc\tContinue (no stop)\ne\tExecute (w breakpoint)\ns\tSingle step\nn\texec until Next instr\nr\texec until return (JIND R6)\nR\texec until return at higher stack level\nb [adr]\tset Breakpoint\nd [adr]\tDissasemble\nm [adr]\tMemory dump\n"
+txtload:	asczbe "\nUpload program to debug\n"
+;-------------------------------------------------------------------
 ;
-;		MAIN
+;		MAIN (overwritable by the stack)
 ;
 ;-------------------------------------------------------------------
 pstart:	
@@ -904,17 +927,8 @@ getw:	ld		r0,(r5+UARTDAT-IOBASE)	; LSB
 		or		r0,r0,r1
 		jind	r6
 
-txtload:	asczbe "\nUpload program to debug\n"
 
 pend:
-;-------------------------------------------------------------------
-;		Variables
-;-------------------------------------------------------------------
 
-bvar=	pend
-ldpcf=	bvar
-trace=	bvar+1
-break=	bvar+2
-rutsp=	bvar+3
-caddr=	bvar+4
+
 

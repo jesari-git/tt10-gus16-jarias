@@ -1,5 +1,6 @@
 ;---------------------------------------------------------------------
-; Find the amount of attached RAM
+; Find the amount of attached RAM and check it
+;  RAM under 0x100 has to be working for this program to run
 ;  J. Arias (2024)
 ;---------------------------------------------------------------------
 ; Programming Conventions:
@@ -111,19 +112,19 @@ putch:	ldi		r1,UARTDAT
 ; 	R1: modiffied
 ; notes: CPU clock stops until a character is received
 
- getch:	ldi		r1,UARTDAT	
- 		ld		r0,(r1)		
- 		jind	r6			
+; getch:	ldi		r1,UARTDAT	
+; 		ld		r0,(r1)		
+; 		jind	r6			
 
 ;----------------------------------------------
-; Prints decimal number
+; Prints decimal number (or hex, octal,...)
 ; parameters:
-;	R0: number tyo print
+;	R0: number to print
+;   R2: base
 ;	R6: return address (JAL)
  
 ; returns:
 ;	R0, R1: modiffied
-; retorna: R0 y R1 modificados
 ; notes:
 ;	Avoids printing zeroes on the left
 ;   Stack used for temporary digit storage
@@ -135,17 +136,21 @@ prtdec:
 		ldi		r1,0		; end of string mark
 		subi	r7,1		; to stack
 		st		(r7),r1
-prtd0:	ldi		r1,0		; R0=R0/10, R1=remainder
+prtd0:	ldi		r1,0		; R0=R0/R2, R1=remainder
 		ldi		r6,16		
 prtd1:	add		r0,r0,r0
 		adc		r1,r1,r1
-		cmpi	r1,10
+		sub		r1,r1,r2
 		jnc		prtd2
-		subi	r1,10
 		addi	r0,1
-prtd2:	subi	r6,1
+		jr		prtd5
+prtd2:	add		r1,r1,r2
+prtd5:	subi	r6,1
 		jnz		prtd1
-		ldi		r6,'0'		; remainder in ASCII goes to stack
+		cmpi	r1,10		; digits over '9' translated to 'A','B'...
+		jmi		prtd6
+		addi	r1,7
+prtd6:	ldi		r6,'0'		; remainder in ASCII goes to stack
 		add		r1,r1,r6
 		subi	r7,1
 		st		(r7),r1
@@ -186,13 +191,13 @@ pstart:
 start:	
 		ldi		r7,0xff		; stack pointer
 	
-		ldpc	r0
-		word	txt
+		ldi	r0	txt
 		jal		putsle
+
 
 		ldpc	r5			; test value
 		word	0x72A5
-		
+
 		ldpc	r4			; start address
 		word	0x100
 		or		r3,r4,r4	; same as increment (256)
@@ -214,7 +219,8 @@ buc:	add		r4,r4,r3
 		word	txt64k
 		jal		putsle
 		jr		pr3
-pr2:	jal		prtdec	
+pr2:	ldi		r2,10		; decimal
+		jal		prtdec	
 pr3:	ldpc	r0
 		word	txt2
 		jal		putsle
@@ -232,12 +238,18 @@ pr4:	st		(r3),r0
 pr5:	addi	r3,1
 		sub		r1,r4,r3
 		jnz		pr4
+
+		; forced error (address=0x1021)
+		;ld		r0,(r6)
+		;xori	r0,0x30
+		;st		(r6),r0
+		
 		; 2- Check the stored values
 		ldpc	r3			; initial address
 		word	0x100
 		or		r0,r5,r5	; initial value
 pr6:	ld		r1,(r3)
-		sub		r2,r1,r0
+		xor		r2,r1,r0
 		jnz		perr		
 		add		r0,r0,r0
 		jnc		pr7
@@ -247,7 +259,17 @@ pr7:	addi	r3,1
 		jnz		pr6		
 		ldi		r0,txtok
 		jr		pr8
-perr:	ldi		r0,txterr
+perr:	or		r0,r3,r3	; offending address
+		or		r4,r2,r2	; error bitmask
+		ldi		r2,16		; Hex values
+		jal		prtdec
+		ldi		r0,'h'
+		jal		putch
+		ldi		r0,':'
+		jal		putch
+		or		r0,r4,r4
+		jal		prtdec
+		ldi		r0,txterr
 pr8:	jal		putsle	
 		ldi		r0,txtbak
 		jal		putsle
@@ -258,7 +280,7 @@ txt:	asczle	"\nRAM: "
 txt64k:	asczle	"65536"
 txt2:	asczle	" words\nRAM  "
 txtok:	asczle	"OK\n"
-txterr:	asczle	"error\n"
+txterr:	asczle	"h error\n"
 txtbak: asczle  "-back to bootloader-\n"		
 
 

@@ -1,0 +1,399 @@
+
+Processor: GUS16 v6
+
+; Label listing -----------------------------------
+
+0006   (    6)   CPUMODEL
+0020   (   32)   IOBASE
+0020   (   32)   IRQEN
+0021   (   33)   PFLAGS
+0021   (   33)   PWM
+0022   (   34)   UARTDAT
+0023   (   35)   TIMER
+0001   (    1)   IRQRXEN
+0002   (    2)   IRQTXEN
+0004   (    4)   IRQTIMEN
+0008   (    8)   IRQHDEEN
+0010   (   16)   IRQVDEEN
+0001   (    1)   UARTDV
+0002   (    2)   UARTRDY
+0004   (    4)   UARTOVER
+0008   (    8)   UARTFER
+0010   (   16)   HDE
+0020   (   32)   VDE
+8000   (32768)   TIMOV
+0040   (   64)   PINIT
+0040   (   64)   BVAR
+0040   (   64)   NINT
+0041   (   65)   PHASE
+0042   (   66)   FREQ
+0043   (   67)   PUTSLE
+0044   (   68)   PUTSLE1
+004F   (   79)   PUTSLE3
+0050   (   80)   PUTCH
+0053   (   83)   GETCH
+0056   (   86)   PRTDEC
+005B   (   91)   PRTD0
+005D   (   93)   PRTD1
+0063   (   99)   PRTD2
+006B   (  107)   PRTD3
+0070   (  112)   PRTD9
+0100   (  256)   IRQ0
+0104   (  260)   IRQ1
+0108   (  264)   IRQ2
+010C   (  268)   IRQ3
+0110   (  272)   IRQ4
+0111   (  273)   PWMIRQ
+011F   (  287)   IL2
+0123   (  291)   IEND
+0128   (  296)   PSTART
+0128   (  296)   START
+0132   (  306)   TXT
+0139   (  313)   FNOTAS
+0142   (  322)   MUSTAB
+0188   (  392)   PEND
+
+; Program listing ----------------------------------
+
+0000  -         ;---------------------------------------------------------------------
+0000  -         ; PROGRAMMING CONVENTIONS:
+0000  -         ; STRICT:
+0000  -         ; - CORE REVISION 6 INSTRUCTION SET
+0000  -         ; - R7 IS THE STACK POINTER	(SOFTWARE)
+0000  -         ; - R6 HOLDS THE RETURN ADDRESS FOR SUBROUTINES (JAL)
+0000  -         ; - FULL-DESCENDING STACK
+0000  -         ; LOOSE GUIDELINES:
+0000  -         ; - R0, R1, R2 ARE USED FOR ARGUMENTS / RESULTS
+0000  -         ;              VALUES MAY CHANGE ON SUBROUTINE CALLS
+0000  -         ; - R3, R4, R5 ARE USED FOR LOCAL VARIABLES
+0000  -         ;              VALUES ARE PRESERVED ON SUBROUTINE CALLS
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;----------- I/O MAP  -----------
+0000  -         
+0000  -         IOBASE=		0X20
+0000  -         IRQEN=		0X20
+0000  -         PFLAGS=		0X21
+0000  -         PWM=		0X21
+0000  -         UARTDAT=	0X22
+0000  -         TIMER=		0X23
+0000  -         
+0000  -         ;--------- INTERRUPT ENABLE --------
+0000  -         IRQRXEN=	1
+0000  -         IRQTXEN=	2
+0000  -         IRQTIMEN=	4
+0000  -         IRQHDEEN=	8
+0000  -         IRQVDEEN=	16
+0000  -         ;--------- PFLAGS REGISTER BITS -----------
+0000  -         UARTDV=		1		; DATA VALID (UART RX)
+0000  -         UARTRDY=	2		; TRANSMITTER READY (UART TX)
+0000  -         UARTOVER=	4		; RX OVERRUN ERROR
+0000  -         UARTFER=	8		; RX FRAME ERROR
+0000  -         HDE=		16		; HORIZONTAL DISPLAY ENABLE
+0000  -         VDE=		32		; VERTICAL DISPLAY ENABLE
+0000  -         TIMOV=		0X8000	; TIMER OVERFLOW (SIGN BIT)
+0000  -         
+0000  -         ;--------------------------------------
+0000  -         ;------- HEADER FOR BOOTLOADER --------
+0000  -         ;--------------------------------------
+0000  -         
+0000  -         		ORG		0X40-4
+003C  -         		
+003C  -  4CFF   		WORD	0X4CFF			; MARK
+003D  -  0040   		WORD	PINIT			; DESTINATION ADDRESS
+003E  -  0148   		WORD	PEND-PINIT		; SIZE (WORDS)
+003F  -  0128   		WORD	PSTART			; EXECUTION ADDRESS
+0040  -         
+0040  -         ;--------------------------------------
+0040  -         ;------------- CODE -----------------
+0040  -         ;--------------------------------------
+0040  -         PINIT:
+0040  -         
+0040  -         ;------------------------------------------------------------------------
+0040  -         ; FAST ADDRESS VARIABLES (SINGLE LDI FOR ADDRESS LOADING)
+0040  -         ;------------------------------------------------------------------------
+0040  -         		ORG		0X40
+0040  -         BVAR:
+0040  -  0000   NINT:	WORD	0
+0041  -  0000   PHASE:	WORD	0
+0042  -  04C9   FREQ:	WORD	1225	;440HZ
+0043  -         
+0043  -         
+0043  -         ;-------------------------------------------------------------------
+0043  -         ; I/O SUBROUTINES
+0043  -         ;-------------------------------------------------------------------
+0043  -         
+0043  -         ;------------------------------------------------------------
+0043  -         ; PRINTS ASCIIZ (16-BIT PACKED, LITTLE ENDIAN) STRING ON UART 
+0043  -         ; PARAMETERS:
+0043  -         ;	R0: POINTER TO STRING
+0043  -         ;	R6: RETURN ADDRESS (JAL)
+0043  -         ; RETURS:
+0043  -         ; 	R0-R2: MODIFIED
+0043  -         
+0043  -  5222   PUTSLE:	LDI		R2,UARTDAT
+0044  -         PUTSLE1:
+0044  -  6100   		LD		R1,(R0)
+0045  -  31FF   		ANDI	R1,0XFF
+0046  -  8008   		JZ		PUTSLE3
+0047  -  6940   		ST		(R2),R1
+0048  -         		
+0048  -  6100   		LD		R1,(R0)
+0049  -  5944   		RORI	R1,R1,8
+004A  -  31FF   		ANDI	R1,0XFF
+004B  -  8003   		JZ		PUTSLE3
+004C  -  6940   		ST		(R2),R1
+004D  -  1001   		ADDI	R0,1
+004E  -  FFF5   		JR		PUTSLE1
+004F  -         
+004F  -         PUTSLE3:
+004F  -  58FA   		JIND	R6
+0050  -         ;----------------------------------------------
+0050  -         ; SENDS CHARACTER TO UART
+0050  -         ; PARAMETERS:
+0050  -         ;	R0: CHARACTER TO SEND
+0050  -         ;	R6: RETURN ADDRESS (JAL)
+0050  -         ; RETURNS:
+0050  -         ; 	R1: MODIFFIED
+0050  -         ; NOTES: CPU CLOCK STOPS IF UART NOT READY FOR TRANSMISSION
+0050  -         
+0050  -  5122   PUTCH:	LDI		R1,UARTDAT
+0051  -  6820   		ST		(R1),R0		
+0052  -  58FA   		JIND	R6			
+0053  -         
+0053  -         ;----------------------------------------------
+0053  -         ; RECEIVES CHARACTER FROM UART
+0053  -         ; PARAMETERS:
+0053  -         ;	R6: RETURN ADDRESS (JAL)
+0053  -         ; RETURNS:
+0053  -         ;	R0: REVEIVED CHAR
+0053  -         ; 	R1: MODIFFIED
+0053  -         ; NOTES: CPU CLOCK STOPS UNTIL A CHARACTER IS RECEIVED
+0053  -         
+0053  -  5122    GETCH:	LDI		R1,UARTDAT	
+0054  -  6020    		LD		R0,(R1)		
+0055  -  58FA    		JIND	R6			
+0056  -         
+0056  -         ;----------------------------------------------
+0056  -         ; PRINTS DECIMAL NUMBER
+0056  -         ; PARAMETERS:
+0056  -         ;	R0: NUMBER TYO PRINT
+0056  -         ;	R6: RETURN ADDRESS (JAL)
+0056  -          
+0056  -         ; RETURNS:
+0056  -         ;	R0, R1: MODIFFIED
+0056  -         ; RETORNA: R0 Y R1 MODIFICADOS
+0056  -         ; NOTES:
+0056  -         ;	AVOIDS PRINTING ZEROES ON THE LEFT
+0056  -         ;   STACK USED FOR TEMPORARY DIGIT STORAGE
+0056  -         
+0056  -         PRTDEC:
+0056  -  1F01   		SUBI	R7,1
+0057  -  6EE0   		ST		(R7),R6
+0058  -         
+0058  -  5100   		LDI		R1,0		; END OF STRING MARK
+0059  -  1F01   		SUBI	R7,1		; TO STACK
+005A  -  69E0   		ST		(R7),R1
+005B  -  5100   PRTD0:	LDI		R1,0		; R0=R0/10, R1=REMAINDER
+005C  -  5610   		LDI		R6,16		
+005D  -  0000   PRTD1:	ADD		R0,R0,R0
+005E  -  0126   		ADC		R1,R1,R1
+005F  -  490A   		CMPI	R1,10
+0060  -  B002   		JNC		PRTD2
+0061  -  190A   		SUBI	R1,10
+0062  -  1001   		ADDI	R0,1
+0063  -  1E01   PRTD2:	SUBI	R6,1
+0064  -  9FF8   		JNZ		PRTD1
+0065  -  5630   		LDI		R6,'0'		; REMAINDER IN ASCII GOES TO STACK
+0066  -  0138   		ADD		R1,R1,R6
+0067  -  1F01   		SUBI	R7,1
+0068  -  69E0   		ST		(R7),R1
+0069  -  0801   		OR		R0,R0,R0	; REPEAT UNTIL ZERO
+006A  -  9FF0   		JNZ		PRTD0
+006B  -         
+006B  -  60E0   PRTD3:	LD		R0,(R7)		; RETRIEVE CHARACTER FROM STACK
+006C  -  8003   		JZ		PRTD9		; END OF STRING?
+006D  -  1701   		ADDI	R7,1
+006E  -  7FE1   		JAL		PUTCH
+006F  -  FFFB   		JR		PRTD3
+0070  -         
+0070  -  1701   PRTD9:	ADDI	R7,1
+0071  -  66E0   		LD		R6,(R7)
+0072  -  1701   		ADDI	R7,1
+0073  -  58FA   		JIND	R6
+0074  -         
+0074  -         
+0074  -         
+0074  -         ;-------------------------------------------------------------------
+0074  -         ; INTERRUPTS
+0074  -         ;-------------------------------------------------------------------
+0074  -         		ORG	0X100
+0100  -         IRQ0:	;JR	RXIRQ
+0100  -         		ORG	0X104
+0104  -         IRQ1:	;JR	TXIRQ
+0104  -         		ORG	0X108
+0108  -         IRQ2:	;JR	TIMERIRQ
+0108  -         		ORG	0X10C
+010C  -  F004   IRQ3:	JR	PWMIRQ
+010D  -         		ORG	0X110
+0110  -  0000   IRQ4:	WORD	0
+0111  -         
+0111  -         PWMIRQ:
+0111  -  1F03   		SUBI	R7,3
+0112  -  68E0   		ST		(R7),R0
+0113  -  69E1   		ST		(R7+1),R1
+0114  -  6AE2   		ST		(R7+2),R2
+0115  -         	
+0115  -  5240   		LDI		R2,BVAR
+0116  -  6040   		LD		R0,(R2+NINT-BVAR)
+0117  -  1001   		ADDI	R0,1
+0118  -  6840   		ST		(R2+NINT-BVAR),R0
+0119  -  6041   		LD		R0,(R2+PHASE-BVAR)
+011A  -  6142   		LD		R1,(R2+FREQ-BVAR)
+011B  -  0004   		ADD		R0,R0,R1
+011C  -  6841   		ST		(R2+PHASE-BVAR),R0
+011D  -  D001   		JPL		IL2
+011E  -  58A0   		NOT		R0,R0
+011F  -  5823   IL2:	RORI	R0,R0,7
+0120  -  30FF   		ANDI	R0,255
+0121  -  5120   		LDI		R1,IOBASE	
+0122  -  6821   		ST		(R1+PWM-IOBASE),R0
+0123  -         		
+0123  -  60E0   IEND:	LD		R0,(R7)
+0124  -  61E1   		LD		R1,(R7+1)
+0125  -  62E2   		LD		R2,(R7+2)
+0126  -  1703   		ADDI	R7,3
+0127  -  58E3   		RETI
+0128  -         
+0128  -         
+0128  -         ;-------------------------------------------------------------------
+0128  -         ;
+0128  -         ;		MAIN
+0128  -         ;
+0128  -         ;-------------------------------------------------------------------
+0128  -         PSTART:	
+0128  -         START:	
+0128  -  5FE0   		LDPC	R7
+0129  -  0000   		WORD	0X0000			; STACK 
+012A  -         	
+012A  -  58E0   		LDPC	R0
+012B  -  0132   		WORD	TXT
+012C  -  7F16   		JAL		PUTSLE
+012D  -         		
+012D  -         		; ENABLE PWM IRQ
+012D  -  5120   		LDI		R1,IOBASE
+012E  -  6020   		LD		R0,(R1)
+012F  -  3808   		ORI		R0,0X8
+0130  -  6820   		ST		(R1),R0
+0131  -         
+0131  -  FFFF   		JR		.
+0132  -         
+0132  -         ;BU0:	LD		R2,(R1+PFLAGS-IOBASE)
+0132  -         ;		ANDI	R2,0X10
+0132  -         ;		JZ		BU0
+0132  -         ;		ST		(R1+PWM-IOBASE),R0
+0132  -         ;		ADDI	R0,1
+0132  -         ;
+0132  -         ;		JR		BU0	
+0132  -         		
+0132  -         
+0132  -  500A   TXT:	ASCZLE "\nPruebas PWM\n"
+0133  -  7572   
+0134  -  6265   
+0135  -  7361   
+0136  -  5020   
+0137  -  4D57   
+0138  -  000A   
+0139  -         
+0139  -  0416   FNOTAS:	WORD	523*65536/23529	; 523.251 HZ DO
+013A  -  0496   		WORD	587*65536/23529	; 587,330 HZ RE
+013B  -  0526   		WORD	659*65536/23529	; 659,255 HZ MI
+013C  -  0574   		WORD	698*65536/23529	; 698,456 HZ FA
+013D  -  0620   		WORD	784*65536/23529	; 783,991 HZ SOL
+013E  -  06E0   		WORD	880*65536/23529	; 880.000 HZ LA
+013F  -  07B8   		WORD	988*65536/23529	; 987,767 HZ SI
+0140  -  082C   		WORD	1046*65536/23529	; 1046,50 HZ DO
+0141  -  0000   		WORD	0		; 0HZ (SILENCIO)
+0142  -         		
+0142  -         ; MELODIAS: CADA NOTA CONSTA DE 4 BITS DE DURACIóN (MSB)
+0142  -         ; Y DE 4 BITS DE SELECCIóN DE NOTA (LSB) 0=DO, 1=RE, ...
+0142  -         ; LA MELODíA TERMINA EN 0
+0142  -  0010   MUSTAB:	WORD	0X10
+0143  -  0011   		WORD	0X11
+0144  -  0022   		WORD	0X22,
+0145  -  0014   		WORD	0X14
+0146  -  0018   		WORD	0X18,
+0147  -  0034   		WORD	0X34,
+0148  -  0015   		WORD	0X15,
+0149  -  0024   		WORD	0X24,
+014A  -  0022   		WORD	0X22,
+014B  -  0030   		WORD	0X30,
+014C  -  0011   		WORD	0X11,
+014D  -  0012   		WORD	0X12,
+014E  -  0018   		WORD	0X18,
+014F  -  0022   		WORD	0X22,
+0150  -  0021   		WORD	0X21,
+0151  -  0020   		WORD	0X20,
+0152  -  0051   		WORD	0X51,
+0153  -  0018   		WORD	0X18,
+0154  -  0010   		WORD	0X10,
+0155  -  0011   		WORD	0X11,
+0156  -  0022   		WORD	0X22,
+0157  -  0014   		WORD	0X14,
+0158  -  0018   		WORD	0X18,
+0159  -  0034   		WORD	0X34,
+015A  -  0015   		WORD	0X15,
+015B  -  0024   		WORD	0X24,
+015C  -  0022   		WORD	0X22,
+015D  -  0030   		WORD	0X30,
+015E  -  0011   		WORD	0X11,
+015F  -  0012   		WORD	0X12,
+0160  -  0018   		WORD	0X18,
+0161  -  0022   		WORD	0X22,
+0162  -  0011   		WORD	0X11,
+0163  -  0018   		WORD	0X18,
+0164  -  0021   		WORD	0X21,
+0165  -  0060   		WORD	0X60,
+0166  -  0028   		WORD	0X28,
+0167  -  0033   		WORD	0X33,
+0168  -  0018   		WORD	0X18,
+0169  -  0043   		WORD	0X43,
+016A  -  0015   		WORD	0X15,
+016B  -  0018   		WORD	0X18,
+016C  -  0035   		WORD	0X35,
+016D  -  0018   		WORD	0X18,
+016E  -  0025   		WORD	0X25,
+016F  -  0034   		WORD	0X34,
+0170  -  0015   		WORD	0X15,
+0171  -  0024   		WORD	0X24,
+0172  -  0022   		WORD	0X22,
+0173  -  0051   		WORD	0X51,
+0174  -  0018   		WORD	0X18,
+0175  -  0010   		WORD	0X10,
+0176  -  0011   		WORD	0X11,
+0177  -  0022   		WORD	0X22,
+0178  -  0014   		WORD	0X14,
+0179  -  0018   		WORD	0X18,
+017A  -  0034   		WORD	0X34,
+017B  -  0015   		WORD	0X15,
+017C  -  0024   		WORD	0X24,
+017D  -  0022   		WORD	0X22,
+017E  -  0030   		WORD	0X30,
+017F  -  0011   		WORD	0X11,
+0180  -  0012   		WORD	0X12,
+0181  -  0018   		WORD	0X18,
+0182  -  0022   		WORD	0X22,
+0183  -  0011   		WORD	0X11,
+0184  -  0018   		WORD	0X18,
+0185  -  0021   		WORD	0X21,
+0186  -  0050   		WORD	0X50,
+0187  -  0000   		WORD	0
+0188  -         		
+0188  -         PEND:
+0188  -         ;-------------------------------------------------------------------
+0188  -         ; VARIABLES
+0188  -         ;-------------------------------------------------------------------
+0188  -         
+0188  -         	
+0188  -         
+0188  -         

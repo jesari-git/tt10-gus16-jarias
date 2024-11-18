@@ -1,0 +1,1220 @@
+
+Processor: GUS16 v6
+
+; Label listing -----------------------------------
+
+0006   (    6)   CPUMODEL
+0020   (   32)   IOBASE
+0020   (   32)   IRQEN
+0021   (   33)   PFLAGS
+0021   (   33)   PWM
+0022   (   34)   UARTDAT
+0023   (   35)   TIMER
+0024   (   36)   GPO
+0026   (   38)   FLAG0
+0027   (   39)   PC0
+0001   (    1)   IRQRXEN
+0002   (    2)   IRQTXEN
+0004   (    4)   IRQTIMEN
+0008   (    8)   IRQPWMEN
+0010   (   16)   IRQSSTEPEN
+0001   (    1)   UARTDV
+0002   (    2)   UARTRDY
+0004   (    4)   UARTOVER
+0008   (    8)   UARTFER
+0010   (   16)   PWMF
+8000   (32768)   TIMOV
+FC00   (64512)   PINIT
+FC00   (64512)   SSTEPIRQ
+FAEF   (64239)   JMPIRQ
+FC05   (64517)   DB00
+FC0D   (64525)   DB01
+FC1D   (64541)   DB02
+FC1F   (64543)   DB03
+FC2D   (64557)   DB2
+FC31   (64561)   DB3
+FC36   (64566)   DB4
+FC4D   (64589)   DB5
+FC5B   (64603)   DBKEY
+FC61   (64609)   DB51
+FC65   (64613)   DB10
+FC6C   (64620)   DB15
+FC6F   (64623)   DB20
+FC74   (64628)   DB30
+FC77   (64631)   DB31
+FC7D   (64637)   DB35
+FC81   (64641)   DB40
+FC8A   (64650)   DB45
+FC8D   (64653)   DB44
+FC90   (64656)   DB50
+FC97   (64663)   DB60
+FC9D   (64669)   DB70
+FCA3   (64675)   IEND
+FCA6   (64678)   IEND2
+FCAC   (64684)   MSGCLS
+FCB0   (64688)   MSGFLG
+FCBE   (64702)   FLGTBL
+FCC2   (64706)   MSGPOS
+FCC4   (64708)   MSGREG
+FCC7   (64711)   MSGBRK
+FCCF   (64719)   MSGEBRK
+FCD9   (64729)   DISABLK
+FCDC   (64732)   DISA1
+FCEA   (64746)   DISA2
+FCEC   (64748)   DISA3
+FCF4   (64756)   DISASSEMBLE
+FD0D   (64781)   DIS01
+FD12   (64786)   DIS1
+FD2D   (64813)   DIS13
+FD30   (64816)   DIS11
+FD3D   (64829)   DIS12
+FD45   (64837)   DIS2
+FD54   (64852)   DIS20
+FD5C   (64860)   DIS21
+FD67   (64871)   DIS22
+FD6D   (64877)   DIS221
+FD77   (64887)   DIS23
+FD8F   (64911)   DIS24
+FD8F   (64911)   DIS3
+FDA0   (64928)   DIS4
+FDB3   (64947)   DIS99
+FDB9   (64953)   PRNEMO
+FDCF   (64975)   PRREG
+FDD6   (64982)   NMTAB
+FE20   (65056)   GETHEX
+FE28   (65064)   GHEX1
+FE31   (65073)   GHEX2
+FE38   (65080)   GHEX3
+FE3D   (65085)   GHEX9
+FE43   (65091)   GHEX95
+FE47   (65095)   MDUMP
+FE4A   (65098)   MD1
+FE51   (65105)   MD2
+FE5D   (65117)   MD3
+FE70   (65136)   GOODCH
+FE75   (65141)   GOCH1
+FE76   (65142)   GOCH2
+FE77   (65143)   PUTSBE
+FE78   (65144)   PUTSBE1
+FE83   (65155)   PUTSBE3
+FE84   (65156)   PUTCH
+FE87   (65159)   PRTDEC
+FE8C   (65164)   PRTD0
+FE8E   (65166)   PRTD1
+FE94   (65172)   PRTD2
+FE95   (65173)   PRTD5
+FE9A   (65178)   PRTD6
+FEA0   (65184)   PRTD3
+FEA5   (65189)   PRTD9
+FEA9   (65193)   PRTHEX8
+FEB0   (65200)   PRTHEX
+FEB5   (65205)   PTX1
+FEBB   (65211)   PTX2
+FEC3   (65219)   BVAR
+FEC3   (65219)   LDPCF
+FEC4   (65220)   TRACE
+FEC5   (65221)   BREAK
+FEC6   (65222)   RUTSP
+FEC7   (65223)   CADDR
+FEC8   (65224)   MSGHELP
+FF37   (65335)   TXTLOAD
+FF44   (65348)   PSTART
+FF44   (65348)   START
+FF49   (65353)   BUC1
+FF53   (65363)   BUC2
+FF65   (65381)   GETW
+FF6A   (65386)   PEND
+
+; Program listing ----------------------------------
+
+0000  -         ;---------------------------------------------------------------------
+0000  -         ; PROGRAMMING CONVENTIONS:
+0000  -         ; STRICT:
+0000  -         ; - CORE REVISION 6 INSTRUCTION SET
+0000  -         ; - R7 IS THE STACK POINTER	(SOFTWARE)
+0000  -         ; - R6 HOLDS THE RETURN ADDRESS FOR SUBROUTINES (JAL)
+0000  -         ; - FULL-DESCENDING STACK
+0000  -         ; LOOSE GUIDELINES:
+0000  -         ; - R0, R1, R2 ARE USED FOR ARGUMENTS / RESULTS
+0000  -         ;              VALUES MAY CHANGE ON SUBROUTINE CALLS
+0000  -         ; - R3, R4, R5 ARE USED FOR LOCAL VARIABLES
+0000  -         ;              VALUES ARE PRESERVED ON SUBROUTINE CALLS
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;----------- I/O MAP  -----------
+0000  -         
+0000  -         IOBASE=		0X20
+0000  -         IRQEN=		0X20
+0000  -         PFLAGS=		0X21
+0000  -         PWM=		0X21
+0000  -         UARTDAT=	0X22
+0000  -         TIMER=		0X23
+0000  -         GPO=		0X24
+0000  -         
+0000  -         FLAG0=		0X26	; USER-MODE FLAGS
+0000  -         PC0=		0X27	; USER-MODE PC
+0000  -         
+0000  -         ;--------- INTERRUPT ENABLE --------
+0000  -         IRQRXEN=	1
+0000  -         IRQTXEN=	2
+0000  -         IRQTIMEN=	4
+0000  -         IRQPWMEN=	8
+0000  -         IRQSSTEPEN=	16		; SINGLE-STEP IRQ
+0000  -         ;--------- PFLAGS REGISTER BITS -----------
+0000  -         UARTDV=		1		; DATA VALID (UART RX)
+0000  -         UARTRDY=	2		; TRANSMITTER READY (UART TX)
+0000  -         UARTOVER=	4		; RX OVERRUN ERROR
+0000  -         UARTFER=	8		; RX FRAME ERROR
+0000  -         PWMF=		16		; PWM INTERRUPT
+0000  -         TIMOV=		0X8000	; TIMER OVERFLOW (SIGN BIT)
+0000  -         
+0000  -         ;--------------------------------------
+0000  -         ;------- HEADER FOR BOOTLOADER --------
+0000  -         ;--------------------------------------
+0000  -         
+0000  -         		ORG		0XFC00-4
+FBFC  -         		
+FBFC  -  4CFF   		WORD	0X4CFF			; MARK
+FBFD  -  FC00   		WORD	PINIT			; DESTINATION ADDRESS
+FBFE  -  036A   		WORD	PEND-PINIT		; SIZE (WORDS)
+FBFF  -  FF44   		WORD	PSTART			; EXECUTION ADDRESS
+FC00  -         
+FC00  -         ;--------------------------------------
+FC00  -         ;------------- CODE -----------------
+FC00  -         ;--------------------------------------
+FC00  -         PINIT:
+FC00  -         
+FC00  -         ;-------------------------------------------------------------------
+FC00  -         ; INTERRUPTS
+FC00  -         ;-------------------------------------------------------------------
+FC00  -         		
+FC00  -         SSTEPIRQ:
+FC00  -         
+FC00  -         JMPIRQ= ~(0X10110-SSTEPIRQ)		; OPECODE OF: JR FROM 0X110 TO HERE
+FC00  -         
+FC00  -  1F07   		SUBI	R7,7
+FC01  -  69E1   		ST		(R7+1),R1
+FC02  -  6BE3   		ST		(R7+3),R3
+FC03  -  6CE4   		ST		(R7+4),R4
+FC04  -  6DE5   		ST		(R7+5),R5
+FC05  -         
+FC05  -  5520   DB00:	LDI		R5,IOBASE
+FC06  -  5BE0   		LDPC	R3
+FC07  -  FEC3   		WORD	BVAR
+FC08  -         		
+FC08  -  6162   		LD		R1,(R3+BREAK-BVAR)	; IF(BREAK==PC) SET_TRACE
+FC09  -  64A7   		LD		R4,(R5+PC0-IOBASE)	; R4: PC NORMAL MODE
+FC0A  -  0986   		XOR		R1,R4,R1			; CHECK FOR BREAKPOINT
+FC0B  -  9001   		JNZ		DB01
+FC0C  -  6D61   		ST		(R3+TRACE-BVAR),R5	
+FC0D  -  6161   DB01:	LD		R1,(R3+TRACE-BVAR)	; IF (!TRACE) RETURN
+FC0E  -  8097   		JZ		IEND2
+FC0F  -  68E0   		ST		(R7+0),R0			; SAVE REST OF REGISTERS
+FC10  -  6AE2   		ST		(R7+2),R2
+FC11  -  6EE6   		ST		(R7+6),R6
+FC12  -  D00C   		JPL		DB03				; IF (TRACE<0) WAIT FOR RETURN (JIND R6)
+FC13  -  6080   		LD		R0,(R4)
+FC14  -  5AE0   		LDPC	R2
+FC15  -  58FA   		JIND R6
+FC16  -  080A   		XOR		R0,R0,R2
+FC17  -  908B   		JNZ		IEND
+FC18  -  3101   		ANDI	R1,1
+FC19  -  8003   		JZ		DB02
+FC1A  -  6163   		LD		R1,(R3+RUTSP-BVAR)	; HIGHER STACK LEVEL?
+FC1B  -  013D   		SUB		R1,R1,R7
+FC1C  -  D086   		JPL		IEND
+FC1D  -  5102   DB02:	LDI		R1,2
+FC1E  -  6961   		ST		(R3+TRACE-BVAR),R1	; TRACE POSITIVE
+FC1F  -         
+FC1F  -  5100   DB03:	LDI		R1,0
+FC20  -  6960   		ST		(R3+LDPCF-BVAR),R1	; CLEAR LDPC FLAG
+FC21  -         
+FC21  -  58E0   		LDPC	R0					; CLEAR SCREEN
+FC22  -  FCAC   		WORD	MSGCLS ;+2
+FC23  -  7253   		JAL		PUTSBE
+FC24  -         		
+FC24  -         		; PRINT CODE @ PC0
+FC24  -  70B4   		JAL		DISABLK		
+FC25  -         		; PRINT FLAGS0
+FC25  -  58E0   		LDPC	R0
+FC26  -  FCB0   		WORD	MSGFLG
+FC27  -  724F   		JAL		PUTSBE
+FC28  -  64A6   		LD		R4,(R5+FLAG0-IOBASE)
+FC29  -  5C30   		RORI	R4,R4,4
+FC2A  -  5304   		LDI		R3,4
+FC2B  -  5AE0   		LDPC	R2
+FC2C  -  FCBE   		WORD	FLGTBL
+FC2D  -  505F   DB2:	LDI		R0,'_'
+FC2E  -  0490   		ADD		R4,R4,R4		
+FC2F  -  B001   		JNC		DB3
+FC30  -  6040   		LD		R0,(R2)	
+FC31  -  68A2   DB3:	ST		(R5+UARTDAT-IOBASE),R0
+FC32  -  1201   		ADDI	R2,1
+FC33  -  1B01   		SUBI	R3,1
+FC34  -  9FF8   		JNZ		DB2
+FC35  -         		
+FC35  -         		; PRINT REGISTERS
+FC35  -  5300   		LDI		R3,0
+FC36  -  58E0   DB4:	LDPC	R0
+FC37  -  FCC2   		WORD	MSGPOS
+FC38  -  723E   		JAL		PUTSBE
+FC39  -  5003   		LDI		R0,3
+FC3A  -  0060   		ADD		R0,R3,R0
+FC3B  -  724B   		JAL		PRTDEC
+FC3C  -  58E0   		LDPC	R0
+FC3D  -  FCC4   		WORD	MSGREG
+FC3E  -  7238   		JAL		PUTSBE
+FC3F  -  5030   		LDI		R0,'0'
+FC40  -  0060   		ADD		R0,R3,R0
+FC41  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FC42  -  503A   		LDI		R0,':'
+FC43  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FC44  -  5020   		LDI		R0,' '
+FC45  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FC46  -  086D   		OR		R0,R3,R3
+FC47  -  001C   		ADD		R0,R0,R7
+FC48  -  6000   		LD		R0,(R0)
+FC49  -  4B07   		CMPI	R3,7
+FC4A  -  9002   		JNZ		DB5
+FC4B  -  5007   		LDI		R0,7
+FC4C  -  001C   		ADD		R0,R0,R7
+FC4D  -  7262   DB5:	JAL		PRTHEX
+FC4E  -  1301   		ADDI	R3,1
+FC4F  -  4B08   		CMPI	R3,8
+FC50  -  9FE5   		JNZ		DB4
+FC51  -         
+FC51  -         		; PRINT BRK
+FC51  -  58E0   		LDPC	R0
+FC52  -  FCC7   		WORD	MSGBRK
+FC53  -  7223   		JAL		PUTSBE
+FC54  -  58E0   		LDPC	R0
+FC55  -  FEC3   		WORD	BVAR
+FC56  -  6002   		LD		R0,(R0+BREAK-BVAR)
+FC57  -  7258   		JAL		PRTHEX
+FC58  -  58E0   		LDPC	R0
+FC59  -  FCCF   		WORD	MSGEBRK
+FC5A  -  721C   		JAL		PUTSBE
+FC5B  -         		;------------------
+FC5B  -         		; USER COMMANDS
+FC5B  -         		;------------------
+FC5B  -  60A2   DBKEY:	LD		R0,(R5+UARTDAT-IOBASE)
+FC5C  -  4863   		CMPI	R0,'c'		; CONTINUE
+FC5D  -  9007   		JNZ		DB10
+FC5E  -  60A0   		LD		R0,(R5)		; DISABLE SINGLE-STEP IRQ
+FC5F  -  30EF   		ANDI	R0,0XEF
+FC60  -  68A0   		ST		(R5),R0
+FC61  -  58E0   DB51:	LDPC	R0
+FC62  -  FCAC   		WORD	MSGCLS
+FC63  -  7213   		JAL		PUTSBE
+FC64  -  F03E   		JR		IEND
+FC65  -         		
+FC65  -  486E   DB10:	CMPI	R0,'n'		; BREAK ON NEXT INSTR
+FC66  -  9008   		JNZ		DB20
+FC67  -  60A7   		LD		R0,(R5+PC0-IOBASE)
+FC68  -  1001   		ADDI	R0,1
+FC69  -  5BE0   		LDPC	R3
+FC6A  -  FEC3   		WORD	BVAR
+FC6B  -  6862   		ST		(R3+BREAK-BVAR),R0
+FC6C  -  5000   DB15:	LDI		R0,0
+FC6D  -  6861   		ST		(R3+TRACE-BVAR),R0
+FC6E  -  FFF2   		JR		DB51
+FC6F  -         
+FC6F  -  4865   DB20:	CMPI	R0,'e'		; EXEC WITH BREAKPOINT (SLOW)
+FC70  -  9003   		JNZ		DB30
+FC71  -  5BE0   		LDPC	R3
+FC72  -  FEC3   		WORD	BVAR
+FC73  -  FFF8   		JR		DB15
+FC74  -         		
+FC74  -  4872   DB30:	CMPI	R0,'r'		; EXEC UNTIL RETURN
+FC75  -  9007   		JNZ		DB35
+FC76  -  5001   		LDI		R0,1
+FC77  -  5BE0   DB31:	LDPC	R3
+FC78  -  FEC3   		WORD	BVAR
+FC79  -  5801   		RORI	R0,R0,1
+FC7A  -  6861   		ST		(R3+TRACE-BVAR),R0	; TRACE<0 MEANS STOP ON RETURNS
+FC7B  -  6F63   		ST		(R3+RUTSP-BVAR),R7	; STACK LEVEL
+FC7C  -  FFE4   		JR		DB51
+FC7D  -  4852   DB35:	CMPI	R0,'R'	; EXEC UNTIL RETURN (HIGHER STACK)
+FC7E  -  9002   		JNZ		DB40
+FC7F  -  5003   		LDI		R0,3	; TRACE<0 && (TRACE&1) => STOP ON RETURNS IF STACK IS HIGHER
+FC80  -  FFF6   		JR		DB31
+FC81  -         
+FC81  -  4873   DB40:	CMPI	R0,'s'		; STEP
+FC82  -  8020   		JZ		IEND
+FC83  -         		;CMPI	R0,'\n'
+FC83  -         		;JZ		DB00
+FC83  -  4820   		CMPI	R0,' '
+FC84  -  8F80   		JZ		DB00
+FC85  -         		
+FC85  -  4864   		CMPI	R0,'d'		; DISASSEMBLE
+FC86  -  9009   		JNZ		DB50
+FC87  -  7198   		JAL		GETHEX
+FC88  -  0C01   		OR		R4,R0,R0
+FC89  -  704F   		JAL		DISABLK
+FC8A  -  5BE0   DB45:	LDPC	R3
+FC8B  -  FEC3   		WORD	BVAR
+FC8C  -  6C64   		ST		(R3+CADDR-BVAR),R4
+FC8D  -  503E   DB44:	LDI		R0,'>'
+FC8E  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FC8F  -  FFCB   		JR		DBKEY
+FC90  -         			
+FC90  -  4862   DB50:	CMPI	R0,'b'		; SET BREAKPOINT
+FC91  -  9005   		JNZ		DB60
+FC92  -  718D   		JAL		GETHEX	
+FC93  -  5BE0   		LDPC	R3
+FC94  -  FEC3   		WORD	BVAR
+FC95  -  6862   		ST		(R3+BREAK-BVAR),R0
+FC96  -  FF6E   		JR		DB00
+FC97  -         
+FC97  -  486D   DB60:	CMPI	R0,'m'		; DUMP MEMORY
+FC98  -  9004   		JNZ		DB70
+FC99  -  7186   		JAL		GETHEX
+FC9A  -  0C01   		OR		R4,R0,R0
+FC9B  -  71AB   		JAL		MDUMP
+FC9C  -  FFED   		JR		DB45
+FC9D  -         		
+FC9D  -  4868   DB70:	CMPI	R0,'h'		; PRINT HELP
+FC9E  -  9FBC   		JNZ		DBKEY
+FC9F  -  58E0   		LDPC	R0
+FCA0  -  FEC8   		WORD	MSGHELP
+FCA1  -  71D5   		JAL		PUTSBE
+FCA2  -  FFB8   		JR		DBKEY
+FCA3  -         		
+FCA3  -  60E0   IEND:	LD		R0,(R7+0)
+FCA4  -  62E2   		LD		R2,(R7+2)
+FCA5  -  66E6   		LD		R6,(R7+6)
+FCA6  -         
+FCA6  -  61E1   IEND2:	LD		R1,(R7+1)
+FCA7  -  63E3   		LD		R3,(R7+3)
+FCA8  -  64E4   		LD		R4,(R7+4)
+FCA9  -  65E5   		LD		R5,(R7+5)
+FCAA  -  1707   		ADDI	R7,7
+FCAB  -  58E3   		RETI
+FCAC  -         
+FCAC  -  1B5B   MSGCLS:	ASCZBE "\e[2J\e[H"
+FCAD  -  324A   
+FCAE  -  1B5B   
+FCAF  -  4800   
+FCB0  -  1B5B   MSGFLG:	ASCZBE "\e[1;32H<- PC\e[1;39HFlags: "
+FCB1  -  313B   
+FCB2  -  3332   
+FCB3  -  483C   
+FCB4  -  2D20   
+FCB5  -  5043   
+FCB6  -  1B5B   
+FCB7  -  313B   
+FCB8  -  3339   
+FCB9  -  4846   
+FCBA  -  6C61   
+FCBB  -  6773   
+FCBC  -  3A20   
+FCBD  -  0000   
+FCBE  -  0056   FLGTBL: WORD 'V'
+FCBF  -  004E   		WORD 'N'
+FCC0  -  0043   		WORD 'C'
+FCC1  -  005A   		WORD 'Z'
+FCC2  -  1B5B   MSGPOS:	ASCZBE "\e["
+FCC3  -  0000   
+FCC4  -  3B34   MSGREG:	ASCZBE ";42HR"
+FCC5  -  3248   
+FCC6  -  5200   
+FCC7  -  1B5B   MSGBRK:	ASCZBE "\e[13;39HBreak: "
+FCC8  -  3133   
+FCC9  -  3B33   
+FCCA  -  3948   
+FCCB  -  4272   
+FCCC  -  6561   
+FCCD  -  6B3A   
+FCCE  -  2000   
+FCCF  -  1B5B   MSGEBRK:	ASCZBE "\e[22;1HhcesnrRbdm>"
+FCD0  -  3232   
+FCD1  -  3B31   
+FCD2  -  4868   
+FCD3  -  6365   
+FCD4  -  736E   
+FCD5  -  7252   
+FCD6  -  6264   
+FCD7  -  6D3E   
+FCD8  -  0000   
+FCD9  -         
+FCD9  -         ;------------------------------------------------------
+FCD9  -         ; DISSASEMBLE 20 INSTR AT (R4)
+FCD9  -         DISABLK:
+FCD9  -  1F01   		SUBI	R7,1
+FCDA  -  6EE0   		ST		(R7),R6
+FCDB  -         
+FCDB  -  5314   		LDI		R3,20
+FCDC  -  0891   DISA1:	OR		R0,R4,R4
+FCDD  -  71D2   		JAL		PRTHEX
+FCDE  -  503A   		LDI		R0,':'
+FCDF  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FCE0  -  5020   		LDI		R0,' '
+FCE1  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FCE2  -  6080   		LD		R0,(R4)
+FCE3  -  71CC   		JAL		PRTHEX
+FCE4  -  59E0   		LDPC	R1
+FCE5  -  FEC3   		WORD	LDPCF
+FCE6  -  6120   		LD		R1,(R1)
+FCE7  -  9002   		JNZ		DISA2
+FCE8  -  700B   		JAL		DISASSEMBLE
+FCE9  -  F002   		JR		DISA3
+FCEA  -  5000   DISA2:	LDI		R0,0
+FCEB  -  6820   		ST		(R1),R0
+FCEC  -  500A   DISA3:	LDI		R0,'\n'
+FCED  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FCEE  -  1401   		ADDI	R4,1
+FCEF  -  1B01   		SUBI	R3,1
+FCF0  -  9FEB   		JNZ		DISA1
+FCF1  -         
+FCF1  -  66E0   		LD		R6,(R7)
+FCF2  -  1701   		ADDI	R7,1
+FCF3  -  58FA   		JIND	R6
+FCF4  -         
+FCF4  -         ;------------------------------------------------------
+FCF4  -         ; DISSASEMBLE SINGLE INSTRUCTION AT (R4)
+FCF4  -         DISASSEMBLE:
+FCF4  -  1F04   		SUBI	R7,4
+FCF5  -  68E0   		ST		(R7+0),R0
+FCF6  -  69E1   		ST		(R7+1),R1
+FCF7  -  6DE2   		ST		(R7+2),R5
+FCF8  -  6EE3   		ST		(R7+3),R6
+FCF9  -         		
+FCF9  -  5000   		LDI		R0,0
+FCFA  -  59E0   		LDPC	R1
+FCFB  -  FEC3   		WORD	LDPCF
+FCFC  -  6820   		ST		(R1),R0
+FCFD  -  5020   		LDI		R0,' '
+FCFE  -  7185   		JAL		PUTCH
+FCFF  -  6080   		LD		R0,(R4)
+FD00  -  5860   		RORI	R0,R0,12
+FD01  -  300F   		ANDI	R0,0XF
+FD02  -  4807   		CMPI	R0,7
+FD03  -  C00E   		JMI		DIS1
+FD04  -  1015   		ADDI	R0,28-7
+FD05  -  70B3   		JAL		PRNEMO
+FD06  -  6180   		LD		R1,(R4)
+FD07  -  5DE0   		LDPC	R5
+FD08  -  0FFF   		WORD	0XFFF
+FD09  -  0DA4   		AND		R5,R5,R1
+FD0A  -  5D74   		RORI	R5,R5,12
+FD0B  -  D001   		JPL		DIS01
+FD0C  -  3D0F   		ORI		R5,0XF
+FD0D  -  5D34   DIS01:	RORI	R5,R5,4	
+FD0E  -  00B0   		ADD		R0,R5,R4
+FD0F  -  1001   		ADDI	R0,1
+FD10  -  719F   		JAL		PRTHEX
+FD11  -  F0A1   		JR		DIS99
+FD12  -         
+FD12  -  4806   DIS1:	CMPI	R0,6
+FD13  -  9031   		JNZ		DIS2
+FD14  -  6180   		LD		R1,(R4)
+FD15  -  5847   		RORI	R0,R1,11
+FD16  -  3001   		ANDI	R0,1
+FD17  -  101A   		ADDI	R0,26
+FD18  -  70A0   		JAL		PRNEMO
+FD19  -  6080   		LD		R0,(R4)
+FD1A  -  5860   		RORI	R0,R0,12
+FD1B  -  C014   		JMI		DIS11
+FD1C  -  5860   		RORI	R0,R0,12	; LD
+FD1D  -  70B1   		JAL		PRREG
+FD1E  -  502C   		LDI		R0,','
+FD1F  -  7164   		JAL		PUTCH
+FD20  -  5028   		LDI		R0,'('
+FD21  -  7162   		JAL		PUTCH
+FD22  -  6080   		LD		R0,(R4)
+FD23  -  5821   		RORI	R0,R0,5
+FD24  -  70AA   		JAL		PRREG
+FD25  -  6080   		LD		R0,(R4)
+FD26  -  301F   		ANDI	R0,31
+FD27  -  8005   		JZ		DIS13
+FD28  -  502B   		LDI		R0,'+'
+FD29  -  715A   		JAL		PUTCH
+FD2A  -  6080   		LD		R0,(R4)
+FD2B  -  301F   		ANDI	R0,31
+FD2C  -  715A   		JAL		PRTDEC
+FD2D  -  5029   DIS13:	LDI		R0,')'
+FD2E  -  7155   		JAL		PUTCH
+FD2F  -  F083   		JR		DIS99
+FD30  -  5028   DIS11:	LDI		R0,'('	; ST
+FD31  -  7152   		JAL		PUTCH
+FD32  -  6080   		LD		R0,(R4)
+FD33  -  5821   		RORI	R0,R0,5
+FD34  -  709A   		JAL		PRREG
+FD35  -  6080   		LD		R0,(R4)
+FD36  -  301F   		ANDI	R0,31
+FD37  -  8005   		JZ		DIS12
+FD38  -  502B   		LDI		R0,'+'
+FD39  -  714A   		JAL		PUTCH
+FD3A  -  6080   		LD		R0,(R4)
+FD3B  -  301F   		ANDI	R0,31
+FD3C  -  714A   		JAL		PRTDEC		
+FD3D  -  5029   DIS12:	LDI		R0,')'
+FD3E  -  7145   		JAL		PUTCH
+FD3F  -  502C   		LDI		R0,','
+FD40  -  7143   		JAL		PUTCH
+FD41  -  6080   		LD		R0,(R4)
+FD42  -  5840   		RORI	R0,R0,8
+FD43  -  708B   		JAL		PRREG
+FD44  -  F06E   		JR		DIS99
+FD45  -         		
+FD45  -  4805   DIS2:	CMPI	R0,5
+FD46  -  9048   		JNZ		DIS3
+FD47  -  6080   		LD		R0,(R4)
+FD48  -  5903   		RORI	R1,R0,3
+FD49  -  311C   		ANDI	R1,0X1C
+FD4A  -  5A22   		RORI	R2,R0,6
+FD4B  -  3220   		ANDI	R2,0X20
+FD4C  -  3003   		ANDI	R0,3
+FD4D  -  0805   		OR		R0,R0,R1
+FD4E  -  0809   		OR		R0,R0,R2
+FD4F  -  483F   		CMPI	R0,0X3F
+FD50  -  9003   		JNZ		DIS20
+FD51  -  5019   		LDI		R0,25		; RETI
+FD52  -  7066   		JAL		PRNEMO
+FD53  -  F05F   		JR		DIS99
+FD54  -  483E   DIS20:	CMPI	R0,0X3E
+FD55  -  9006   		JNZ		DIS21
+FD56  -  5018   		LDI		R0,24		; JIND
+FD57  -  7061   		JAL		PRNEMO
+FD58  -  6080   		LD		R0,(R4)
+FD59  -  5802   		RORI	R0,R0,2
+FD5A  -  7074   		JAL		PRREG
+FD5B  -  F057   		JR		DIS99
+FD5C  -  483C   DIS21:	CMPI	R0,0X3C
+FD5D  -  9009   		JNZ		DIS22
+FD5E  -  5017   		LDI		R0,23		; LDPC
+FD5F  -  7059   		JAL		PRNEMO
+FD60  -  6080   		LD		R0,(R4)
+FD61  -  5840   		RORI	R0,R0,8
+FD62  -  706C   		JAL		PRREG
+FD63  -  58E0   		LDPC	R0
+FD64  -  FEC3   		WORD	LDPCF
+FD65  -  6800   		ST		(R0),R0
+FD66  -  F04C   		JR		DIS99
+FD67  -  4830   DIS22:	CMPI	R0,0X30
+FD68  -  C00E   		JMI		DIS23
+FD69  -  181E   		SUBI	R0,48-18	; RORC - NEG
+FD6A  -  4816   		CMPI	R0,22
+FD6B  -  C001   		JMI		DIS221
+FD6C  -  1801   		SUBI	R0,1
+FD6D  -  704B   DIS221:	JAL		PRNEMO	
+FD6E  -  6080   		LD		R0,(R4)
+FD6F  -  5840   		RORI	R0,R0,8
+FD70  -  705E   		JAL		PRREG
+FD71  -  502C   		LDI		R0,','
+FD72  -  7111   		JAL		PUTCH
+FD73  -  6080   		LD		R0,(R4)
+FD74  -  5802   		RORI	R0,R0,2
+FD75  -  7059   		JAL		PRREG	
+FD76  -  F03C   		JR		DIS99
+FD77  -  5820   DIS23:	RORI	R0,R0,4
+FD78  -  3003   		ANDI	R0,3
+FD79  -  4802   		CMPI	R0,2
+FD7A  -  9014   		JNZ		DIS24
+FD7B  -  5011   		LDI		R0,17		; RORI
+FD7C  -  703C   		JAL		PRNEMO
+FD7D  -  6080   		LD		R0,(R4)
+FD7E  -  5840   		RORI	R0,R0,8
+FD7F  -  704F   		JAL		PRREG
+FD80  -  502C   		LDI		R0,','
+FD81  -  7102   		JAL		PUTCH
+FD82  -  6080   		LD		R0,(R4)
+FD83  -  5802   		RORI	R0,R0,2
+FD84  -  704A   		JAL		PRREG
+FD85  -  502C   		LDI		R0,','
+FD86  -  70FD   		JAL		PUTCH
+FD87  -  6080   		LD		R0,(R4)
+FD88  -  5903   		RORI	R1,R0,3
+FD89  -  3003   		ANDI	R0,3
+FD8A  -  310C   		ANDI	R1,0XC
+FD8B  -  0805   		OR		R0,R0,R1
+FD8C  -  520A   		LDI		R2,10
+FD8D  -  70F9   		JAL		PRTDEC
+FD8E  -  F024   		JR		DIS99
+FD8F  -         DIS24:	; LDI
+FD8F  -  6080   DIS3:	LD		R0,(R4)		; IMMEDIATE INSTRS
+FD90  -  5843   		RORI	R0,R0,11
+FD91  -  300F   		ANDI	R0,0XF
+FD92  -  1802   		SUBI	R0,2
+FD93  -  C00C   		JMI		DIS4
+FD94  -  1008   		ADDI	R0,8
+FD95  -  7023   		JAL		PRNEMO
+FD96  -  6080   		LD		R0,(R4)
+FD97  -  5840   		RORI	R0,R0,8
+FD98  -  7036   		JAL		PRREG
+FD99  -  502C   		LDI		R0,','
+FD9A  -  70E9   		JAL		PUTCH
+FD9B  -  6080   		LD		R0,(R4)
+FD9C  -  30FF   		ANDI	R0,0XFF
+FD9D  -  520A   		LDI		R2,10
+FD9E  -  710A   		JAL		PRTHEX8
+FD9F  -  F013   		JR		DIS99
+FDA0  -         
+FDA0  -  6080   DIS4:	LD		R0,(R4)		; 3-OPERAND INSTRS
+FDA1  -  5941   		RORI	R1,R0,9
+FDA2  -  3003   		ANDI	R0,3
+FDA3  -  3104   		ANDI	R1,4
+FDA4  -  0805   		OR		R0,R0,R1
+FDA5  -  7013   		JAL		PRNEMO
+FDA6  -  6080   		LD		R0,(R4)
+FDA7  -  5840   		RORI	R0,R0,8
+FDA8  -  7026   		JAL		PRREG
+FDA9  -  502C   		LDI		R0,','
+FDAA  -  70D9   		JAL		PUTCH
+FDAB  -  6080   		LD		R0,(R4)
+FDAC  -  5821   		RORI	R0,R0,5
+FDAD  -  7021   		JAL		PRREG
+FDAE  -  502C   		LDI		R0,','
+FDAF  -  70D4   		JAL		PUTCH
+FDB0  -  6080   		LD		R0,(R4)
+FDB1  -  5802   		RORI	R0,R0,2
+FDB2  -  701C   		JAL		PRREG
+FDB3  -         		
+FDB3  -         
+FDB3  -         DIS99:	
+FDB3  -  60E0   		LD		R0,(R7+0)
+FDB4  -  61E1   		LD		R1,(R7+1)
+FDB5  -  65E2   		LD		R5,(R7+2)
+FDB6  -  66E3   		LD		R6,(R7+3)
+FDB7  -  1704   		ADDI	R7,4
+FDB8  -  58FA   		JIND	R6
+FDB9  -         		
+FDB9  -         
+FDB9  -  5122   PRNEMO:	LDI		R1,UARTDAT
+FDBA  -  5520   		LDI		R5,' '
+FDBB  -  6D20   		ST		(R1),R5
+FDBC  -  6D20   		ST		(R1),R5		
+FDBD  -  5DE0   		LDPC	R5
+FDBE  -  FDD6   		WORD	NMTAB
+FDBF  -  0000   		ADD		R0,R0,R0
+FDC0  -  05A0   		ADD		R5,R5,R0
+FDC1  -  60A0   		LD		R0,(R5)
+FDC2  -  5840   		RORI	R0,R0,8
+FDC3  -  6820   		ST		(R1),R0
+FDC4  -  5840   		RORI	R0,R0,8
+FDC5  -  6820   		ST		(R1),R0
+FDC6  -  60A1   		LD		R0,(R5+1)
+FDC7  -  5840   		RORI	R0,R0,8
+FDC8  -  6820   		ST		(R1),R0
+FDC9  -  5840   		RORI	R0,R0,8
+FDCA  -  6820   		ST		(R1),R0
+FDCB  -  5520   		LDI		R5,' '
+FDCC  -  6D20   		ST		(R1),R5
+FDCD  -  6D20   		ST		(R1),R5
+FDCE  -  58FA   		JIND	R6
+FDCF  -         
+FDCF  -  5122   PRREG:	LDI		R1,UARTDAT
+FDD0  -  5252   		LDI		R2,'R'
+FDD1  -  6A20   		ST		(R1),R2
+FDD2  -  3007   		ANDI	R0,7
+FDD3  -  1030   		ADDI	R0,'0'
+FDD4  -  6820   		ST		(R1),R0
+FDD5  -  58FA   		JIND	R6
+FDD6  -         		
+FDD6  -         
+FDD6  -         				
+FDD6  -  4144   NMTAB:	WORD ('A'<<8)|'D'	; 0: ADD
+FDD7  -  4420   		WORD ('D'<<8)|' '
+FDD8  -  5355   		WORD ('S'<<8)|'U'	; 1: SUB
+FDD9  -  4220   		WORD ('B'<<8)|' '				
+FDDA  -  4144   		WORD ('A'<<8)|'D'	; 2: ADC
+FDDB  -  4320   		WORD ('C'<<8)|' '				
+FDDC  -  5342   		WORD ('S'<<8)|'B'	; 3: SBC
+FDDD  -  4320   		WORD ('C'<<8)|' '				
+FDDE  -  414E   		WORD ('A'<<8)|'N'	; 4: AND
+FDDF  -  4420   		WORD ('D'<<8)|' '				
+FDE0  -  4F52   		WORD ('O'<<8)|'R'	; 5: OR
+FDE1  -  2020   		WORD (' '<<8)|' '				
+FDE2  -  584F   		WORD ('X'<<8)|'O'	; 6: XOR
+FDE3  -  5220   		WORD ('R'<<8)|' '				
+FDE4  -  4249   		WORD ('B'<<8)|'I'	; 7: BIC
+FDE5  -  4320   		WORD ('C'<<8)|' '				
+FDE6  -  4144   		WORD ('A'<<8)|'D'	; 8: ADDI
+FDE7  -  4449   		WORD ('D'<<8)|'I'				
+FDE8  -  5355   		WORD ('S'<<8)|'U'	; 9: SUBI
+FDE9  -  4249   		WORD ('B'<<8)|'I'				
+FDEA  -  4144   		WORD ('A'<<8)|'D'	; 10: ADCI
+FDEB  -  4349   		WORD ('C'<<8)|'I'				
+FDEC  -  5342   		WORD ('S'<<8)|'B'	; 11: SBCI
+FDED  -  4349   		WORD ('C'<<8)|'I'				
+FDEE  -  414E   		WORD ('A'<<8)|'N'	; 12: ANDI
+FDEF  -  4449   		WORD ('D'<<8)|'I'				
+FDF0  -  4F52   		WORD ('O'<<8)|'R'	; 13: ORI
+FDF1  -  4920   		WORD ('I'<<8)|' '				
+FDF2  -  584F   		WORD ('X'<<8)|'O'	; 14: XORI
+FDF3  -  5249   		WORD ('R'<<8)|'I'				
+FDF4  -  434D   		WORD ('C'<<8)|'M'	; 15: CMPI
+FDF5  -  5049   		WORD ('P'<<8)|'I'				
+FDF6  -  4C44   		WORD ('L'<<8)|'D'	; 16: LDI
+FDF7  -  4920   		WORD ('I'<<8)|' '				
+FDF8  -  524F   		WORD ('R'<<8)|'O'	; 17: RORI
+FDF9  -  5249   		WORD ('R'<<8)|'I'				
+FDFA  -  524F   		WORD ('R'<<8)|'O'	; 18: RORC
+FDFB  -  5243   		WORD ('R'<<8)|'C'				
+FDFC  -  5348   		WORD ('S'<<8)|'H'	; 19: SHR
+FDFD  -  5220   		WORD ('R'<<8)|' '				
+FDFE  -  5348   		WORD ('S'<<8)|'H'	; 20: SHRA
+FDFF  -  5241   		WORD ('R'<<8)|'A'				
+FE00  -  4E4F   		WORD ('N'<<8)|'O'	; 21: NOT
+FE01  -  5420   		WORD ('T'<<8)|' '				
+FE02  -  4E45   		WORD ('N'<<8)|'E'	; 22: NEG
+FE03  -  4720   		WORD ('G'<<8)|' '				
+FE04  -  4C44   		WORD ('L'<<8)|'D'	; 23: LDPC
+FE05  -  5043   		WORD ('P'<<8)|'C'				
+FE06  -  4A49   		WORD ('J'<<8)|'I'	; 24: JIND
+FE07  -  4E44   		WORD ('N'<<8)|'D'				
+FE08  -  5245   		WORD ('R'<<8)|'E'	; 25: RETI
+FE09  -  5449   		WORD ('T'<<8)|'I'				
+FE0A  -  4C44   		WORD ('L'<<8)|'D'	; 26: LD
+FE0B  -  2020   		WORD (' '<<8)|' '				
+FE0C  -  5354   		WORD ('S'<<8)|'T'	; 27: ST
+FE0D  -  2020   		WORD (' '<<8)|' '				
+FE0E  -  4A41   		WORD ('J'<<8)|'A'	; 28: JAL
+FE0F  -  4C20   		WORD ('L'<<8)|' '				
+FE10  -  4A5A   		WORD ('J'<<8)|'Z'	; 29: JZ
+FE11  -  2020   		WORD (' '<<8)|' '				
+FE12  -  4A4E   		WORD ('J'<<8)|'N'	; 30: JNZ
+FE13  -  5A20   		WORD ('Z'<<8)|' '				
+FE14  -  4A43   		WORD ('J'<<8)|'C'	; 31: JC
+FE15  -  2020   		WORD (' '<<8)|' '				
+FE16  -  4A4E   		WORD ('J'<<8)|'N'	; 32: JNC
+FE17  -  4320   		WORD ('C'<<8)|' '				
+FE18  -  4A4D   		WORD ('J'<<8)|'M'	; 33: JMI
+FE19  -  4920   		WORD ('I'<<8)|' '				
+FE1A  -  4A50   		WORD ('J'<<8)|'P'	; 34: JPL
+FE1B  -  4C20   		WORD ('L'<<8)|' '				
+FE1C  -  4A56   		WORD ('J'<<8)|'V'	; 35: JV
+FE1D  -  2020   		WORD (' '<<8)|' '		
+FE1E  -  4A52   		WORD ('J'<<8)|'R'	; 36: JR
+FE1F  -  2020   		WORD (' '<<8)|' '				
+FE20  -         
+FE20  -         ;-------------------------------------------------------------------
+FE20  -         ; 	GET AN HEX VALUE FROM UART, WITH EDITING
+FE20  -         ;     CADDR HOLDS THE INITIAL VALUE
+FE20  -         ;     R0 CONTENTS ARE PRINTED AS CHAR IN FRONT TO THE HEX VALUE
+FE20  -         ;     R0 RETURNS THE EDITED VALUE
+FE20  -         ;   HEX DIGITS ARE SHIFTED TO THE LEFT UNTIL AN NEW-LINE IS RECEIVED
+FE20  -  1F01   GETHEX:	SUBI	R7,1
+FE21  -  6EE0   		ST		(R7),R6
+FE22  -  7061   		JAL		PUTCH
+FE23  -  5020   		LDI		R0,' '
+FE24  -  705F   		JAL		PUTCH
+FE25  -  5BE0   		LDPC	R3
+FE26  -  FEC3   		WORD	BVAR
+FE27  -  6064   		LD		R0,(R3+CADDR-BVAR)
+FE28  -  7087   GHEX1:	JAL		PRTHEX
+FE29  -  61A2   		LD		R1,(R5+UARTDAT-IOBASE)
+FE2A  -  490A   		CMPI	R1,'\n'
+FE2B  -  8017   		JZ		GHEX95
+FE2C  -  4930   		CMPI	R1,'0'
+FE2D  -  C00F   		JMI		GHEX9
+FE2E  -  4960   		CMPI	R1,'a'-1
+FE2F  -  C001   		JMI		GHEX2
+FE30  -  1920   		SUBI	R1,32
+FE31  -  493A   GHEX2:	CMPI	R1,'9'+1
+FE32  -  C005   		JMI		GHEX3
+FE33  -  4940   		CMPI	R1,'A'-1
+FE34  -  C008   		JMI		GHEX9
+FE35  -  4947   		CMPI	R1,'F'+1
+FE36  -  D006   		JPL		GHEX9
+FE37  -  1907   		SUBI	R1,7
+FE38  -  1930   GHEX3:	SUBI	R1,'0'
+FE39  -  5860   		RORI	R0,R0,12
+FE3A  -  380F   		ORI		R0,0XF
+FE3B  -  400F   		XORI	R0,0XF
+FE3C  -  0004   		ADD		R0,R0,R1
+FE3D  -         		
+FE3D  -  5108   GHEX9:	LDI		R1,'\b'
+FE3E  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE3F  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE40  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE41  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE42  -  FFE5   		JR		GHEX1			
+FE43  -         
+FE43  -  69A2   GHEX95:	ST		(R5+UARTDAT-IOBASE),R1
+FE44  -  66E0   		LD		R6,(R7)
+FE45  -  1701   		ADDI	R7,1
+FE46  -  58FA   		JIND	R6
+FE47  -         ;-------------------------------------------------------------------
+FE47  -         ; HEX DUMP OF THE MEMORY BLOCK POINTED BY R4
+FE47  -  1F01   MDUMP:	SUBI	R7,1
+FE48  -  6EE0   		ST		(R7),R6
+FE49  -  5310   		LDI		R3,16
+FE4A  -  0891   MD1:	OR		R0,R4,R4
+FE4B  -  7064   		JAL		PRTHEX			; ADDRESS
+FE4C  -  513A   		LDI		R1,':'
+FE4D  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE4E  -  5120   		LDI		R1,' '
+FE4F  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE50  -  5208   		LDI		R2,8
+FE51  -  6080   MD2:	LD		R0,(R4)			; DATA
+FE52  -  705D   		JAL		PRTHEX
+FE53  -  5120   		LDI		R1,' '
+FE54  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE55  -  1401   		ADDI	R4,1
+FE56  -  1A01   		SUBI	R2,1
+FE57  -  9FF9   		JNZ		MD2
+FE58  -  5120   		LDI		R1,' '
+FE59  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE5A  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE5B  -         		
+FE5B  -  1C08   		SUBI	R4,8
+FE5C  -  5208   		LDI		R2,8
+FE5D  -  6080   MD3:	LD		R0,(R4)
+FE5E  -  5940   		RORI	R1,R0,8
+FE5F  -  7010   		JAL		GOODCH
+FE60  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE61  -  0901   		OR		R1,R0,R0
+FE62  -  700D   		JAL		GOODCH
+FE63  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE64  -  5120   		LDI		R1,' '
+FE65  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE66  -  1401   		ADDI	R4,1
+FE67  -  1A01   		SUBI	R2,1
+FE68  -  9FF4   		JNZ		MD3
+FE69  -  510A   		LDI		R1,'\n'
+FE6A  -  69A2   		ST		(R5+UARTDAT-IOBASE),R1
+FE6B  -  1B01   		SUBI	R3,1
+FE6C  -  9FDD   		JNZ		MD1
+FE6D  -         		
+FE6D  -  66E0   		LD		R6,(R7)
+FE6E  -  1701   		ADDI	R7,1
+FE6F  -  58FA   		JIND	R6
+FE70  -         
+FE70  -         ;--------------------------------------
+FE70  -         ; 		FORCES A GOOD ASCII CHAR IN R1
+FE70  -  31FF   GOODCH:	ANDI	R1,0XFF
+FE71  -  497F   		CMPI	R1,127
+FE72  -  D002   		JPL		GOCH1
+FE73  -  4920   		CMPI	R1,' '
+FE74  -  D001   		JPL		GOCH2
+FE75  -  512E   GOCH1:	LDI		R1,'.'
+FE76  -  58FA   GOCH2:	JIND	R6
+FE77  -         
+FE77  -         ;-------------------------------------------------------------------
+FE77  -         ; I/O SUBROUTINES
+FE77  -         ;-------------------------------------------------------------------
+FE77  -         
+FE77  -         ;------------------------------------------------------------
+FE77  -         ; PRINTS ASCIIZ (16-BIT PACKED, BIG ENDIAN) STRING ON UART 
+FE77  -         ; PARAMETERS:
+FE77  -         ;	R0: POINTER TO STRING
+FE77  -         ;	R6: RETURN ADDRESS (JAL)
+FE77  -         ; RETURS:
+FE77  -         ; 	R0-R2: MODIFIED
+FE77  -         
+FE77  -  5222   PUTSBE:	LDI		R2,UARTDAT
+FE78  -         PUTSBE1:
+FE78  -  6100   		LD		R1,(R0)
+FE79  -  5944   		RORI	R1,R1,8
+FE7A  -  31FF   		ANDI	R1,0XFF
+FE7B  -  8007   		JZ		PUTSBE3
+FE7C  -  6940   		ST		(R2),R1
+FE7D  -         		
+FE7D  -  6100   		LD		R1,(R0)
+FE7E  -  31FF   		ANDI	R1,0XFF
+FE7F  -  8003   		JZ		PUTSBE3
+FE80  -  6940   		ST		(R2),R1
+FE81  -  1001   		ADDI	R0,1
+FE82  -  FFF5   		JR		PUTSBE1
+FE83  -         
+FE83  -         PUTSBE3:
+FE83  -  58FA   		JIND	R6
+FE84  -         ;----------------------------------------------
+FE84  -         ; SENDS CHARACTER TO UART
+FE84  -         ; PARAMETERS:
+FE84  -         ;	R0: CHARACTER TO SEND
+FE84  -         ;	R6: RETURN ADDRESS (JAL)
+FE84  -         ; RETURNS:
+FE84  -         ; 	R1: MODIFFIED
+FE84  -         ; NOTES: CPU CLOCK STOPS IF UART NOT READY FOR TRANSMISSION
+FE84  -         
+FE84  -  5122   PUTCH:	LDI		R1,UARTDAT
+FE85  -  6820   		ST		(R1),R0		
+FE86  -  58FA   		JIND	R6			
+FE87  -         
+FE87  -         ;----------------------------------------------
+FE87  -         ; PRINTS DECIMAL NUMBER (OR HEX, OCTAL,...)
+FE87  -         ; PARAMETERS:
+FE87  -         ;	R0: NUMBER TO PRINT
+FE87  -         ;	R6: RETURN ADDRESS (JAL)
+FE87  -          
+FE87  -         ; RETURNS:
+FE87  -         ;	R0, R1: MODIFFIED
+FE87  -         ; NOTES:
+FE87  -         ;	AVOIDS PRINTING ZEROES ON THE LEFT
+FE87  -         ;   STACK USED FOR TEMPORARY DIGIT STORAGE
+FE87  -         
+FE87  -         PRTDEC:
+FE87  -  1F01   		SUBI	R7,1
+FE88  -  6EE0   		ST		(R7),R6
+FE89  -         
+FE89  -  5100   		LDI		R1,0		; END OF STRING MARK
+FE8A  -  1F01   		SUBI	R7,1		; TO STACK
+FE8B  -  69E0   		ST		(R7),R1
+FE8C  -  5100   PRTD0:	LDI		R1,0		; R0=R0/R2, R1=REMAINDER
+FE8D  -  5610   		LDI		R6,16		
+FE8E  -  0000   PRTD1:	ADD		R0,R0,R0
+FE8F  -  0126   		ADC		R1,R1,R1
+FE90  -  190A   		SUBI	R1,10
+FE91  -  B002   		JNC		PRTD2
+FE92  -  1001   		ADDI	R0,1
+FE93  -  F001   		JR		PRTD5
+FE94  -  110A   PRTD2:	ADDI	R1,10
+FE95  -  1E01   PRTD5:	SUBI	R6,1
+FE96  -  9FF7   		JNZ		PRTD1
+FE97  -  490A   		CMPI	R1,10		; DIGITS OVER '9' TRANSLATED TO 'A','B'...
+FE98  -  C001   		JMI		PRTD6
+FE99  -  1107   		ADDI	R1,7
+FE9A  -  5630   PRTD6:	LDI		R6,'0'		; REMAINDER IN ASCII GOES TO STACK
+FE9B  -  0138   		ADD		R1,R1,R6
+FE9C  -  1F01   		SUBI	R7,1
+FE9D  -  69E0   		ST		(R7),R1
+FE9E  -  0801   		OR		R0,R0,R0	; REPEAT UNTIL ZERO
+FE9F  -  9FEC   		JNZ		PRTD0
+FEA0  -         
+FEA0  -  60E0   PRTD3:	LD		R0,(R7)		; RETRIEVE CHARACTER FROM STACK
+FEA1  -  8003   		JZ		PRTD9		; END OF STRING?
+FEA2  -  1701   		ADDI	R7,1
+FEA3  -  7FE0   		JAL		PUTCH
+FEA4  -  FFFB   		JR		PRTD3
+FEA5  -         
+FEA5  -  1701   PRTD9:	ADDI	R7,1
+FEA6  -  66E0   		LD		R6,(R7)
+FEA7  -  1701   		ADDI	R7,1
+FEA8  -  58FA   		JIND	R6
+FEA9  -         
+FEA9  -         ;-------------------------------------------
+FEA9  -         ; PRINT LOWER 8 BITS OF R0 AS HEX (2 DIGITS)
+FEA9  -         PRTHEX8:
+FEA9  -  1F02   		SUBI	R7,2
+FEAA  -  6AE0   		ST		(R7),R2
+FEAB  -  6EE1   		ST		(R7+1),R6
+FEAC  -  5622   		LDI		R6,UARTDAT
+FEAD  -  5202   		LDI		R2,2
+FEAE  -  5840   		RORI	R0,R0,8
+FEAF  -  F005   		JR		PTX1
+FEB0  -         
+FEB0  -         ;--------------------------------------
+FEB0  -         ; PRINT 16 BITS OF R0 AS HEX (4 DIGITS)
+FEB0  -  1F02   PRTHEX:	SUBI	R7,2
+FEB1  -  6AE0   		ST		(R7),R2
+FEB2  -  6EE1   		ST		(R7+1),R6
+FEB3  -  5622   		LDI		R6,UARTDAT
+FEB4  -  5204   		LDI		R2,4
+FEB5  -  5860   PTX1:	RORI	R0,R0,12
+FEB6  -  0901   		OR		R1,R0,R0
+FEB7  -  310F   		ANDI	R1,15
+FEB8  -  490A   		CMPI	R1,10
+FEB9  -  C001   		JMI		PTX2
+FEBA  -  1107   		ADDI	R1,7
+FEBB  -  1130   PTX2:	ADDI	R1,'0'
+FEBC  -  69C0   		ST		(R6),R1
+FEBD  -  1A01   		SUBI	R2,1
+FEBE  -  9FF6   		JNZ		PTX1
+FEBF  -  62E0   		LD		R2,(R7)
+FEC0  -  66E1   		LD		R6,(R7+1)
+FEC1  -  1702   		ADDI	R7,2
+FEC2  -  58FA   		JIND	R6
+FEC3  -         
+FEC3  -         ;-------------------------------------------------------------------
+FEC3  -         ; VARIABLES
+FEC3  -         ;-------------------------------------------------------------------
+FEC3  -         BVAR:
+FEC3  -  0000   LDPCF:	WORD	0
+FEC4  -  0000   TRACE:	WORD	0
+FEC5  -  0000   BREAK:	WORD 	0
+FEC6  -  0000   RUTSP:	WORD	0
+FEC7  -  0100   CADDR:	WORD	0X100
+FEC8  -         
+FEC8  -         ;-------------------------------------------------------------------
+FEC8  -         ; TEXT (OVERWRITABLE BY THE STACK...MAYBE)
+FEC8  -         ;-------------------------------------------------------------------
+FEC8  -  0A63   MSGHELP:	ASCZBE "\nc\tContinue (no stop)\ne\tExecute (w breakpoint)\ns\tSingle step\nn\texec until Next instr\nr\texec until return (JIND R6)\nR\texec until return at higher stack level\nb [adr]\tset Breakpoint\nd [adr]\tDissasemble\nm [adr]\tMemory dump\n"
+FEC9  -  0943   
+FECA  -  6F6E   
+FECB  -  7469   
+FECC  -  6E75   
+FECD  -  6520   
+FECE  -  286E   
+FECF  -  6F20   
+FED0  -  7374   
+FED1  -  6F70   
+FED2  -  290A   
+FED3  -  6509   
+FED4  -  4578   
+FED5  -  6563   
+FED6  -  7574   
+FED7  -  6520   
+FED8  -  2877   
+FED9  -  2062   
+FEDA  -  7265   
+FEDB  -  616B   
+FEDC  -  706F   
+FEDD  -  696E   
+FEDE  -  7429   
+FEDF  -  0A73   
+FEE0  -  0953   
+FEE1  -  696E   
+FEE2  -  676C   
+FEE3  -  6520   
+FEE4  -  7374   
+FEE5  -  6570   
+FEE6  -  0A6E   
+FEE7  -  0965   
+FEE8  -  7865   
+FEE9  -  6320   
+FEEA  -  756E   
+FEEB  -  7469   
+FEEC  -  6C20   
+FEED  -  4E65   
+FEEE  -  7874   
+FEEF  -  2069   
+FEF0  -  6E73   
+FEF1  -  7472   
+FEF2  -  0A72   
+FEF3  -  0965   
+FEF4  -  7865   
+FEF5  -  6320   
+FEF6  -  756E   
+FEF7  -  7469   
+FEF8  -  6C20   
+FEF9  -  7265   
+FEFA  -  7475   
+FEFB  -  726E   
+FEFC  -  2028   
+FEFD  -  4A49   
+FEFE  -  4E44   
+FEFF  -  2052   
+FF00  -  3629   
+FF01  -  0A52   
+FF02  -  0965   
+FF03  -  7865   
+FF04  -  6320   
+FF05  -  756E   
+FF06  -  7469   
+FF07  -  6C20   
+FF08  -  7265   
+FF09  -  7475   
+FF0A  -  726E   
+FF0B  -  2061   
+FF0C  -  7420   
+FF0D  -  6869   
+FF0E  -  6768   
+FF0F  -  6572   
+FF10  -  2073   
+FF11  -  7461   
+FF12  -  636B   
+FF13  -  206C   
+FF14  -  6576   
+FF15  -  656C   
+FF16  -  0A62   
+FF17  -  205B   
+FF18  -  6164   
+FF19  -  725D   
+FF1A  -  0973   
+FF1B  -  6574   
+FF1C  -  2042   
+FF1D  -  7265   
+FF1E  -  616B   
+FF1F  -  706F   
+FF20  -  696E   
+FF21  -  740A   
+FF22  -  6420   
+FF23  -  5B61   
+FF24  -  6472   
+FF25  -  5D09   
+FF26  -  4469   
+FF27  -  7373   
+FF28  -  6173   
+FF29  -  656D   
+FF2A  -  626C   
+FF2B  -  650A   
+FF2C  -  6D20   
+FF2D  -  5B61   
+FF2E  -  6472   
+FF2F  -  5D09   
+FF30  -  4D65   
+FF31  -  6D6F   
+FF32  -  7279   
+FF33  -  2064   
+FF34  -  756D   
+FF35  -  700A   
+FF36  -  0000   
+FF37  -  0A55   TXTLOAD:	ASCZBE "\nUpload program to debug\n"
+FF38  -  706C   
+FF39  -  6F61   
+FF3A  -  6420   
+FF3B  -  7072   
+FF3C  -  6F67   
+FF3D  -  7261   
+FF3E  -  6D20   
+FF3F  -  746F   
+FF40  -  2064   
+FF41  -  6562   
+FF42  -  7567   
+FF43  -  0A00   
+FF44  -         ;-------------------------------------------------------------------
+FF44  -         ;
+FF44  -         ;		MAIN (OVERWRITABLE BY THE STACK)
+FF44  -         ;
+FF44  -         ;-------------------------------------------------------------------
+FF44  -         PSTART:	
+FF44  -         START:	
+FF44  -  5700   		LDI		R7,0
+FF45  -         
+FF45  -  58E0   		LDPC	R0
+FF46  -  FF37   		WORD	TXTLOAD
+FF47  -  7F2F   		JAL		PUTSBE
+FF48  -         
+FF48  -         		; BOOTLOADER-LIKE CODE
+FF48  -  5520   		LDI		R5,IOBASE
+FF49  -  60A2   BUC1:	LD		R0,(R5+UARTDAT-IOBASE)
+FF4A  -  484C   		CMPI	R0,'L'
+FF4B  -  9FFD   		JNZ		BUC1
+FF4C  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FF4D  -  7017   		JAL		GETW
+FF4E  -  0A01   		OR		R2,R0,R0		; ADDRESS
+FF4F  -  7015   		JAL		GETW
+FF50  -  0B01   		OR		R3,R0,R0		; COUNT
+FF51  -  7013   		JAL		GETW
+FF52  -  0C01   		OR		R4,R0,R0		; ENTRY POINT
+FF53  -         
+FF53  -  7011   BUC2:	JAL		GETW
+FF54  -  6840   		ST		(R2),R0
+FF55  -  1201   		ADDI	R2,1
+FF56  -  1B01   		SUBI	R3,1
+FF57  -  9FFB   		JNZ		BUC2
+FF58  -         
+FF58  -         		; SET IRQ JUMP 
+FF58  -  51FF   		LDI		R1,0XFF
+FF59  -  58E0   		LDPC	R0
+FF5A  -  FAEF   		WORD	JMPIRQ
+FF5B  -  6831   		ST		(R1+0X110-0XFF),R0
+FF5C  -         		; SET TRACE, BREAK
+FF5C  -  5AE0   		LDPC	R2
+FF5D  -  FEC3   		WORD	BVAR
+FF5E  -  5000   		LDI		R0,0
+FF5F  -  6941   		ST		(R2+TRACE-BVAR),R1
+FF60  -  6842   		ST		(R2+BREAK-BVAR),R0	
+FF61  -         
+FF61  -         		; ENABLE SSTEP IRQ
+FF61  -  60A0   		LD		R0,(R5+IRQEN-IOBASE)
+FF62  -  3810   		ORI		R0,0X10
+FF63  -  68A0   		ST		(R5+IRQEN-IOBASE),R0
+FF64  -         		; AND JUMP TO CODE
+FF64  -  58F2   		JIND	R4
+FF65  -         
+FF65  -         ;-------------------------------------------------------------------
+FF65  -         ; GET 16-BIT WORD FROM UART (TWO BYTES)
+FF65  -  60A2   GETW:	LD		R0,(R5+UARTDAT-IOBASE)	; LSB
+FF66  -  61A2   		LD		R1,(R5+UARTDAT-IOBASE)	; MSB
+FF67  -  5944   		RORI	R1,R1,8
+FF68  -  0805   		OR		R0,R0,R1
+FF69  -  58FA   		JIND	R6
+FF6A  -         
+FF6A  -         
+FF6A  -         PEND:
+FF6A  -         
+FF6A  -         
+FF6A  -         

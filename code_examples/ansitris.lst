@@ -10,6 +10,8 @@ Processor: GUS16 v6
 0021   (   33)   PWM
 0022   (   34)   UARTDAT
 0023   (   35)   TIMER
+0024   (   36)   GPO
+0024   (   36)   GPIN
 0001   (    1)   IRQ0EN
 0001   (    1)   UARTDV
 0002   (    2)   UARTRDY
@@ -33,6 +35,7 @@ Processor: GUS16 v6
 004D   (   77)   PNOTA
 004E   (   78)   ONOTA
 004F   (   79)   PIEZA
+5BE9   (23529)   SRATE
 005F   (   95)   FNOTAS
 0068   (  104)   DEL50M
 0071   (  113)   D50M
@@ -50,89 +53,90 @@ Processor: GUS16 v6
 0104   (  260)   IRQ1
 0108   (  264)   IRQ2
 010C   (  268)   IRQ3
-010C   (  268)   PWMIRQ
-011A   (  282)   IPW1
-0124   (  292)   IPW4
-0129   (  297)   IPW3
-012B   (  299)   IPW5
-0138   (  312)   IPW2
-013A   (  314)   IEND
-013F   (  319)   RND
-0149   (  329)   RND9
-014E   (  334)   CUADRO
-0173   (  371)   STR1
-0176   (  374)   STR2
-017C   (  380)   INIT
-0181   (  385)   INI1
-0186   (  390)   INI2
-0190   (  400)   INI3
-0198   (  408)   INI4
-019F   (  415)   INI5
-01AE   (  430)   STR3
-01B2   (  434)   DISPLAY
-01B8   (  440)   DISP1
-01B9   (  441)   DISP2
-01C5   (  453)   DISP3
-01D9   (  473)   DISP4
-01E4   (  484)   DISP5
-01F5   (  501)   STR4
-01FA   (  506)   TESTPOS
-0200   (  512)   TPOS1
-0201   (  513)   TPOS2
-0206   (  518)   TPOS21
-020C   (  524)   TPOS22
-021F   (  543)   TPOS3
-0226   (  550)   TPOS9
-022C   (  556)   ROTA
-0233   (  563)   ROTA1
-0234   (  564)   ROTA2
-0243   (  579)   ROTAH
-0245   (  581)   ROTA5
-0246   (  582)   ROTA6
-0253   (  595)   ROTA4
-0255   (  597)   ROTA3
-025F   (  607)   PSTART
-025F   (  607)   START
-026A   (  618)   MBUC0
-026C   (  620)   MBUC01
-027D   (  637)   MBUC1
-0283   (  643)   MBUC20
-0292   (  658)   MBUC2
-02A3   (  675)   MBUC5
-02A4   (  676)   MBUC3
-02B0   (  688)   MBUC4
-02D0   (  720)   MBUC41
-02D1   (  721)   MBUC42
-02D4   (  724)   IBUC0
-02E9   (  745)   IBUC2
-02F8   (  760)   IBUC3
-0305   (  773)   IBUC4
-0307   (  775)   IBUC45
-0314   (  788)   IBUC5
-0314   (  788)   IBUC1
-0326   (  806)   IBUC20
-0329   (  809)   IBUC21
-032B   (  811)   NUEVAPIEZA
-032C   (  812)   MBUC6
-032D   (  813)   MBUC7
-0348   (  840)   MBUC8
-0354   (  852)   MBUC10
-035C   (  860)   MBUC11
-0362   (  866)   MBUC12
-0363   (  867)   MBUC13
-0370   (  880)   MBUC14
-038C   (  908)   MBUC15
-0390   (  912)   MBUC30
-0394   (  916)   MBUC100
-039B   (  923)   MBUC101
-03A6   (  934)   STR7
-03BD   (  957)   STR5
-03C7   (  967)   STR6
-03CC   (  972)   PIEZAS
-0404   ( 1028)   MUSTAB
-0428   ( 1064)   PEND
-0428   ( 1064)   CAMPO
-0524   ( 1316)   OLDC
+0110   (  272)   IRQ4
+0114   (  276)   PWMIRQ
+0125   (  293)   IPW1
+012F   (  303)   IPW4
+0134   (  308)   IPW3
+0136   (  310)   IPW5
+0143   (  323)   IPW2
+0145   (  325)   IEND
+014A   (  330)   RND
+0154   (  340)   RND9
+0159   (  345)   CUADRO
+017E   (  382)   STR1
+0181   (  385)   STR2
+0187   (  391)   INIT
+018C   (  396)   INI1
+0191   (  401)   INI2
+019B   (  411)   INI3
+01A3   (  419)   INI4
+01AA   (  426)   INI5
+01B9   (  441)   STR3
+01BD   (  445)   DISPLAY
+01C3   (  451)   DISP1
+01C4   (  452)   DISP2
+01D0   (  464)   DISP3
+01E4   (  484)   DISP4
+01EF   (  495)   DISP5
+0200   (  512)   STR4
+0205   (  517)   TESTPOS
+020B   (  523)   TPOS1
+020C   (  524)   TPOS2
+0211   (  529)   TPOS21
+0217   (  535)   TPOS22
+022A   (  554)   TPOS3
+0231   (  561)   TPOS9
+0237   (  567)   ROTA
+023E   (  574)   ROTA1
+023F   (  575)   ROTA2
+024E   (  590)   ROTAH
+0250   (  592)   ROTA5
+0251   (  593)   ROTA6
+025E   (  606)   ROTA4
+0260   (  608)   ROTA3
+026A   (  618)   PSTART
+026A   (  618)   START
+0275   (  629)   MBUC0
+0277   (  631)   MBUC01
+0288   (  648)   MBUC1
+028E   (  654)   MBUC20
+029D   (  669)   MBUC2
+02AE   (  686)   MBUC5
+02AF   (  687)   MBUC3
+02BB   (  699)   MBUC4
+02DB   (  731)   MBUC41
+02DC   (  732)   MBUC42
+02DF   (  735)   IBUC0
+02F4   (  756)   IBUC2
+0303   (  771)   IBUC3
+0310   (  784)   IBUC4
+0312   (  786)   IBUC45
+031F   (  799)   IBUC5
+031F   (  799)   IBUC1
+0331   (  817)   IBUC20
+0334   (  820)   IBUC21
+0336   (  822)   NUEVAPIEZA
+0337   (  823)   MBUC6
+0338   (  824)   MBUC7
+0353   (  851)   MBUC8
+035F   (  863)   MBUC10
+0367   (  871)   MBUC11
+036D   (  877)   MBUC12
+036E   (  878)   MBUC13
+037B   (  891)   MBUC14
+0397   (  919)   MBUC15
+039B   (  923)   MBUC30
+039F   (  927)   MBUC100
+03A6   (  934)   MBUC101
+03B1   (  945)   STR7
+03C8   (  968)   STR5
+03D2   (  978)   STR6
+03D7   (  983)   PIEZAS
+040F   ( 1039)   MUSTAB
+0433   ( 1075)   PEND
+0433   ( 1075)   CAMPO
+052F   ( 1327)   OLDC
 
 ; Program listing ----------------------------------
 
@@ -158,6 +162,8 @@ Processor: GUS16 v6
 0000  -         PWM=		0X21
 0000  -         UARTDAT=	0X22
 0000  -         TIMER=		0X23
+0000  -         GPO=		0X24
+0000  -         GPIN=		0X24
 0000  -         
 0000  -         ;--------- INTERRUPTS --------
 0000  -         IRQ0EN=		1
@@ -177,8 +183,8 @@ Processor: GUS16 v6
 003C  -         		
 003C  -  4CFF   		WORD	0X4CFF			; MARK
 003D  -  0040   		WORD	PINIT			; DESTINATION ADDRESS
-003E  -  03E8   		WORD	PEND-PINIT		; SIZE (WORDS)
-003F  -  025F   		WORD	PSTART			; EXECUTION ADDRESS
+003E  -  03F3   		WORD	PEND-PINIT		; SIZE (WORDS)
+003F  -  026A   		WORD	PSTART			; EXECUTION ADDRESS
 0040  -         
 0040  -         ;--------------------------------------
 0040  -         ;------------- CODE -----------------
@@ -186,14 +192,14 @@ Processor: GUS16 v6
 0040  -         PINIT:
 0040  -         
 0040  -         ;------------------------------------------------------------------------
-0040  -         ; ESPACIO PARA VARIABLES DE ACCESO RáPIDO (LA DIRECCIóN SE CARGA CON LDI)
+0040  -         ; LOCAL VARIABLES (FAST ACCESS: ADDRESS < 256 => LOADED WITH SINGLE LDI )
 0040  -         ;------------------------------------------------------------------------
 0040  -         		ORG		0X40
 0040  -         BVAR:
 0040  -         
 0040  -         		;WORD	0XFFFF
 0040  -         
-0040  -  0000   XP:		WORD	0		; POSICIóN DE LA PIEZA
+0040  -  0000   XP:		WORD	0		; TETROMINO POSITION (PIECE)
 0041  -  0000   YP:		WORD	0
 0042  -  0000   MAX:	WORD	0
 0043  -  0000   SIGP:	WORD	0
@@ -210,18 +216,18 @@ Processor: GUS16 v6
 004D  -  0000   PNOTA:	WORD	0		; NOTE POINTER
 004E  -  0000   ONOTA:	WORD	0		; OLD NOTE (2 NOTES STORED ON EACH WORD)
 004F  -         
-004F  -         PIEZA:	ORG		.+4*4	; PIEZA[4][4]
+004F  -         PIEZA:	ORG		.+4*4	; PIEZA[4][4] 
 005F  -         
-005F  -  05B1   FNOTAS:	WORD	1457	; 523.251 HZ DO
-0060  -  0664   		WORD	1636	; 587,330 HZ RE
-0061  -  072C   		WORD	1836	; 659,255 HZ MI
-0062  -  0799   		WORD	1945	; 698,456 HZ FA
-0063  -  0888   		WORD	2184	; 783,991 HZ SOL
-0064  -  0993   		WORD	2451	; 880.000 HZ LA
-0065  -  0ABF   		WORD	2751	; 987,767 HZ SI
-0066  -  0B63   		WORD	2915	; 1046,50 HZ DO
-0067  -  0000   		WORD	0		; 0HZ (SILENCIO)
-0068  -         		
+005F  -         SRATE=  6000000/255
+005F  -  05B1   FNOTAS:	WORD (5232<<16)/(SRATE*10) ; 523.251 HZ DO
+0060  -  0663   		WORD (5873<<16)/(SRATE*10) ; 587,330 HZ RE
+0061  -  072C   		WORD (6593<<16)/(SRATE*10) ; 659,255 HZ MI
+0062  -  0799   		WORD (6985<<16)/(SRATE*10) ; 698,456 HZ FA
+0063  -  0887   		WORD (7840<<16)/(SRATE*10) ; 783,991 HZ SOL
+0064  -  0993   		WORD (8800<<16)/(SRATE*10) ; 880.000 HZ LA
+0065  -  0ABF   		WORD (9878<<16)/(SRATE*10) ; 987,767 HZ SI
+0066  -  0B62   		WORD (10465<<16)/(SRATE*10); 1046,50 HZ DO
+0067  -  0000   		WORD 0 					   ; 0HZ (SILENCIO)
 0068  -         
 0068  -         ;-------------------------------------------------------------------
 0068  -         ; SUBRUTINAS I/O
@@ -249,12 +255,12 @@ Processor: GUS16 v6
 007A  -  58FA   		JIND	R6
 007B  -         
 007B  -         ;----------------------------------------------
-007B  -         ; ENVíA CARACTER AL TERMINAL
-007B  -         ; PARáMETROS:
-007B  -         ;	R0: DATO A ENVIAR
-007B  -         ;	R6: DIRECCIóN DE RETORNO
-007B  -         ; RETORNA:
-007B  -         ; 	R1: MODIFICADO
+007B  -         ; PUT CHARACTER TO TERMINAL
+007B  -         ; PARAMETER:
+007B  -         ;	R0: DATA TO SEND
+007B  -         ;	R6: RETURN ADDESS
+007B  -         ; RETURNS:
+007B  -         ; 	R1: MODIFFIED
 007B  -         
 007B  -  5120   PUTCH:	LDI		R1,IOBASE
 007C  -  6121   		LD		R1,(R1+PFLAGS-IOBASE)
@@ -265,12 +271,12 @@ Processor: GUS16 v6
 0081  -  58FA   		JIND	R6			; Y RETORNAMOS
 0082  -         
 0082  -         ;----------------------------------------------------
-0082  -         ; ENVíA CADENA DE CARACTERES EMPAQUETADOS AL TERMINAL
-0082  -         ; PARáMETROS:
-0082  -         ;	R0: PUNTERO A LA CADENA DE CARACTERES
-0082  -         ;	R6: DIRECCIóN DE RETORNO
-0082  -         ; RETORNA:
-0082  -         ; 	
+0082  -         ; PUT PACKED CHARACTER STRING (LITTLE-ENDIAN) TO TERMINAL
+0082  -         ; PARAMETER:
+0082  -         ;	R0: STRING ADDRESS
+0082  -         ;	R6: RETURN ADDRESS
+0082  -         ; RETURNS:
+0082  -         ; 	NO REGISTER MODIFFIED
 0082  -         
 0082  -  1F04   PUTSLE: SUBI    R7,4
 0083  -  68E0           ST      (R7+0),R0
@@ -299,32 +305,27 @@ Processor: GUS16 v6
 0098  -  58FA           JIND    R6
 0099  -         
 0099  -         ;----------------------------------------------
-0099  -         ; RECIBE CARACTER DEL TERMINAL
-0099  -         ; PARáMETROS:
-0099  -         ;	R6: DIRECCIóN DE RETORNO
-0099  -         ; RETORNA:
-0099  -         ;	R0: DATO RECIBIDO
-0099  -         ; 	R1: MODIFICADO
-0099  -         
-0099  -         ; GETCH:	LDI		R1,UARTDAT	; AHORA APUNTAMOS A REGISTRO RX
-0099  -         ; 		LD		R0,(R1)		; LEEMOS DATO
-0099  -         ; 		JIND	R6			; Y RETORNAMOS
+0099  -         ; GET CHARACTER FROM TERMINAL
+0099  -         ; PARAMETERS:
+0099  -         ;	R6: RETURN ADDRESS
+0099  -         ; RETURNS:
+0099  -         ;	R0: RECEIVED DATA
+0099  -         ; 	R1: MODIFFIED
 0099  -         
 0099  -         ;----------------------------------------------
-0099  -         ; IMPRIME R0 EN DECIMAL
-0099  -         ; RETORNA: R0 Y R1 MODIFICADOS
-0099  -         ; USA LA PILA PARA EL ALMACENAMIENTO TEMPORAL DE DíGITOS
+0099  -         ; PRINT R0 AS DECIMAL VALUE
+0099  -         ; RETURNS: R0 , R1 MODIFFIED
+0099  -         ; STACK SPACE IS USED FOR TEMPORARY DIGIT STORAGE
 0099  -         
 0099  -         PRTDEC:
-0099  -         		; PRóLOGO
 0099  -  1F01   		SUBI	R7,1
 009A  -  6EE0   		ST		(R7),R6
 009B  -         		;
-009B  -  5100   		LDI		R1,0		; MARCA DE FINAL DE CADENA
-009C  -  1F01   		SUBI	R7,1		; A LA PILA
+009B  -  5100   		LDI		R1,0		; END OF STRING MARK
+009C  -  1F01   		SUBI	R7,1		; PUSH TO STACK
 009D  -  69E0   		ST		(R7),R1
-009E  -  5100   PRTD0:	LDI		R1,0		; R0=R0/10, R1=RESTO
-009F  -  5610   		LDI		R6,16		; CONTADOR
+009E  -  5100   PRTD0:	LDI		R1,0		; R0=R0/10, R1=REMAINDER
+009F  -  5610   		LDI		R6,16		; R6: ITERATION COUNTER
 00A0  -  0000   PRTD1:	ADD		R0,R0,R0
 00A1  -  0126   		ADC		R1,R1,R1
 00A2  -  490A   		CMPI	R1,10
@@ -333,21 +334,20 @@ Processor: GUS16 v6
 00A5  -  1001   		ADDI	R0,1
 00A6  -  1E01   PRTD2:	SUBI	R6,1
 00A7  -  9FF8   		JNZ		PRTD1
-00A8  -  5630   		LDI		R6,'0'		; RESTO A LA PILA
+00A8  -  5630   		LDI		R6,'0'		; REMAINDER TO ASCII
 00A9  -  0138   		ADD		R1,R1,R6
-00AA  -  1F01   		SUBI	R7,1
+00AA  -  1F01   		SUBI	R7,1		; AND PUSHED TO THE STACK
 00AB  -  69E0   		ST		(R7),R1
-00AC  -  0801   		OR		R0,R0,R0	; HASTA QUE EL COCIENTE SEA 0
+00AC  -  0801   		OR		R0,R0,R0	; REPEAT UNTIL RESULT IS ZERO
 00AD  -  9FF0   		JNZ		PRTD0
 00AE  -         
-00AE  -  60E0   PRTD3:	LD		R0,(R7)		; CARACTER DESDE LA PILA
-00AF  -  8003   		JZ		PRTD9		; FINAL DE CADENA?
+00AE  -  60E0   PRTD3:	LD		R0,(R7)		; CHARACTER FROM STACK
+00AF  -  8003   		JZ		PRTD9		; END OF STRING?
 00B0  -  1701   		ADDI	R7,1
 00B1  -  7FC9   		JAL		PUTCH
 00B2  -  FFFB   		JR		PRTD3
 00B3  -         
 00B3  -  1701   PRTD9:	ADDI	R7,1
-00B4  -         		; EPíLOGO
 00B4  -  66E0   		LD		R6,(R7)
 00B5  -  1701   		ADDI	R7,1
 00B6  -  58FA   		JIND	R6
@@ -362,1041 +362,1054 @@ Processor: GUS16 v6
 0104  -         		ORG	0X108
 0108  -         IRQ2:	
 0108  -         		ORG	0X10C
-010C  -         IRQ3:
-010C  -         PWMIRQ:
-010C  -  1F03   		SUBI	R7,3
-010D  -  68E0   		ST		(R7),R0
-010E  -  69E1   		ST		(R7+1),R1
-010F  -  6AE2   		ST		(R7+2),R2
-0110  -         
-0110  -  5240   		LDI		R2,BVAR				; NINT++
-0111  -  6049   		LD		R0,(R2+NINT-BVAR)
-0112  -  1001   		ADDI	R0,1
-0113  -  6849   		ST		(R2+NINT-BVAR),R0
+010C  -  F007   IRQ3:	JR		PWMIRQ
+010D  -         		ORG	0X110
+0110  -         IRQ4:
+0110  -         		ORG	0X114
 0114  -         		
-0114  -  604A   		LD		R0,(R2+PHASE-BVAR)	; PHASE+=FREQ
-0115  -  614B   		LD		R1,(R2+FREQ-BVAR)
-0116  -  0004   		ADD		R0,R0,R1
-0117  -  684A   		ST		(R2+PHASE-BVAR),R0
-0118  -  D001   		JPL		IPW1				; LEVEL = (PHASE<0)? ~PHASE : PHASE;
-0119  -  58A0   		NOT		R0,R0
-011A  -  5823   IPW1:	RORI	R0,R0,7				; PWM = LEVEL>>7
-011B  -  30FF   		ANDI	R0,0XFF
-011C  -  5120   		LDI		R1,IOBASE			; ALSO CLEAR PWM IRQ
-011D  -  6821   		ST		(R1+PWM-IOBASE),R0
-011E  -  604C   		LD		R0,(R2+NDEL-BVAR)	; IF (NDEL==0) {
-011F  -  9018   		JNZ		IPW2
-0120  -  614D   		LD		R1,(R2+PNOTA-BVAR)  ;   IF (PNOTA) {
-0121  -  8018   		JZ		IEND
-0122  -         		
-0122  -  604E   		LD		R0,(R2+ONOTA-BVAR)  ;   IF ((NOTA=ONOTA)==0) {
-0123  -  9007   		JNZ		IPW5
-0124  -         		
-0124  -  6020   IPW4:	LD		R0,(R1)				;     NOTA = *PNOTA
-0125  -  9003   		JNZ		IPW3				;     IF (NOTA==0) {
-0126  -  59E0   		LDPC	R1					;       PNOTA = &MUSTAB
-0127  -  0404   		WORD	MUSTAB
-0128  -  6020   		LD		R0,(R1)				;		NOTA = *PNOTA
-0129  -  1101   IPW3:	ADDI	R1,1				;     PNOTA++
-012A  -  694D   		ST		(R2+PNOTA-BVAR),R1
-012B  -         
-012B  -  5940   IPW5:	RORI	R1,R0,8				;   ONOTA = NOTA>>8
-012C  -  31FF   		ANDI	R1,0XFF
-012D  -  694E   		ST		(R2+ONOTA-BVAR),R1
-012E  -         		
-012E  -  0901   		OR		R1,R0,R0			;   FREQ = FNOTAS[NOTA&0XF]
-012F  -  310F   		ANDI	R1,0XF
-0130  -  115F   		ADDI	R1,FNOTAS
-0131  -  6120   		LD		R1,(R1)
-0132  -  694B   		ST		(R2+FREQ-BVAR),R1
-0133  -         		
-0133  -  30F0   		ANDI	R0,0XF0				;   NDEL= (NOTA>>4)*24*128 IRQS
-0134  -  5901   		RORI	R1,R0,1
-0135  -  0004   		ADD		R0,R0,R1
-0136  -  5841   		RORI	R0,R0,16-7			;   (~128 MS/PASO)
-0137  -  684C   		ST		(R2+NDEL-BVAR),R0
-0138  -         		
-0138  -  1801   IPW2:	SUBI	R0,1				; } ELSE NDEL--
-0139  -  684C   		ST		(R2+NDEL-BVAR),R0
-013A  -  60E0   IEND:	LD		R0,(R7)
-013B  -  61E1   		LD		R1,(R7+1)
-013C  -  62E2   		LD		R2,(R7+2)
-013D  -  1703   		ADDI	R7,3
-013E  -  58E3   		RETI
-013F  -         
-013F  -         ;-------------------------------------------------------------------
-013F  -         ;
-013F  -         ;		CODIGO PRINCIPAL
-013F  -         ;
-013F  -         ;-------------------------------------------------------------------
-013F  -         
-013F  -         ; GENERA NúMEROS PSEUDOALEATORIOS EN RNDV
-013F  -  1F02   RND:	SUBI	R7,2
-0140  -  69E0   		ST		(R7),R1
-0141  -  6EE1   		ST		(R7+1),R6
-0142  -  5648   		LDI		R6,RNDV
-0143  -  60C0   		LD		R0,(R6)
-0144  -  0000   		ADD		R0,R0,R0
-0145  -  B003   		JNC		RND9
-0146  -  59E0   		LDPC	R1
-0147  -  1021   		WORD	0X1021
-0148  -  0806   		XOR		R0,R0,R1
-0149  -  68C0   RND9:	ST		(R6),R0
-014A  -  61E0   		LD		R1,(R7)
-014B  -  66E1   		LD		R6,(R7+1)
-014C  -  1702   		ADDI	R7,2
-014D  -  58FA   		JIND	R6
-014E  -         
-014E  -         ; VOID CUADRO(INT X,INT Y, INT TIPO)
-014E  -         ; R0: X
-014E  -         ; R1: Y
-014E  -         ; R2: TIPO
-014E  -         
-014E  -  1F04   CUADRO:	SUBI	R7,4
-014F  -  6EE3   		ST		(R7+3),R6
-0150  -  6DE2   		ST		(R7+2),R5
-0151  -  6CE1   		ST		(R7+1),R4
-0152  -  6BE0   		ST		(R7+0),R3
-0153  -         
-0153  -  0400   		ADD		R4,R0,R0
-0154  -  0D25   		OR		R5,R1,R1
-0155  -  531E   		LDI		R3,30
-0156  -  0368   		ADD		R3,R3,R2
-0157  -         		; PRINTF("\033[%d;%dH",Y+1,X*2+1);
-0157  -  501B   		LDI		R0,'\e'
-0158  -  7F22   		JAL		PUTCH
-0159  -  505B   		LDI		R0,'['
-015A  -  7F20   		JAL		PUTCH
-015B  -  08B5   		OR		R0,R5,R5
-015C  -  1001   		ADDI	R0,1
-015D  -  7F3B   		JAL		PRTDEC
-015E  -  503B   		LDI		R0,';'
-015F  -  7F1B   		JAL		PUTCH
-0160  -  0891   		OR		R0,R4,R4
-0161  -  1001   		ADDI	R0,1
-0162  -  7F36   		JAL		PRTDEC
-0163  -  5048   		LDI		R0,'H'
-0164  -  7F16   		JAL		PUTCH
-0165  -         
-0165  -         		;PRINTF("\033[01;%2dm\033[7m  \033[0m",TIPO+30);
-0165  -  58E0   		LDPC	R0
-0166  -  0173   		WORD	STR1
-0167  -  7F1A   		JAL		PUTSLE
-0168  -  086D   		OR		R0,R3,R3
-0169  -  7F2F   		JAL		PRTDEC
-016A  -  58E0   		LDPC	R0
-016B  -  0176   		WORD	STR2
-016C  -  7F15   		JAL		PUTSLE
-016D  -         
-016D  -  63E0   		LD		R3,(R7+0)
-016E  -  64E1   		LD		R4,(R7+1)
-016F  -  65E2   		LD		R5,(R7+2)
-0170  -  66E3   		LD		R6,(R7+3)
-0171  -  1704   		ADDI	R7,4
-0172  -  58FA   		JIND	R6
-0173  -  5B1B   STR1:	ASCZLE	"\e[01;"
-0174  -  3130   
-0175  -  003B   
-0176  -  1B6D   STR2:	ASCZLE	"m\e[7m  \e[0m"
-0177  -  375B   
-0178  -  206D   
-0179  -  1B20   
-017A  -  305B   
-017B  -  006D   
-017C  -         
-017C  -         ;VOID INIT()
-017C  -  1F01   INIT:	SUBI	R7,1
-017D  -  6EE0   		ST		(R7),R6
-017E  -         		
-017E  -         ;	FOR (I=0;I<ALTO;I++) {
-017E  -         ;		FOR (J=1;J<ANCHO+1;J++) CAMPO[I][J]=0;
-017E  -         ;		CAMPO[I][0]=CAMPO[I][ANCHO+1]=8;
-017E  -         ;	}
-017E  -  59E0   		LDPC	R1
-017F  -  0428   		WORD	CAMPO
-0180  -  5614   		LDI		R6,ALTO
-0181  -  5008   INI1:	LDI		R0,8
-0182  -  6820   		ST		(R1),R0
-0183  -  1101   		ADDI	R1,1
-0184  -  520A   		LDI		R2,ANCHO
-0185  -  5000   		LDI		R0,0
-0186  -  6820   INI2:	ST		(R1),R0
-0187  -  1101   		ADDI	R1,1
-0188  -  1A01   		SUBI	R2,1
-0189  -  9FFC   		JNZ		INI2
-018A  -  5008   		LDI		R0,8
-018B  -  6820   		ST		(R1),R0
-018C  -  1101   		ADDI	R1,1
-018D  -  1E01   		SUBI	R6,1
-018E  -  9FF2   		JNZ		INI1
-018F  -         ;	FOR (J=0;J<ANCHO+2;J++) CAMPO[I][J]=8;
-018F  -  520C   		LDI		R2,ANCHO+2
-0190  -  6820   INI3:	ST		(R1),R0
-0191  -  1101   		ADDI	R1,1
-0192  -  1A01   		SUBI	R2,1
-0193  -  9FFC   		JNZ		INI3
-0194  -         ;	FOR (I=0;I<ALTO+1;I++) FOR(J=0;J<ANCHO+2;J++) OLDC[I][J]=0XFF;
-0194  -  59E0   		LDPC	R1
-0195  -  0524   		WORD	OLDC
-0196  -  50FF   		LDI		R0,0XFF
-0197  -  52FC   		LDI		R2,(ALTO+1)*(ANCHO+2)
-0198  -  6820   INI4:	ST		(R1),R0
-0199  -  1101   		ADDI	R1,1
-019A  -  1A01   		SUBI	R2,1
-019B  -  9FFC   		JNZ		INI4
-019C  -         ;	FOR (I=0;I<4;I++) FOR (J=0;J<4;J++) PIEZA[I][J]=0;
-019C  -  514F   		LDI		R1,PIEZA
-019D  -  5000   		LDI		R0,0
-019E  -  5210   		LDI		R2,16
-019F  -  6820   INI5:	ST		(R1),R0
-01A0  -  1101   		ADDI	R1,1
-01A1  -  1A01   		SUBI	R2,1
-01A2  -  9FFC   		JNZ		INI5
-01A3  -         ;	XP=4; YP=-4;
-01A3  -  5140   		LDI		R1,BVAR
-01A4  -  5004   		LDI		R0,4
-01A5  -  6820   		ST		(R1+XP-BVAR),R0
-01A6  -  58A1   		NEG		R0,R0
-01A7  -  6821   		ST		(R1+YP-BVAR),R0
-01A8  -         ;        PRINTF("\0332J\033[H");
-01A8  -  58E0   		LDPC	R0
-01A9  -  01AE   		WORD	STR3
-01AA  -  7ED7   		JAL		PUTSLE
-01AB  -         
-01AB  -  66E0   		LD		R6,(R7)
-01AC  -  1701   		ADDI	R7,1
-01AD  -  58FA   		JIND	R6
-01AE  -  5B1B   STR3:	ASCZLE	"\e[2J\e[H"
-01AF  -  4A32   
-01B0  -  5B1B   
-01B1  -  0048   
-01B2  -         
-01B2  -         ;VOID DISPLAY()
-01B2  -         DISPLAY:
-01B2  -         ;INT I,J,IP,JP,CH;
-01B2  -  1F04   		SUBI	R7,4
-01B3  -  6EE3   		ST		(R7+3),R6
-01B4  -  6DE2   		ST		(R7+2),R5
-01B5  -  6CE1   		ST		(R7+1),R4
-01B6  -  6BE0   		ST		(R7+0),R3
-01B7  -         ;	FOR (I=0;I<ALTO+1;I++) {			; I=R5
-01B7  -         ;	    FOR (J=0;J<ANCHO+2;J++) {		; J=R4
-01B7  -  5500   		LDI		R5,0
-01B8  -  5400   DISP1:	LDI		R4,0		
-01B9  -         ;		CH=0;							; CH=R3
-01B9  -  5300   DISP2:	LDI		R3,0
-01BA  -  00B4   		ADD		R0,R5,R5				
-01BB  -  0000   		ADD		R0,R0,R0				; R0=I*4
-01BC  -  0100   		ADD		R1,R0,R0				; R1=I*8
-01BD  -  0120   		ADD		R1,R1,R0				; R1=I*12 (ANCHO+2)
-01BE  -  0130   		ADD		R1,R1,R4				; R1=I*12+J
-01BF  -  58E0   		LDPC	R0
-01C0  -  0428   		WORD	CAMPO
-01C1  -  0220   		ADD		R2,R1,R0				; R2=CAMPO[I][J]
-01C2  -         ;		IF (CAMPO[I][J]) CH=CAMPO[I][J];
-01C2  -  6040   		LD		R0,(R2)
-01C3  -  8001   		JZ		DISP3
-01C4  -  0B01   		OR		R3,R0,R0
-01C5  -         ;		IP=I-YP;			; IP=R2
-01C5  -  5241   DISP3:	LDI		R2,YP
-01C6  -  6240   		LD		R2,(R2)
-01C7  -  02A9   		SUB		R2,R5,R2
-01C8  -         ;		IF (IP>=0 && IP<4) {
-01C8  -  C010   		JMI		DISP4
-01C9  -  4A04   		CMPI	R2,4
-01CA  -  A00E   		JC		DISP4
-01CB  -         ;		    JP=J-XP;		; JP=R0
-01CB  -  5040   		LDI		R0,XP
-01CC  -  6000   		LD		R0,(R0)
-01CD  -  0081   		SUB		R0,R4,R0
-01CE  -         ;		    IF (JP>=0 && JP<4) 
-01CE  -  C00A   		JMI		DISP4
-01CF  -  4804   		CMPI	R0,4
-01D0  -  A008   		JC		DISP4
-01D1  -         ;				IF (PIEZA[IP][JP]) CH=PIEZA[IP][JP];
-01D1  -  0248   		ADD		R2,R2,R2
-01D2  -  0248   		ADD		R2,R2,R2
-01D3  -  0240   		ADD		R2,R2,R0	; R2=IP*4+JP
-01D4  -  504F   		LDI		R0,PIEZA
-01D5  -  0240   		ADD		R2,R2,R0	; R2=&PIEZA[IP][JP]
-01D6  -  6040   		LD		R0,(R2)
-01D7  -  8001   		JZ		DISP4
-01D8  -  0B01   		OR		R3,R0,R0
-01D9  -         ;		}
-01D9  -         DISP4:
-01D9  -         ;		IF (OLDC[I][J]!=CH) {
-01D9  -  58E0   		LDPC	R0
-01DA  -  0524   		WORD	OLDC
-01DB  -  0220   		ADD		R2,R1,R0	; R2=&OLDC[I][J]
-01DC  -  6040   		LD		R0,(R2)
-01DD  -  000D   		SUB		R0,R0,R3
-01DE  -  8005   		JZ		DISP5
-01DF  -         ;		    OLDC[I][J]=CH;
-01DF  -  6B40   		ST		(R2),R3
-01E0  -         ;		    CUADRO(J,I,CH);
-01E0  -  0891   		OR		R0,R4,R4
-01E1  -  09B5   		OR		R1,R5,R5
-01E2  -  0A6D   		OR		R2,R3,R3
-01E3  -  7F6A   		JAL		CUADRO
-01E4  -         ;		  }
-01E4  -         ;	    }
-01E4  -  1401   DISP5:	ADDI	R4,1
-01E5  -  500C   		LDI		R0,ANCHO+2
-01E6  -  0081   		SUB		R0,R4,R0
-01E7  -  9FD1   		JNZ		DISP2
-01E8  -         ;	}
-01E8  -  1501   		ADDI	R5,1
-01E9  -  5015   		LDI		R0,ALTO+1
-01EA  -  00A1   		SUB		R0,R5,R0
-01EB  -  9FCC   		JNZ		DISP1
-01EC  -         ;	PRINTF("\033[%d;%dH",12,31);
-01EC  -  58E0   		LDPC	R0
-01ED  -  01F5   		WORD	STR4
-01EE  -  7E93   		JAL		PUTSLE
-01EF  -         
-01EF  -  63E0   		LD		R3,(R7+0)
-01F0  -  64E1   		LD		R4,(R7+1)
-01F1  -  65E2   		LD		R5,(R7+2)
-01F2  -  66E3   		LD		R6,(R7+3)
-01F3  -  1704   		ADDI	R7,4
-01F4  -  58FA   		JIND	R6
-01F5  -  5B1B   STR4:	ASCZLE	"\e[12;31H"
-01F6  -  3231   
-01F7  -  333B   
-01F8  -  4831   
-01F9  -  0000   
+0114  -         PWMIRQ:
+0114  -  1F03   		SUBI	R7,3
+0115  -  68E0   		ST		(R7),R0
+0116  -  69E1   		ST		(R7+1),R1
+0117  -  6AE2   		ST		(R7+2),R2
+0118  -         
+0118  -  5240   		LDI		R2,BVAR				; NINT++
+0119  -  6049   		LD		R0,(R2+NINT-BVAR)
+011A  -  1001   		ADDI	R0,1
+011B  -  6849   		ST		(R2+NINT-BVAR),R0
+011C  -  5862   		RORI	R0,R0,14
+011D  -  5120   		LDI		R1,IOBASE			; BLINKING LED
+011E  -  6824   		ST		(R1+GPO-IOBASE),R0
+011F  -         		
+011F  -  604A   		LD		R0,(R2+PHASE-BVAR)	; PHASE+=FREQ
+0120  -  614B   		LD		R1,(R2+FREQ-BVAR)
+0121  -  0004   		ADD		R0,R0,R1
+0122  -  684A   		ST		(R2+PHASE-BVAR),R0
+0123  -  D001   		JPL		IPW1				; LEVEL = (PHASE<0)? ~PHASE : PHASE;
+0124  -  58A0   		NOT		R0,R0
+0125  -  5823   IPW1:	RORI	R0,R0,7				; PWM = LEVEL>>7
+0126  -  30FF   		ANDI	R0,0XFF
+0127  -  5120   		LDI		R1,IOBASE			; ALSO CLEAR PWM IRQ
+0128  -  6821   		ST		(R1+PWM-IOBASE),R0
+0129  -  604C   		LD		R0,(R2+NDEL-BVAR)	; IF (NDEL==0) {
+012A  -  9018   		JNZ		IPW2
+012B  -  614D   		LD		R1,(R2+PNOTA-BVAR)  ;   IF (PNOTA) {
+012C  -  8018   		JZ		IEND
+012D  -         		
+012D  -  604E   		LD		R0,(R2+ONOTA-BVAR)  ;   IF ((NOTA=ONOTA)==0) {
+012E  -  9007   		JNZ		IPW5
+012F  -         		
+012F  -  6020   IPW4:	LD		R0,(R1)				;     NOTA = *PNOTA
+0130  -  9003   		JNZ		IPW3				;     IF (NOTA==0) {
+0131  -  59E0   		LDPC	R1					;       PNOTA = &MUSTAB
+0132  -  040F   		WORD	MUSTAB
+0133  -  6020   		LD		R0,(R1)				;		NOTA = *PNOTA
+0134  -  1101   IPW3:	ADDI	R1,1				;     PNOTA++
+0135  -  694D   		ST		(R2+PNOTA-BVAR),R1
+0136  -         
+0136  -  5940   IPW5:	RORI	R1,R0,8				;   ONOTA = NOTA>>8
+0137  -  31FF   		ANDI	R1,0XFF
+0138  -  694E   		ST		(R2+ONOTA-BVAR),R1
+0139  -         		
+0139  -  0901   		OR		R1,R0,R0			;   FREQ = FNOTAS[NOTA&0XF]
+013A  -  310F   		ANDI	R1,0XF
+013B  -  115F   		ADDI	R1,FNOTAS
+013C  -  6120   		LD		R1,(R1)
+013D  -  694B   		ST		(R2+FREQ-BVAR),R1
+013E  -         		
+013E  -  30F0   		ANDI	R0,0XF0				;   NDEL= (NOTA>>4)*24*128 IRQS
+013F  -  5901   		RORI	R1,R0,1
+0140  -  0004   		ADD		R0,R0,R1
+0141  -  5841   		RORI	R0,R0,16-7			;   (~130 MS/PASO)
+0142  -  684C   		ST		(R2+NDEL-BVAR),R0
+0143  -         		
+0143  -  1801   IPW2:	SUBI	R0,1				; } ELSE NDEL--
+0144  -  684C   		ST		(R2+NDEL-BVAR),R0
+0145  -  60E0   IEND:	LD		R0,(R7)
+0146  -  61E1   		LD		R1,(R7+1)
+0147  -  62E2   		LD		R2,(R7+2)
+0148  -  1703   		ADDI	R7,3
+0149  -  58E3   		RETI
+014A  -         
+014A  -         ;-------------------------------------------------------------------
+014A  -         ;
+014A  -         ;		GAME CODE
+014A  -         ;
+014A  -         ;-------------------------------------------------------------------
+014A  -         
+014A  -         ; GET A PSEUDORANDOM NUMBER IN 'rndv'
+014A  -  1F02   RND:	SUBI	R7,2
+014B  -  69E0   		ST		(R7),R1
+014C  -  6EE1   		ST		(R7+1),R6
+014D  -  5648   		LDI		R6,RNDV
+014E  -  60C0   		LD		R0,(R6)
+014F  -  0000   		ADD		R0,R0,R0
+0150  -  B003   		JNC		RND9
+0151  -  59E0   		LDPC	R1
+0152  -  1021   		WORD	0X1021
+0153  -  0806   		XOR		R0,R0,R1
+0154  -  68C0   RND9:	ST		(R6),R0
+0155  -  61E0   		LD		R1,(R7)
+0156  -  66E1   		LD		R6,(R7+1)
+0157  -  1702   		ADDI	R7,2
+0158  -  58FA   		JIND	R6
+0159  -         
+0159  -         ; DRAW AN SQUARE BLOCK ON THE SCREEN USIGN ANSI ESCAPES
+0159  -         ; VOID CUADRO(INT X,INT Y, INT TIPO)
+0159  -         ; R0: X
+0159  -         ; R1: Y
+0159  -         ; R2: TIPO
+0159  -         
+0159  -  1F04   CUADRO:	SUBI	R7,4
+015A  -  6EE3   		ST		(R7+3),R6
+015B  -  6DE2   		ST		(R7+2),R5
+015C  -  6CE1   		ST		(R7+1),R4
+015D  -  6BE0   		ST		(R7+0),R3
+015E  -         
+015E  -  0400   		ADD		R4,R0,R0
+015F  -  0D25   		OR		R5,R1,R1
+0160  -  531E   		LDI		R3,30
+0161  -  0368   		ADD		R3,R3,R2
+0162  -         		; PRINTF("\033[%d;%dH",Y+1,X*2+1);
+0162  -  501B   		LDI		R0,'\e'
+0163  -  7F17   		JAL		PUTCH
+0164  -  505B   		LDI		R0,'['
+0165  -  7F15   		JAL		PUTCH
+0166  -  08B5   		OR		R0,R5,R5
+0167  -  1001   		ADDI	R0,1
+0168  -  7F30   		JAL		PRTDEC
+0169  -  503B   		LDI		R0,';'
+016A  -  7F10   		JAL		PUTCH
+016B  -  0891   		OR		R0,R4,R4
+016C  -  1001   		ADDI	R0,1
+016D  -  7F2B   		JAL		PRTDEC
+016E  -  5048   		LDI		R0,'H'
+016F  -  7F0B   		JAL		PUTCH
+0170  -         
+0170  -         		;PRINTF("\033[01;%2dm\033[7m  \033[0m",TIPO+30);
+0170  -  58E0   		LDPC	R0
+0171  -  017E   		WORD	STR1
+0172  -  7F0F   		JAL		PUTSLE
+0173  -  086D   		OR		R0,R3,R3
+0174  -  7F24   		JAL		PRTDEC
+0175  -  58E0   		LDPC	R0
+0176  -  0181   		WORD	STR2
+0177  -  7F0A   		JAL		PUTSLE
+0178  -         
+0178  -  63E0   		LD		R3,(R7+0)
+0179  -  64E1   		LD		R4,(R7+1)
+017A  -  65E2   		LD		R5,(R7+2)
+017B  -  66E3   		LD		R6,(R7+3)
+017C  -  1704   		ADDI	R7,4
+017D  -  58FA   		JIND	R6
+017E  -  5B1B   STR1:	ASCZLE	"\e[01;"
+017F  -  3130   
+0180  -  003B   
+0181  -  1B6D   STR2:	ASCZLE	"m\e[7m  \e[0m"
+0182  -  375B   
+0183  -  206D   
+0184  -  1B20   
+0185  -  305B   
+0186  -  006D   
+0187  -         
+0187  -         ;INIT GAME ( PLAYFIELD, SCORE, ...)
+0187  -         ;VOID INIT()
+0187  -  1F01   INIT:	SUBI	R7,1
+0188  -  6EE0   		ST		(R7),R6
+0189  -         		
+0189  -         ;	FOR (I=0;I<ALTO;I++) {
+0189  -         ;		FOR (J=1;J<ANCHO+1;J++) CAMPO[I][J]=0;
+0189  -         ;		CAMPO[I][0]=CAMPO[I][ANCHO+1]=8;
+0189  -         ;	}
+0189  -  59E0   		LDPC	R1
+018A  -  0433   		WORD	CAMPO
+018B  -  5614   		LDI		R6,ALTO
+018C  -  5008   INI1:	LDI		R0,8
+018D  -  6820   		ST		(R1),R0
+018E  -  1101   		ADDI	R1,1
+018F  -  520A   		LDI		R2,ANCHO
+0190  -  5000   		LDI		R0,0
+0191  -  6820   INI2:	ST		(R1),R0
+0192  -  1101   		ADDI	R1,1
+0193  -  1A01   		SUBI	R2,1
+0194  -  9FFC   		JNZ		INI2
+0195  -  5008   		LDI		R0,8
+0196  -  6820   		ST		(R1),R0
+0197  -  1101   		ADDI	R1,1
+0198  -  1E01   		SUBI	R6,1
+0199  -  9FF2   		JNZ		INI1
+019A  -         ;	FOR (J=0;J<ANCHO+2;J++) CAMPO[I][J]=8;
+019A  -  520C   		LDI		R2,ANCHO+2
+019B  -  6820   INI3:	ST		(R1),R0
+019C  -  1101   		ADDI	R1,1
+019D  -  1A01   		SUBI	R2,1
+019E  -  9FFC   		JNZ		INI3
+019F  -         ;	FOR (I=0;I<ALTO+1;I++) FOR(J=0;J<ANCHO+2;J++) OLDC[I][J]=0XFF;
+019F  -  59E0   		LDPC	R1
+01A0  -  052F   		WORD	OLDC
+01A1  -  50FF   		LDI		R0,0XFF
+01A2  -  52FC   		LDI		R2,(ALTO+1)*(ANCHO+2)
+01A3  -  6820   INI4:	ST		(R1),R0
+01A4  -  1101   		ADDI	R1,1
+01A5  -  1A01   		SUBI	R2,1
+01A6  -  9FFC   		JNZ		INI4
+01A7  -         ;	FOR (I=0;I<4;I++) FOR (J=0;J<4;J++) PIEZA[I][J]=0;
+01A7  -  514F   		LDI		R1,PIEZA
+01A8  -  5000   		LDI		R0,0
+01A9  -  5210   		LDI		R2,16
+01AA  -  6820   INI5:	ST		(R1),R0
+01AB  -  1101   		ADDI	R1,1
+01AC  -  1A01   		SUBI	R2,1
+01AD  -  9FFC   		JNZ		INI5
+01AE  -         ;	XP=4; YP=-4;
+01AE  -  5140   		LDI		R1,BVAR
+01AF  -  5004   		LDI		R0,4
+01B0  -  6820   		ST		(R1+XP-BVAR),R0
+01B1  -  58A1   		NEG		R0,R0
+01B2  -  6821   		ST		(R1+YP-BVAR),R0
+01B3  -         ;        PRINTF("\0332J\033[H");
+01B3  -  58E0   		LDPC	R0
+01B4  -  01B9   		WORD	STR3
+01B5  -  7ECC   		JAL		PUTSLE
+01B6  -         
+01B6  -  66E0   		LD		R6,(R7)
+01B7  -  1701   		ADDI	R7,1
+01B8  -  58FA   		JIND	R6
+01B9  -  5B1B   STR3:	ASCZLE	"\e[2J\e[H"
+01BA  -  4A32   
+01BB  -  5B1B   
+01BC  -  0048   
+01BD  -         
+01BD  -         ;DISPLAY UPDATE
+01BD  -         ;VOID DISPLAY()
+01BD  -         DISPLAY:
+01BD  -         ;INT I,J,IP,JP,CH;
+01BD  -  1F04   		SUBI	R7,4
+01BE  -  6EE3   		ST		(R7+3),R6
+01BF  -  6DE2   		ST		(R7+2),R5
+01C0  -  6CE1   		ST		(R7+1),R4
+01C1  -  6BE0   		ST		(R7+0),R3
+01C2  -         ;	FOR (I=0;I<ALTO+1;I++) {			; I=R5
+01C2  -         ;	    FOR (J=0;J<ANCHO+2;J++) {		; J=R4
+01C2  -  5500   		LDI		R5,0
+01C3  -  5400   DISP1:	LDI		R4,0		
+01C4  -         ;		CH=0;							; CH=R3
+01C4  -  5300   DISP2:	LDI		R3,0
+01C5  -  00B4   		ADD		R0,R5,R5				
+01C6  -  0000   		ADD		R0,R0,R0				; R0=I*4
+01C7  -  0100   		ADD		R1,R0,R0				; R1=I*8
+01C8  -  0120   		ADD		R1,R1,R0				; R1=I*12 (ANCHO+2)
+01C9  -  0130   		ADD		R1,R1,R4				; R1=I*12+J
+01CA  -  58E0   		LDPC	R0
+01CB  -  0433   		WORD	CAMPO
+01CC  -  0220   		ADD		R2,R1,R0				; R2=CAMPO[I][J]
+01CD  -         ;		IF (CAMPO[I][J]) CH=CAMPO[I][J];
+01CD  -  6040   		LD		R0,(R2)
+01CE  -  8001   		JZ		DISP3
+01CF  -  0B01   		OR		R3,R0,R0
+01D0  -         ;		IP=I-YP;			; IP=R2
+01D0  -  5241   DISP3:	LDI		R2,YP
+01D1  -  6240   		LD		R2,(R2)
+01D2  -  02A9   		SUB		R2,R5,R2
+01D3  -         ;		IF (IP>=0 && IP<4) {
+01D3  -  C010   		JMI		DISP4
+01D4  -  4A04   		CMPI	R2,4
+01D5  -  A00E   		JC		DISP4
+01D6  -         ;		    JP=J-XP;		; JP=R0
+01D6  -  5040   		LDI		R0,XP
+01D7  -  6000   		LD		R0,(R0)
+01D8  -  0081   		SUB		R0,R4,R0
+01D9  -         ;		    IF (JP>=0 && JP<4) 
+01D9  -  C00A   		JMI		DISP4
+01DA  -  4804   		CMPI	R0,4
+01DB  -  A008   		JC		DISP4
+01DC  -         ;				IF (PIEZA[IP][JP]) CH=PIEZA[IP][JP];
+01DC  -  0248   		ADD		R2,R2,R2
+01DD  -  0248   		ADD		R2,R2,R2
+01DE  -  0240   		ADD		R2,R2,R0	; R2=IP*4+JP
+01DF  -  504F   		LDI		R0,PIEZA
+01E0  -  0240   		ADD		R2,R2,R0	; R2=&PIEZA[IP][JP]
+01E1  -  6040   		LD		R0,(R2)
+01E2  -  8001   		JZ		DISP4
+01E3  -  0B01   		OR		R3,R0,R0
+01E4  -         ;		}
+01E4  -         DISP4:
+01E4  -         ;		IF (OLDC[I][J]!=CH) {
+01E4  -  58E0   		LDPC	R0
+01E5  -  052F   		WORD	OLDC
+01E6  -  0220   		ADD		R2,R1,R0	; R2=&OLDC[I][J]
+01E7  -  6040   		LD		R0,(R2)
+01E8  -  000D   		SUB		R0,R0,R3
+01E9  -  8005   		JZ		DISP5
+01EA  -         ;		    OLDC[I][J]=CH;
+01EA  -  6B40   		ST		(R2),R3
+01EB  -         ;		    CUADRO(J,I,CH);
+01EB  -  0891   		OR		R0,R4,R4
+01EC  -  09B5   		OR		R1,R5,R5
+01ED  -  0A6D   		OR		R2,R3,R3
+01EE  -  7F6A   		JAL		CUADRO
+01EF  -         ;		  }
+01EF  -         ;	    }
+01EF  -  1401   DISP5:	ADDI	R4,1
+01F0  -  500C   		LDI		R0,ANCHO+2
+01F1  -  0081   		SUB		R0,R4,R0
+01F2  -  9FD1   		JNZ		DISP2
+01F3  -         ;	}
+01F3  -  1501   		ADDI	R5,1
+01F4  -  5015   		LDI		R0,ALTO+1
+01F5  -  00A1   		SUB		R0,R5,R0
+01F6  -  9FCC   		JNZ		DISP1
+01F7  -         ;	PRINTF("\033[%d;%dH",12,31);
+01F7  -  58E0   		LDPC	R0
+01F8  -  0200   		WORD	STR4
+01F9  -  7E88   		JAL		PUTSLE
 01FA  -         
-01FA  -         ;INT TESTPOS(INT X, INT Y)
-01FA  -         TESTPOS:	; R0 = X  R1 = Y
-01FA  -  1F04   		SUBI	R7,4
-01FB  -  6EE3   		ST		(R7+3),R6
-01FC  -  6DE2   		ST		(R7+2),R5
-01FD  -  6CE1   		ST		(R7+1),R4
-01FE  -  6BE0   		ST		(R7+0),R3
-01FF  -         ;	FOR (I=0;I<4;I++)
-01FF  -         ;		FOR (J=0;J<4;J++) {
-01FF  -  5600   		LDI		R6,0	; R6 = I
-0200  -  5500   TPOS1:	LDI		R5,0	; R5 = J
-0201  -         TPOS2:
-0201  -         ;			IF (X+J<0) CONTINUE;
-0201  -  0214   		ADD		R2,R0,R5
-0202  -  C01C   		JMI		TPOS3
-0203  -         ;			IF (X+J>ANCHO+1) CONTINUE;
-0203  -  4A0B   		CMPI	R2,ANCHO+1
-0204  -  8001   		JZ		TPOS21
-0205  -  A019   		JC		TPOS3
-0206  -         ;			IF (Y+I<0) CONTINUE;
-0206  -  0438   TPOS21:	ADD		R4,R1,R6
-0207  -  C017   		JMI		TPOS3
-0208  -         ;			IF (Y+I>ALTO) CONTINUE;
-0208  -  5314   		LDI		R3,ALTO
-0209  -  038D   		SUB		R3,R4,R3
-020A  -  8001   		JZ		TPOS22
-020B  -  A013   		JC		TPOS3
-020C  -         ;			IF (CAMPO[Y+I][X+J] && PIEZA[I][J]) RETURN 1;
-020C  -  0390   TPOS22:	ADD		R3,R4,R4	;
-020D  -  0370   		ADD		R3,R3,R4	; R3 = (Y+I)*3
-020E  -  036C   		ADD		R3,R3,R3
-020F  -  036C   		ADD		R3,R3,R3	; R3 = (Y+I)*12
-0210  -  0368   		ADD		R3,R3,R2	; R3 = (Y+I)*12 + (X+J)
-0211  -  5AE0   		LDPC	R2
-0212  -  0428   		WORD	CAMPO
-0213  -  0368   		ADD		R3,R3,R2
-0214  -  6360   		LD		R3,(R3)
-0215  -  8009   		JZ		TPOS3
-0216  -         
-0216  -  03D8   		ADD		R3,R6,R6	; R3 = I*4
-0217  -  036C   		ADD		R3,R3,R3
-0218  -  0374   		ADD		R3,R3,R5	; R3= I*4+J
-0219  -  524F   		LDI		R2,PIEZA
-021A  -  0368   		ADD		R3,R3,R2
-021B  -  6360   		LD		R3,(R3)
-021C  -  8002   		JZ		TPOS3
-021D  -         
-021D  -  5001   		LDI		R0,1
-021E  -  F007   		JR		TPOS9
-021F  -         
-021F  -  1501   TPOS3:	ADDI	R5,1
-0220  -  4D04   		CMPI	R5,4
-0221  -  9FDF   		JNZ		TPOS2
-0222  -  1601   		ADDI	R6,1
-0223  -  4E04   		CMPI	R6,4
-0224  -  9FDB   		JNZ		TPOS1
-0225  -         ;		}
-0225  -         ;	RETURN 0;
-0225  -  5000   		LDI		R0,0
-0226  -  63E0   TPOS9:	LD		R3,(R7+0)
-0227  -  64E1   		LD		R4,(R7+1)
-0228  -  65E2   		LD		R5,(R7+2)
-0229  -  66E3   		LD		R6,(R7+3)
-022A  -  1704   		ADDI	R7,4
-022B  -  58FA   		JIND	R6
-022C  -         
-022C  -         ;VOID ROTA(INT GIRO)
-022C  -         ROTA:	; R0: 0 HORARIO,  !=0 ANTIHORARIO
-022C  -  1F12   		SUBI	R7,18	; ESPACIO PARA TABLA EN LA PILA
-022D  -  6EF1   		ST		(R7+17),R6
-022E  -  6DF0   		ST		(R7+16),R5
-022F  -         		;	INT I,J; R6=I, R5=I
-022F  -         		;	UCHAR TMP[4][4];
-022F  -         
-022F  -         ;	IF (GIRO>0) {		//GIRO ANTIHORARIO DE 90º
-022F  -  0801   		OR		R0,R0,R0
-0230  -  8012   		JZ		ROTAH
-0231  -         ;		FOR (I=0;I<4;I++)
-0231  -         ;			FOR (J=0;J<4;J++) TMP[3-J][I]=PIEZA[I][J];
-0231  -  514F   		LDI		R1,PIEZA
-0232  -  5600   		LDI		R6,0
-0233  -  5500   ROTA1:	LDI		R5,0
-0234  -  5203   ROTA2:	LDI		R2,3
-0235  -  0255   		SUB		R2,R2,R5	; 3-J
-0236  -  5A6A   		RORI	R2,R2,16-2
-0237  -  0258   		ADD		R2,R2,R6	; [3-J]*4+J
-0238  -  02E8   		ADD		R2,R7,R2	; &TMP[3-J][I]
-0239  -  6020   		LD		R0,(R1)
-023A  -  1101   		ADDI	R1,1
-023B  -  6840   		ST		(R2),R0
-023C  -  1501   		ADDI	R5,1
-023D  -  4D04   		CMPI	R5,4
-023E  -  9FF5   		JNZ		ROTA2
-023F  -  1601   		ADDI	R6,1
-0240  -  4E04   		CMPI	R6,4
-0241  -  9FF1   		JNZ		ROTA1
-0242  -         ;		FOR (I=0;I<4;I++)
-0242  -         ;			FOR (J=0;J<4;J++) PIEZA[I][J]=TMP[I][J];
-0242  -  F010   		JR		ROTA4
-0243  -         ;	}
-0243  -         ;	IF (GIRO<0) {		//GIRO HORARIO DE 90º
-0243  -         ;		FOR (I=0;I<4;I++)
-0243  -         ;			FOR (J=0;J<4;J++) TMP[J][3-I]=PIEZA[I][J];
-0243  -  514F   ROTAH:	LDI		R1,PIEZA
-0244  -  5600   		LDI		R6,0
-0245  -  5500   ROTA5:	LDI		R5,0
-0246  -  5A76   ROTA6:	RORI	R2,R5,16-2 ; J*4
-0247  -  1203   		ADDI	R2,3
-0248  -  0259   		SUB		R2,R2,R6	; J*4 +3 -I
-0249  -  025C   		ADD		R2,R2,R7	; R2 = &TMP[J][3-I]
-024A  -  6020   		LD		R0,(R1)
-024B  -  1101   		ADDI	R1,1
-024C  -  6840   		ST		(R2),R0
-024D  -  1501   		ADDI	R5,1
-024E  -  4D04   		CMPI	R5,4
-024F  -  9FF6   		JNZ		ROTA6
-0250  -  1601   		ADDI	R6,1
-0251  -  4E04   		CMPI	R6,4
-0252  -  9FF2   		JNZ		ROTA5
-0253  -         ;		FOR (I=0;I<4;I++)
-0253  -         ;			FOR (J=0;J<4;J++) PIEZA[I][J]=TMP[I][J];
-0253  -  514F   ROTA4:	LDI		R1,PIEZA
-0254  -  5610   		LDI		R6,16
-0255  -  60E0   ROTA3:	LD		R0,(R7)
-0256  -  6820   		ST		(R1),R0
-0257  -  1101   		ADDI	R1,1
-0258  -  1701   		ADDI	R7,1		; APROVECHAMOS PARA REAJUSTAR PILA
-0259  -  1E01   		SUBI	R6,1
-025A  -  9FFA   		JNZ		ROTA3
-025B  -         ;	}
-025B  -         
-025B  -  65E0   		LD		R5,(R7+0)
-025C  -  66E1   		LD		R6,(R7+1)
-025D  -  1702   		ADDI	R7,2
-025E  -  58FA   		JIND	R6
-025F  -         
-025F  -         ;-------------------------------------------------------------------
-025F  -         ;
-025F  -         ;		MAIN
-025F  -         ;
-025F  -         ;-------------------------------------------------------------------
-025F  -         PSTART:	
-025F  -         START:	
-025F  -  5FE0   		LDPC	R7			; PUNTERO DE PILA AL FINAL DE RAM
-0260  -  8000   		WORD	0X8000
-0261  -  5120   		LDI		R1,IOBASE	
-0262  -  5008   		LDI		R0,8		; ENABLE PWM IRQ
-0263  -  6820   		ST		(R1+IRQEN-IOBASE),R0
-0264  -         		
-0264  -         ;	MAX=0;
-0264  -  5000   		LDI		R0,0
-0265  -  5140   		LDI		R1,BVAR
-0266  -  6822   		ST		(R1+MAX-BVAR),R0
-0267  -  7F14   		JAL		INIT
-0268  -  7F49   		JAL		DISPLAY
-0269  -  F12A   		JR		MBUC100
-026A  -         MBUC0:
-026A  -         ;	INIT();
-026A  -  7F11   		JAL		INIT
-026B  -         ;	DISPLAY();
-026B  -  7F46   		JAL		DISPLAY
-026C  -         
-026C  -         ;	SIGP=RAND()%7;
-026C  -  7ED2   MBUC01:	JAL		RND
-026D  -  7ED1   		JAL		RND
-026E  -  7ED0   		JAL		RND
-026F  -  3007   		ANDI	R0,7
-0270  -  4807   		CMPI	R0,7
-0271  -  8FFA   		JZ		MBUC01
-0272  -         		
-0272  -  5140   		LDI		R1,BVAR
-0273  -  6823   		ST		(R1+SIGP-BVAR),R0
-0274  -         ;	NPIEZAS=NLINEAS=0;
-0274  -  5000   		LDI		R0,0
-0275  -  6824   		ST		(R1+NPIEZAS-BVAR),R0
-0276  -  6825   		ST		(R1+NLINEAS-BVAR),R0
-0277  -         ;	PRINTF("\033[%d;%dH",12,28);
-0277  -         ;	PRINTF("MAX");
-0277  -         ;	PRINTF("\033[%d;%dH",13,28);
-0277  -  58E0   		LDPC	R0
-0278  -  03BD   		WORD	STR5
-0279  -  7E08   		JAL		PUTSLE
-027A  -         ;	PRINTF("%d",MAX); FFLUSH(STDOUT);
-027A  -  5140   		LDI		R1,BVAR
-027B  -  6022   		LD		R0,(R1+MAX-BVAR)
-027C  -  7E1C   		JAL		PRTDEC
-027D  -         ;	FOR(;;) {
-027D  -         MBUC1:
-027D  -         
-027D  -         ;		NPIEZAS++;
+01FA  -  63E0   		LD		R3,(R7+0)
+01FB  -  64E1   		LD		R4,(R7+1)
+01FC  -  65E2   		LD		R5,(R7+2)
+01FD  -  66E3   		LD		R6,(R7+3)
+01FE  -  1704   		ADDI	R7,4
+01FF  -  58FA   		JIND	R6
+0200  -  5B1B   STR4:	ASCZLE	"\e[12;31H"
+0201  -  3231   
+0202  -  333B   
+0203  -  4831   
+0204  -  0000   
+0205  -         
+0205  -         ;CHECK IF PIECE POSITION IS VALID (NOT COLLIDING WITH OTHER BLOCKS)
+0205  -         ;INT TESTPOS(INT X, INT Y)
+0205  -         TESTPOS:	; R0 = X  R1 = Y
+0205  -  1F04   		SUBI	R7,4
+0206  -  6EE3   		ST		(R7+3),R6
+0207  -  6DE2   		ST		(R7+2),R5
+0208  -  6CE1   		ST		(R7+1),R4
+0209  -  6BE0   		ST		(R7+0),R3
+020A  -         ;	FOR (I=0;I<4;I++)
+020A  -         ;		FOR (J=0;J<4;J++) {
+020A  -  5600   		LDI		R6,0	; R6 = I
+020B  -  5500   TPOS1:	LDI		R5,0	; R5 = J
+020C  -         TPOS2:
+020C  -         ;			IF (X+J<0) CONTINUE;
+020C  -  0214   		ADD		R2,R0,R5
+020D  -  C01C   		JMI		TPOS3
+020E  -         ;			IF (X+J>ANCHO+1) CONTINUE;
+020E  -  4A0B   		CMPI	R2,ANCHO+1
+020F  -  8001   		JZ		TPOS21
+0210  -  A019   		JC		TPOS3
+0211  -         ;			IF (Y+I<0) CONTINUE;
+0211  -  0438   TPOS21:	ADD		R4,R1,R6
+0212  -  C017   		JMI		TPOS3
+0213  -         ;			IF (Y+I>ALTO) CONTINUE;
+0213  -  5314   		LDI		R3,ALTO
+0214  -  038D   		SUB		R3,R4,R3
+0215  -  8001   		JZ		TPOS22
+0216  -  A013   		JC		TPOS3
+0217  -         ;			IF (CAMPO[Y+I][X+J] && PIEZA[I][J]) RETURN 1;
+0217  -  0390   TPOS22:	ADD		R3,R4,R4	;
+0218  -  0370   		ADD		R3,R3,R4	; R3 = (Y+I)*3
+0219  -  036C   		ADD		R3,R3,R3
+021A  -  036C   		ADD		R3,R3,R3	; R3 = (Y+I)*12
+021B  -  0368   		ADD		R3,R3,R2	; R3 = (Y+I)*12 + (X+J)
+021C  -  5AE0   		LDPC	R2
+021D  -  0433   		WORD	CAMPO
+021E  -  0368   		ADD		R3,R3,R2
+021F  -  6360   		LD		R3,(R3)
+0220  -  8009   		JZ		TPOS3
+0221  -         
+0221  -  03D8   		ADD		R3,R6,R6	; R3 = I*4
+0222  -  036C   		ADD		R3,R3,R3
+0223  -  0374   		ADD		R3,R3,R5	; R3= I*4+J
+0224  -  524F   		LDI		R2,PIEZA
+0225  -  0368   		ADD		R3,R3,R2
+0226  -  6360   		LD		R3,(R3)
+0227  -  8002   		JZ		TPOS3
+0228  -         
+0228  -  5001   		LDI		R0,1
+0229  -  F007   		JR		TPOS9
+022A  -         
+022A  -  1501   TPOS3:	ADDI	R5,1
+022B  -  4D04   		CMPI	R5,4
+022C  -  9FDF   		JNZ		TPOS2
+022D  -  1601   		ADDI	R6,1
+022E  -  4E04   		CMPI	R6,4
+022F  -  9FDB   		JNZ		TPOS1
+0230  -         ;		}
+0230  -         ;	RETURN 0;
+0230  -  5000   		LDI		R0,0
+0231  -  63E0   TPOS9:	LD		R3,(R7+0)
+0232  -  64E1   		LD		R4,(R7+1)
+0233  -  65E2   		LD		R5,(R7+2)
+0234  -  66E3   		LD		R6,(R7+3)
+0235  -  1704   		ADDI	R7,4
+0236  -  58FA   		JIND	R6
+0237  -         
+0237  -         ;ROTATE THE PIECE
+0237  -         ;VOID ROTA(INT GIRO)
+0237  -         ROTA:	; R0: 0 CLOCKWISE,  !=0 ANTICLOCKWISE
+0237  -  1F12   		SUBI	R7,18	; ALLOCATE SPACE IN THE STACK
+0238  -  6EF1   		ST		(R7+17),R6
+0239  -  6DF0   		ST		(R7+16),R5
+023A  -         		;	INT I,J; R6=I, R5=I
+023A  -         		;	UCHAR TMP[4][4];
+023A  -         
+023A  -         ;	IF (GIRO>0) {		//ANTICLOCKWISE, 90º
+023A  -  0801   		OR		R0,R0,R0
+023B  -  8012   		JZ		ROTAH
+023C  -         ;		FOR (I=0;I<4;I++)
+023C  -         ;			FOR (J=0;J<4;J++) TMP[3-J][I]=PIEZA[I][J];
+023C  -  514F   		LDI		R1,PIEZA
+023D  -  5600   		LDI		R6,0
+023E  -  5500   ROTA1:	LDI		R5,0
+023F  -  5203   ROTA2:	LDI		R2,3
+0240  -  0255   		SUB		R2,R2,R5	; 3-J
+0241  -  5A6A   		RORI	R2,R2,16-2
+0242  -  0258   		ADD		R2,R2,R6	; [3-J]*4+J
+0243  -  02E8   		ADD		R2,R7,R2	; &TMP[3-J][I]
+0244  -  6020   		LD		R0,(R1)
+0245  -  1101   		ADDI	R1,1
+0246  -  6840   		ST		(R2),R0
+0247  -  1501   		ADDI	R5,1
+0248  -  4D04   		CMPI	R5,4
+0249  -  9FF5   		JNZ		ROTA2
+024A  -  1601   		ADDI	R6,1
+024B  -  4E04   		CMPI	R6,4
+024C  -  9FF1   		JNZ		ROTA1
+024D  -         ;		FOR (I=0;I<4;I++)
+024D  -         ;			FOR (J=0;J<4;J++) PIEZA[I][J]=TMP[I][J];
+024D  -  F010   		JR		ROTA4
+024E  -         ;	}
+024E  -         ;	IF (GIRO<0) {		//CLOCKWISE, 90º
+024E  -         ;		FOR (I=0;I<4;I++)
+024E  -         ;			FOR (J=0;J<4;J++) TMP[J][3-I]=PIEZA[I][J];
+024E  -  514F   ROTAH:	LDI		R1,PIEZA
+024F  -  5600   		LDI		R6,0
+0250  -  5500   ROTA5:	LDI		R5,0
+0251  -  5A76   ROTA6:	RORI	R2,R5,16-2 ; J*4
+0252  -  1203   		ADDI	R2,3
+0253  -  0259   		SUB		R2,R2,R6	; J*4 +3 -I
+0254  -  025C   		ADD		R2,R2,R7	; R2 = &TMP[J][3-I]
+0255  -  6020   		LD		R0,(R1)
+0256  -  1101   		ADDI	R1,1
+0257  -  6840   		ST		(R2),R0
+0258  -  1501   		ADDI	R5,1
+0259  -  4D04   		CMPI	R5,4
+025A  -  9FF6   		JNZ		ROTA6
+025B  -  1601   		ADDI	R6,1
+025C  -  4E04   		CMPI	R6,4
+025D  -  9FF2   		JNZ		ROTA5
+025E  -         ;		FOR (I=0;I<4;I++)
+025E  -         ;			FOR (J=0;J<4;J++) PIEZA[I][J]=TMP[I][J];
+025E  -  514F   ROTA4:	LDI		R1,PIEZA
+025F  -  5610   		LDI		R6,16
+0260  -  60E0   ROTA3:	LD		R0,(R7)
+0261  -  6820   		ST		(R1),R0
+0262  -  1101   		ADDI	R1,1
+0263  -  1701   		ADDI	R7,1		; STACK ADJUSTMENT DONE HERE
+0264  -  1E01   		SUBI	R6,1
+0265  -  9FFA   		JNZ		ROTA3
+0266  -         ;	}
+0266  -         
+0266  -  65E0   		LD		R5,(R7+0)
+0267  -  66E1   		LD		R6,(R7+1)
+0268  -  1702   		ADDI	R7,2
+0269  -  58FA   		JIND	R6
+026A  -         
+026A  -         ;-------------------------------------------------------------------
+026A  -         ;
+026A  -         ;		MAIN CODE
+026A  -         ;
+026A  -         ;-------------------------------------------------------------------
+026A  -         PSTART:	
+026A  -         START:	
+026A  -  5700   		LDI		R7,0			; STACK POINTER AT THE END OF RAM
+026B  -  5120   		LDI		R1,IOBASE
+026C  -  6020   		LD		R0,(R1+IRQEN-IOBASE)
+026D  -  3808   		ORI		R0,8		; ENABLE PWM IRQ
+026E  -  6820   		ST		(R1+IRQEN-IOBASE),R0
+026F  -         		
+026F  -         ;	MAX=0;
+026F  -  5000   		LDI		R0,0
+0270  -  5140   		LDI		R1,BVAR
+0271  -  6822   		ST		(R1+MAX-BVAR),R0
+0272  -  7F14   		JAL		INIT
+0273  -  7F49   		JAL		DISPLAY
+0274  -  F12A   		JR		MBUC100
+0275  -         MBUC0:
+0275  -         ;	INIT();
+0275  -  7F11   		JAL		INIT
+0276  -         ;	DISPLAY();
+0276  -  7F46   		JAL		DISPLAY
+0277  -         
+0277  -         ;	SIGP=RAND()%7;
+0277  -  7ED2   MBUC01:	JAL		RND
+0278  -  7ED1   		JAL		RND
+0279  -  7ED0   		JAL		RND
+027A  -  3007   		ANDI	R0,7
+027B  -  4807   		CMPI	R0,7
+027C  -  8FFA   		JZ		MBUC01
+027D  -         		
 027D  -  5140   		LDI		R1,BVAR
-027E  -  6024   		LD		R0,(R1+NPIEZAS-BVAR)
-027F  -  1001   		ADDI	R0,1
-0280  -  6820   		ST		(R1),R0
-0281  -         ;		NP=SIGP;
-0281  -  5243   		LDI		R2,SIGP
-0282  -  6340   		LD		R3,(R2)		; NP=R3
-0283  -         ;		SIGP=RAND()%7;
-0283  -  7EBB   MBUC20:	JAL		RND
-0284  -  7EBA   		JAL		RND
-0285  -  7EB9   		JAL		RND
-0286  -  3007   		ANDI	R0,7
-0287  -  4807   		CMPI	R0,7
-0288  -  8FFA   		JZ		MBUC20
-0289  -  5243   		LDI		R2,SIGP
-028A  -  6840   		ST		(R2),R0
-028B  -         ;		// DIBUJAMOS LA SIGUIENTE PIEZA
-028B  -         ;		FOR (I=0;I<2;I++)
-028B  -         ;		    FOR(J=0;J<4;J++)
-028B  -         ;		    	CUADRO(ANCHO+3+J,I,PIEZAS[SIGP][I][J]);
-028B  -  5500   		LDI		R5,0
-028C  -  5CE0   		LDPC	R4			; R4=&PIEZAS[SIGP][0][0]
-028D  -  03CC   		WORD	PIEZAS
-028E  -  5143   		LDI		R1,SIGP
-028F  -  6020   		LD		R0,(R1)
-0290  -  5861   		RORI	R0,R0,16-3
-0291  -  0410   		ADD		R4,R0,R4
-0292  -  08B5   MBUC2:	OR		R0,R5,R5
-0293  -  3003   		ANDI	R0,3
-0294  -  100D   		ADDI	R0,ANCHO+3
-0295  -  5995   		SHR		R1,R5
-0296  -  5985   		SHR		R1,R1
-0297  -  02B0   		ADD		R2,R5,R4
-0298  -  6240   		LD		R2,(R2)
-0299  -  7EB4   		JAL		CUADRO
-029A  -  1501   		ADDI	R5,1
-029B  -  4D08   		CMPI	R5,8
-029C  -  9FF5   		JNZ		MBUC2
-029D  -         ;		// COPIAMOS PIEZA ACTUAL A SU BITMAP
-029D  -         ;		FOR (I=0;I<4;I++)
-029D  -         ;		    FOR (J=0;J<4;J++)
-029D  -         ;			PIEZA[I][J]=(I==0 || I==3)?0:PIEZAS[NP][I-1][J];
-029D  -  5CE0   		LDPC	R4			; R4=&PIEZAS[NP][0][0]
-029E  -  03CC   		WORD	PIEZAS
-029F  -  586D   		RORI	R0,R3,16-3
-02A0  -  0410   		ADD		R4,R0,R4
-02A1  -  524F   		LDI		R2,PIEZA
-02A2  -  5500   		LDI		R5,0		; I
-02A3  -  5600   MBUC5:	LDI		R6,0		; J
-02A4  -  5000   MBUC3:	LDI		R0,0
-02A5  -  4D00   		CMPI	R5,0
-02A6  -  8009   		JZ		MBUC4
-02A7  -  4D03   		CMPI	R5,3
-02A8  -  8007   		JZ		MBUC4
-02A9  -  09B5   		OR		R1,R5,R5
-02AA  -  1901   		SUBI	R1,1
-02AB  -  0124   		ADD		R1,R1,R1
-02AC  -  0124   		ADD		R1,R1,R1	; R1=(I-1)*4
-02AD  -  0138   		ADD		R1,R1,R6	; R1=(I-1)*4+J
-02AE  -  0130   		ADD		R1,R1,R4	; R1=&PIEZAS[NP][I-1][J];
-02AF  -  6020   		LD		R0,(R1)
-02B0  -  01B4   MBUC4:	ADD		R1,R5,R5
-02B1  -  0124   		ADD		R1,R1,R1	; R1=I*4
-02B2  -  0138   		ADD		R1,R1,R6	; R1=(I*4)+J
-02B3  -  524F   		LDI		R2,PIEZA
-02B4  -  0128   		ADD		R1,R1,R2	; R1=&PIEZA[I][J]
-02B5  -  6820   		ST		(R1),R0
-02B6  -  1601   		ADDI	R6,1
-02B7  -  4E04   		CMPI	R6,4
-02B8  -  9FEB   		JNZ		MBUC3
-02B9  -  1501   		ADDI	R5,1
-02BA  -  4D04   		CMPI	R5,4
-02BB  -  9FE7   		JNZ		MBUC5
-02BC  -         ;		// POSICIONES INICIALES
-02BC  -         ;		XP=4; YP=-2;
-02BC  -  5140   		LDI		R1,BVAR
-02BD  -  5004   		LDI		R0,4
-02BE  -  6820   		ST		(R1+XP-BVAR),R0
-02BF  -  5002   		LDI		R0,2
-02C0  -  58A1   		NEG		R0,R0
-02C1  -  6821   		ST		(R1+YP-BVAR),R0
-02C2  -         ;		// SI NO SE PUEDE NI EMPEZAR A CAER: GAME OVER
-02C2  -         ;		IF (TESTPOS(XP,YP)) BREAK;
-02C2  -  6020   		LD		R0,(R1+XP-BVAR)
-02C3  -  6121   		LD		R1,(R1+YP-BVAR)
-02C4  -  7F35   		JAL		TESTPOS
-02C5  -  0801   		OR		R0,R0,R0
-02C6  -  90CD   		JNZ		MBUC100
-02C7  -         ;		DEL=INIDEL-NLINEAS/DELSTEP; 
+027E  -  6823   		ST		(R1+SIGP-BVAR),R0
+027F  -         ;	NPIEZAS=NLINEAS=0;
+027F  -  5000   		LDI		R0,0
+0280  -  6824   		ST		(R1+NPIEZAS-BVAR),R0
+0281  -  6825   		ST		(R1+NLINEAS-BVAR),R0
+0282  -         ;	PRINTF("\033[%d;%dH",12,28);
+0282  -         ;	PRINTF("MAX");
+0282  -         ;	PRINTF("\033[%d;%dH",13,28);
+0282  -  58E0   		LDPC	R0
+0283  -  03C8   		WORD	STR5
+0284  -  7DFD   		JAL		PUTSLE
+0285  -         ;	PRINTF("%d",MAX); FFLUSH(STDOUT);
+0285  -  5140   		LDI		R1,BVAR
+0286  -  6022   		LD		R0,(R1+MAX-BVAR)
+0287  -  7E11   		JAL		PRTDEC
+0288  -         ;	FOR(;;) {
+0288  -         MBUC1:
+0288  -         
+0288  -         ;		NPIEZAS++;
+0288  -  5140   		LDI		R1,BVAR
+0289  -  6024   		LD		R0,(R1+NPIEZAS-BVAR)
+028A  -  1001   		ADDI	R0,1
+028B  -  6820   		ST		(R1),R0
+028C  -         ;		NP=SIGP;
+028C  -  5243   		LDI		R2,SIGP
+028D  -  6340   		LD		R3,(R2)		; NP=R3
+028E  -         ;		SIGP=RAND()%7;
+028E  -  7EBB   MBUC20:	JAL		RND
+028F  -  7EBA   		JAL		RND
+0290  -  7EB9   		JAL		RND
+0291  -  3007   		ANDI	R0,7
+0292  -  4807   		CMPI	R0,7
+0293  -  8FFA   		JZ		MBUC20
+0294  -  5243   		LDI		R2,SIGP
+0295  -  6840   		ST		(R2),R0
+0296  -         ;		// DIBUJAMOS LA SIGUIENTE PIEZA
+0296  -         ;		FOR (I=0;I<2;I++)
+0296  -         ;		    FOR(J=0;J<4;J++)
+0296  -         ;		    	CUADRO(ANCHO+3+J,I,PIEZAS[SIGP][I][J]);
+0296  -  5500   		LDI		R5,0
+0297  -  5CE0   		LDPC	R4			; R4=&PIEZAS[SIGP][0][0]
+0298  -  03D7   		WORD	PIEZAS
+0299  -  5143   		LDI		R1,SIGP
+029A  -  6020   		LD		R0,(R1)
+029B  -  5861   		RORI	R0,R0,16-3
+029C  -  0410   		ADD		R4,R0,R4
+029D  -  08B5   MBUC2:	OR		R0,R5,R5
+029E  -  3003   		ANDI	R0,3
+029F  -  100D   		ADDI	R0,ANCHO+3
+02A0  -  5995   		SHR		R1,R5
+02A1  -  5985   		SHR		R1,R1
+02A2  -  02B0   		ADD		R2,R5,R4
+02A3  -  6240   		LD		R2,(R2)
+02A4  -  7EB4   		JAL		CUADRO
+02A5  -  1501   		ADDI	R5,1
+02A6  -  4D08   		CMPI	R5,8
+02A7  -  9FF5   		JNZ		MBUC2
+02A8  -         ;		// COPY CURRENT PIECE TO ITS BITMAP
+02A8  -         ;		FOR (I=0;I<4;I++)
+02A8  -         ;		    FOR (J=0;J<4;J++)
+02A8  -         ;			PIEZA[I][J]=(I==0 || I==3)?0:PIEZAS[NP][I-1][J];
+02A8  -  5CE0   		LDPC	R4			; R4=&PIEZAS[NP][0][0]
+02A9  -  03D7   		WORD	PIEZAS
+02AA  -  586D   		RORI	R0,R3,16-3
+02AB  -  0410   		ADD		R4,R0,R4
+02AC  -  524F   		LDI		R2,PIEZA
+02AD  -  5500   		LDI		R5,0		; I
+02AE  -  5600   MBUC5:	LDI		R6,0		; J
+02AF  -  5000   MBUC3:	LDI		R0,0
+02B0  -  4D00   		CMPI	R5,0
+02B1  -  8009   		JZ		MBUC4
+02B2  -  4D03   		CMPI	R5,3
+02B3  -  8007   		JZ		MBUC4
+02B4  -  09B5   		OR		R1,R5,R5
+02B5  -  1901   		SUBI	R1,1
+02B6  -  0124   		ADD		R1,R1,R1
+02B7  -  0124   		ADD		R1,R1,R1	; R1=(I-1)*4
+02B8  -  0138   		ADD		R1,R1,R6	; R1=(I-1)*4+J
+02B9  -  0130   		ADD		R1,R1,R4	; R1=&PIEZAS[NP][I-1][J];
+02BA  -  6020   		LD		R0,(R1)
+02BB  -  01B4   MBUC4:	ADD		R1,R5,R5
+02BC  -  0124   		ADD		R1,R1,R1	; R1=I*4
+02BD  -  0138   		ADD		R1,R1,R6	; R1=(I*4)+J
+02BE  -  524F   		LDI		R2,PIEZA
+02BF  -  0128   		ADD		R1,R1,R2	; R1=&PIEZA[I][J]
+02C0  -  6820   		ST		(R1),R0
+02C1  -  1601   		ADDI	R6,1
+02C2  -  4E04   		CMPI	R6,4
+02C3  -  9FEB   		JNZ		MBUC3
+02C4  -  1501   		ADDI	R5,1
+02C5  -  4D04   		CMPI	R5,4
+02C6  -  9FE7   		JNZ		MBUC5
+02C7  -         ;		// INITIAL POSITION
+02C7  -         ;		XP=4; YP=-2;
 02C7  -  5140   		LDI		R1,BVAR
-02C8  -  6025   		LD		R0,(R1+NLINEAS-BVAR)
-02C9  -  5881   		SHR		R0,R0
-02CA  -  5881   		SHR		R0,R0
-02CB  -  5881   		SHR		R0,R0
-02CC  -  510F   		LDI		R1,15
-02CD  -  0021   		SUB		R0,R1,R0
-02CE  -         ;		IF (DEL<1) DEL=1; DL=DEL;
-02CE  -  C001   		JMI		MBUC41
-02CF  -  9001   		JNZ		MBUC42
-02D0  -  5001   MBUC41:	LDI		R0,1
-02D1  -  5140   MBUC42:	LDI		R1,BVAR
-02D2  -  6826   		ST		(R1+DEL-BVAR),R0
-02D3  -  6827   		ST		(R1+DL-BVAR),R0
-02D4  -         IBUC0:	; BUCLE DE CAIDA
-02D4  -         ;		JAL		RND
-02D4  -         
-02D4  -         ;			NP=0;
-02D4  -  5300   		LDI		R3,0
-02D5  -         ;			SWITCH(GETCH_VT()) {
-02D5  -  5120   		LDI		R1,IOBASE
-02D6  -  6021   		LD		R0,(R1+PFLAGS-IOBASE)
-02D7  -  3001   		ANDI	R0,1
-02D8  -  803B   		JZ		IBUC1
-02D9  -  6022   		LD		R0,(R1+UARTDAT-IOBASE)
-02DA  -         ;CASE K_L:	IF (!TESTPOS(XP-1,YP)) XP--;
-02DA  -         ;					NP=1;
-02DA  -         ;					BREAK;
-02DA  -  5301   		LDI		R3,1
-02DB  -  486A   		CMPI	R0,'j'
-02DC  -  900C   		JNZ		IBUC2
-02DD  -  5440   		LDI		R4,BVAR
-02DE  -  6580   		LD		R5,(R4+XP-BVAR)
-02DF  -  08B5   		OR		R0,R5,R5
-02E0  -  1801   		SUBI	R0,1
-02E1  -  6181   		LD		R1,(R4+YP-BVAR)
-02E2  -  7F17   		JAL		TESTPOS
-02E3  -  0801   		OR		R0,R0,R0
-02E4  -  902F   		JNZ		IBUC1
-02E5  -  08B5   		OR		R0,R5,R5
-02E6  -  1801   		SUBI	R0,1
-02E7  -  6880   		ST		(R4+XP-BVAR),R0
-02E8  -  F02B   		JR		IBUC1
-02E9  -         ;CASE K_R:	IF (!TESTPOS(XP+1,YP)) XP++;
-02E9  -  5301   IBUC2:	LDI		R3,1
-02EA  -  486C   		CMPI	R0,'l'
-02EB  -  900C   		JNZ		IBUC3
-02EC  -  5440   		LDI		R4,BVAR
-02ED  -  6580   		LD		R5,(R4+XP-BVAR)
-02EE  -  08B5   		OR		R0,R5,R5
-02EF  -  1001   		ADDI	R0,1
-02F0  -  6181   		LD		R1,(R4+YP-BVAR)
-02F1  -  7F08   		JAL		TESTPOS
-02F2  -  0801   		OR		R0,R0,R0
-02F3  -  9020   		JNZ		IBUC1
-02F4  -  08B5   		OR		R0,R5,R5
-02F5  -  1001   		ADDI	R0,1
-02F6  -  6880   		ST		(R4+XP-BVAR),R0
-02F7  -  F01C   		JR		IBUC1
-02F8  -         ;CASE K_U:	ROTA(1);
-02F8  -  5301   IBUC3:	LDI		R3,1
-02F9  -  486B   		CMPI	R0,'k'
-02FA  -  900A   		JNZ		IBUC4
-02FB  -  5001   		LDI		R0,1
-02FC  -  7F2F   		JAL		ROTA
-02FD  -         ;IF(TESTPOS(XP,YP)) ROTA(-1);
-02FD  -  5140   		LDI		R1,BVAR
-02FE  -  6020   		LD		R0,(R1+XP-BVAR)
-02FF  -  6121   		LD		R1,(R1+YP-BVAR)
-0300  -  7EF9   		JAL		TESTPOS
-0301  -  0801   		OR		R0,R0,R0
-0302  -  8011   		JZ		IBUC1
-0303  -  5000   		LDI		R0,0
-0304  -  7F27   		JAL		ROTA
-0305  -         ;CASE K_D:	WHILE (!TESTPOS(XP,YP+1)) {
-0305  -  4820   IBUC4:	CMPI	R0,' '
-0306  -  900D   		JNZ		IBUC5
-0307  -  5440   IBUC45:	LDI		R4,BVAR
-0308  -  6080   		LD		R0,(R4+XP-BVAR)
-0309  -  6181   		LD		R1,(R4+YP-BVAR)
-030A  -  1101   		ADDI	R1,1
-030B  -  7EEE   		JAL		TESTPOS
+02C8  -  5004   		LDI		R0,4
+02C9  -  6820   		ST		(R1+XP-BVAR),R0
+02CA  -  5002   		LDI		R0,2
+02CB  -  58A1   		NEG		R0,R0
+02CC  -  6821   		ST		(R1+YP-BVAR),R0
+02CD  -         ;		// GAME OVER IF NOT EVEN THE INITIAL POSITION IS VALID
+02CD  -         ;		IF (TESTPOS(XP,YP)) BREAK;
+02CD  -  6020   		LD		R0,(R1+XP-BVAR)
+02CE  -  6121   		LD		R1,(R1+YP-BVAR)
+02CF  -  7F35   		JAL		TESTPOS
+02D0  -  0801   		OR		R0,R0,R0
+02D1  -  90CD   		JNZ		MBUC100
+02D2  -         ;		DEL=INIDEL-NLINEAS/DELSTEP; 
+02D2  -  5140   		LDI		R1,BVAR
+02D3  -  6025   		LD		R0,(R1+NLINEAS-BVAR)
+02D4  -  5881   		SHR		R0,R0
+02D5  -  5881   		SHR		R0,R0
+02D6  -  5881   		SHR		R0,R0
+02D7  -  510F   		LDI		R1,15
+02D8  -  0021   		SUB		R0,R1,R0
+02D9  -         ;		IF (DEL<1) DEL=1; DL=DEL;
+02D9  -  C001   		JMI		MBUC41
+02DA  -  9001   		JNZ		MBUC42
+02DB  -  5001   MBUC41:	LDI		R0,1
+02DC  -  5140   MBUC42:	LDI		R1,BVAR
+02DD  -  6826   		ST		(R1+DEL-BVAR),R0
+02DE  -  6827   		ST		(R1+DL-BVAR),R0
+02DF  -         IBUC0:	; BUCLE DE CAIDA
+02DF  -         ;		JAL		RND
+02DF  -         
+02DF  -         ;			NP=0;
+02DF  -  5300   		LDI		R3,0
+02E0  -         ;			SWITCH(GETCH_VT()) {
+02E0  -  5120   		LDI		R1,IOBASE
+02E1  -  6021   		LD		R0,(R1+PFLAGS-IOBASE)
+02E2  -  3001   		ANDI	R0,1
+02E3  -  803B   		JZ		IBUC1
+02E4  -  6022   		LD		R0,(R1+UARTDAT-IOBASE)
+02E5  -         ;CASE K_L:	IF (!TESTPOS(XP-1,YP)) XP--;
+02E5  -         ;					NP=1;
+02E5  -         ;					BREAK;
+02E5  -  5301   		LDI		R3,1
+02E6  -  486A   		CMPI	R0,'j'
+02E7  -  900C   		JNZ		IBUC2
+02E8  -  5440   		LDI		R4,BVAR
+02E9  -  6580   		LD		R5,(R4+XP-BVAR)
+02EA  -  08B5   		OR		R0,R5,R5
+02EB  -  1801   		SUBI	R0,1
+02EC  -  6181   		LD		R1,(R4+YP-BVAR)
+02ED  -  7F17   		JAL		TESTPOS
+02EE  -  0801   		OR		R0,R0,R0
+02EF  -  902F   		JNZ		IBUC1
+02F0  -  08B5   		OR		R0,R5,R5
+02F1  -  1801   		SUBI	R0,1
+02F2  -  6880   		ST		(R4+XP-BVAR),R0
+02F3  -  F02B   		JR		IBUC1
+02F4  -         ;CASE K_R:	IF (!TESTPOS(XP+1,YP)) XP++;
+02F4  -  5301   IBUC2:	LDI		R3,1
+02F5  -  486C   		CMPI	R0,'l'
+02F6  -  900C   		JNZ		IBUC3
+02F7  -  5440   		LDI		R4,BVAR
+02F8  -  6580   		LD		R5,(R4+XP-BVAR)
+02F9  -  08B5   		OR		R0,R5,R5
+02FA  -  1001   		ADDI	R0,1
+02FB  -  6181   		LD		R1,(R4+YP-BVAR)
+02FC  -  7F08   		JAL		TESTPOS
+02FD  -  0801   		OR		R0,R0,R0
+02FE  -  9020   		JNZ		IBUC1
+02FF  -  08B5   		OR		R0,R5,R5
+0300  -  1001   		ADDI	R0,1
+0301  -  6880   		ST		(R4+XP-BVAR),R0
+0302  -  F01C   		JR		IBUC1
+0303  -         ;CASE K_U:	ROTA(1);
+0303  -  5301   IBUC3:	LDI		R3,1
+0304  -  486B   		CMPI	R0,'k'
+0305  -  900A   		JNZ		IBUC4
+0306  -  5001   		LDI		R0,1
+0307  -  7F2F   		JAL		ROTA
+0308  -         ;IF(TESTPOS(XP,YP)) ROTA(-1);
+0308  -  5140   		LDI		R1,BVAR
+0309  -  6020   		LD		R0,(R1+XP-BVAR)
+030A  -  6121   		LD		R1,(R1+YP-BVAR)
+030B  -  7EF9   		JAL		TESTPOS
 030C  -  0801   		OR		R0,R0,R0
-030D  -  901D   		JNZ		NUEVAPIEZA
-030E  -         ;						YP++;
-030E  -  6081   		LD		R0,(R4+YP-BVAR)
-030F  -  1001   		ADDI	R0,1
-0310  -  6881   		ST		(R4+YP-BVAR),R0
-0311  -         ;						DISPLAY();
-0311  -  7EA0   		JAL		DISPLAY
-0312  -         ;						USLEEP(50000);
-0312  -  7D55   		JAL		DEL50M
-0313  -  FFF3   		JR		IBUC45
-0314  -         IBUC5:
-0314  -         IBUC1:
-0314  -         ;			IF (!(--DL)) {	// ABAJO
-0314  -  5140   		LDI		R1,BVAR
-0315  -  6027   		LD		R0,(R1+DL-BVAR)
-0316  -  1801   		SUBI	R0,1
-0317  -  6827   		ST		(R1+DL-BVAR),R0
-0318  -  900D   		JNZ		IBUC20
-0319  -         ;				DL=DEL;
-0319  -  6026   		LD		R0,(R1+DEL-BVAR)
-031A  -  6827   		ST		(R1+DL-BVAR),R0
-031B  -         ;			IF (TESTPOS(XP,YP+1)) BREAK;
-031B  -  6020   		LD		R0,(R1+XP-BVAR)
-031C  -  6121   		LD		R1,(R1+YP-BVAR)
-031D  -  1101   		ADDI	R1,1
-031E  -  7EDB   		JAL		TESTPOS
-031F  -  0801   		OR		R0,R0,R0
-0320  -  900A   		JNZ		NUEVAPIEZA
-0321  -         ;				YP++;
-0321  -  5141   		LDI		R1,YP
-0322  -  6020   		LD		R0,(R1)
-0323  -  1001   		ADDI	R0,1
-0324  -  6820   		ST		(R1),R0
-0325  -         ;				NP=1;
-0325  -  5301   		LDI		R3,1
-0326  -         ;			}
-0326  -         IBUC20:
-0326  -         ;			IF (NP) DISPLAY();
-0326  -  0B6D   		OR		R3,R3,R3
-0327  -  8001   		JZ		IBUC21
-0328  -  7E89   		JAL		DISPLAY
-0329  -         IBUC21:
-0329  -         ;			USLEEP(50000);
-0329  -  7D3E   		JAL		DEL50M
-032A  -         
-032A  -  FFA9   		JR		IBUC0
-032B  -         
-032B  -         NUEVAPIEZA:	;// AñADIMOS LA PIEZA AL CAMPO
-032B  -         ;		FOR (I=0;I<4;I++)
-032B  -         ;		    FOR (J=0;J<4;J++)
-032B  -         ;		    	IF (YP+I>=0 && YP+I<ALTO && XP+J>0 && XP+J<ANCHO+1)
-032B  -         ;		    	    CAMPO[YP+I][XP+J]|=PIEZA[I][J];
-032B  -  5600   		LDI		R6,0		; R6 = I
-032C  -  5500   MBUC6:	LDI		R5,0		; R5 = J
-032D  -  5141   MBUC7:	LDI		R1,YP
-032E  -  6020   		LD		R0,(R1)
-032F  -  0018   		ADD		R0,R0,R6	; R0 = YP+I
-0330  -  C017   		JMI		MBUC8
-0331  -  4814   		CMPI	R0,ALTO
-0332  -  A015   		JC		MBUC8
-0333  -  5140   		LDI		R1,XP
-0334  -  6120   		LD		R1,(R1)
-0335  -  0134   		ADD		R1,R1,R5	; R1 = XP+J
-0336  -  C011   		JMI		MBUC8
-0337  -  490B   		CMPI	R1,ANCHO+1
-0338  -  A00F   		JC		MBUC8
-0339  -  5A7A   		RORI	R2,R6,16-2
-033A  -  0254   		ADD		R2,R2,R5	; R2 = I*4+J
-033B  -  544F   		LDI		R4,PIEZA
-033C  -  0250   		ADD		R2,R2,R4
-033D  -  6440   		LD		R4,(R2)		; R4=PIEZA[I][J]; 
-033E  -  0200   		ADD		R2,R0,R0
-033F  -  0240   		ADD		R2,R2,R0
-0340  -  5A6A   		RORI	R2,R2,16-2
-0341  -  0244   		ADD		R2,R2,R1	; R2 = [YP+I]*12 + [XP+J]
-0342  -  59E0   		LDPC	R1
-0343  -  0428   		WORD	CAMPO
-0344  -  0128   		ADD		R1,R1,R2	; R1 = &CAMPO[YP+I][XP+J]
-0345  -  6220   		LD		R2,(R1)
-0346  -  0C89   		OR		R4,R4,R2
-0347  -  6C20   		ST		(R1),R4
-0348  -  1501   MBUC8:	ADDI	R5,1
-0349  -  4D04   		CMPI	R5,4
-034A  -  9FE2   		JNZ		MBUC7
-034B  -  1601   		ADDI	R6,1
-034C  -  4E04   		CMPI	R6,4
-034D  -  9FDE   		JNZ		MBUC6
-034E  -         
-034E  -         ;		// COMPROBAMOS SI HAY QUE "quemar" ALGUNA LíNEA
-034E  -         ;		XP=YP=-4;
-034E  -  5004   		LDI		R0,4
-034F  -  58A1   		NEG		R0,R0
-0350  -  5140   		LDI		R1,BVAR
-0351  -  6820   		ST		(R1+XP-BVAR),R0
-0352  -  6821   		ST		(R1+YP-BVAR),R0
-0353  -         ;		FOR (I=0;I<ALTO;I++) {
-0353  -  5600   		LDI		R6,0	; R6 = I
-0354  -         MBUC10:
-0354  -         ;		    FOR (J=1;J<ANCHO+1;J++) IF (!CAMPO[I][J]) BREAK;
-0354  -  02D8   		ADD		R2,R6,R6
-0355  -  0258   		ADD		R2,R2,R6
-0356  -  5A6A   		RORI	R2,R2,16-2	; R2 = K*12
-0357  -  59E0   		LDPC	R1
-0358  -  0428   		WORD	CAMPO
-0359  -  0128   		ADD		R1,R1,R2
-035A  -  1101   		ADDI	R1,1
-035B  -  550A   		LDI		R5,ANCHO
-035C  -  6020   MBUC11:	LD		R0,(R1)
-035D  -  8032   		JZ		MBUC30
-035E  -  1101   		ADDI	R1,1
-035F  -  1D01   		SUBI	R5,1
-0360  -  9FFB   		JNZ		MBUC11
-0361  -         ;		    IF (J==ANCHO+1) {	// LINEA COMPLETA: SCROLL HACIA ABAJO
-0361  -         ;			FOR (J=1;J<ANCHO+1;J++)
-0361  -         ;			    FOR (K=I;K>=0;K--)
-0361  -         ;				CAMPO[K][J]=(K)?CAMPO[K-1][J]:0;
-0361  -  5501   		LDI		R5,1
-0362  -  0CD9   MBUC12:	OR		R4,R6,R6	; R4 = K
-0363  -  0290   MBUC13:	ADD		R2,R4,R4
-0364  -  0250   		ADD		R2,R2,R4
-0365  -  5A6A   		RORI	R2,R2,16-2	; R2 = K*12
-0366  -  0254   		ADD		R2,R2,R5	; R2 = K*12 + J	
-0367  -  58E0   		LDPC	R0
-0368  -  0428   		WORD	CAMPO
-0369  -  0240   		ADD		R2,R2,R0	; R2 = &CAMPO[K][J]
-036A  -  0B49   		OR		R3,R2,R2
-036B  -  1B0C   		SUBI	R3,12	; R3 = &CAMPO[K-1][J]
-036C  -  5000   		LDI		R0,0
-036D  -  0C91   		OR		R4,R4,R4
-036E  -  8001   		JZ		MBUC14
-036F  -  6060   		LD		R0,(R3)
-0370  -  6840   MBUC14:	ST		(R2),R0
-0371  -  1C01   		SUBI	R4,1
-0372  -  DFF0   		JPL		MBUC13
-0373  -  1501   		ADDI	R5,1
-0374  -  4D0B   		CMPI	R5,ANCHO+1
-0375  -  9FEC   		JNZ		MBUC12		
-0376  -         
-0376  -         ;			NLINEAS++;
-0376  -  5145   		LDI		R1,NLINEAS
-0377  -  6020   		LD		R0,(R1)
-0378  -  1001   		ADDI	R0,1
-0379  -  6820   		ST		(R1),R0
-037A  -  0DD9   		OR		R5,R6,R6	; COPIA TEMPORAL
-037B  -         ;			PRINTF("\033[%d;%dH",10,28);
-037B  -         ;			PRINTF("%d",NLINEAS);
-037B  -  58E0   		LDPC	R0
-037C  -  03C7   		WORD	STR6
-037D  -  7D04   		JAL		PUTSLE
-037E  -  5145   		LDI		R1,NLINEAS
-037F  -  6020   		LD		R0,(R1)
-0380  -  7D18   		JAL		PRTDEC
-0381  -         ;			IF (NLINEAS>MAX) {
-0381  -         ;				MAX=NLINEAS;
-0381  -         ;				PRINTF("\033[%d;%dH",13,28);
-0381  -         ;				PRINTF("%d",MAX);
-0381  -         ;			}
-0381  -  5240   		LDI		R2,BVAR
-0382  -  6345   		LD		R3,(R2+NLINEAS-BVAR)
-0383  -  6142   		LD		R1,(R2+MAX-BVAR)
-0384  -  0165   		SUB		R1,R3,R1
-0385  -  B006   		JNC		MBUC15
-0386  -  6B42   		ST		(R2+MAX-BVAR),R3
-0387  -  58E0   		LDPC	R0
-0388  -  03BD   		WORD	STR5
-0389  -  7CF8   		JAL		PUTSLE
-038A  -  086D   		OR		R0,R3,R3
+030D  -  8011   		JZ		IBUC1
+030E  -  5000   		LDI		R0,0
+030F  -  7F27   		JAL		ROTA
+0310  -         ;CASE K_D:	WHILE (!TESTPOS(XP,YP+1)) {
+0310  -  4820   IBUC4:	CMPI	R0,' '
+0311  -  900D   		JNZ		IBUC5
+0312  -  5440   IBUC45:	LDI		R4,BVAR
+0313  -  6080   		LD		R0,(R4+XP-BVAR)
+0314  -  6181   		LD		R1,(R4+YP-BVAR)
+0315  -  1101   		ADDI	R1,1
+0316  -  7EEE   		JAL		TESTPOS
+0317  -  0801   		OR		R0,R0,R0
+0318  -  901D   		JNZ		NUEVAPIEZA
+0319  -         ;						YP++;
+0319  -  6081   		LD		R0,(R4+YP-BVAR)
+031A  -  1001   		ADDI	R0,1
+031B  -  6881   		ST		(R4+YP-BVAR),R0
+031C  -         ;						DISPLAY();
+031C  -  7EA0   		JAL		DISPLAY
+031D  -         ;						USLEEP(50000);
+031D  -  7D4A   		JAL		DEL50M
+031E  -  FFF3   		JR		IBUC45
+031F  -         IBUC5:
+031F  -         IBUC1:
+031F  -         ;			IF (!(--DL)) {	// ABAJO
+031F  -  5140   		LDI		R1,BVAR
+0320  -  6027   		LD		R0,(R1+DL-BVAR)
+0321  -  1801   		SUBI	R0,1
+0322  -  6827   		ST		(R1+DL-BVAR),R0
+0323  -  900D   		JNZ		IBUC20
+0324  -         ;				DL=DEL;
+0324  -  6026   		LD		R0,(R1+DEL-BVAR)
+0325  -  6827   		ST		(R1+DL-BVAR),R0
+0326  -         ;			IF (TESTPOS(XP,YP+1)) BREAK;
+0326  -  6020   		LD		R0,(R1+XP-BVAR)
+0327  -  6121   		LD		R1,(R1+YP-BVAR)
+0328  -  1101   		ADDI	R1,1
+0329  -  7EDB   		JAL		TESTPOS
+032A  -  0801   		OR		R0,R0,R0
+032B  -  900A   		JNZ		NUEVAPIEZA
+032C  -         ;				YP++;
+032C  -  5141   		LDI		R1,YP
+032D  -  6020   		LD		R0,(R1)
+032E  -  1001   		ADDI	R0,1
+032F  -  6820   		ST		(R1),R0
+0330  -         ;				NP=1;
+0330  -  5301   		LDI		R3,1
+0331  -         ;			}
+0331  -         IBUC20:
+0331  -         ;			IF (NP) DISPLAY();
+0331  -  0B6D   		OR		R3,R3,R3
+0332  -  8001   		JZ		IBUC21
+0333  -  7E89   		JAL		DISPLAY
+0334  -         IBUC21:
+0334  -         ;			USLEEP(50000);
+0334  -  7D33   		JAL		DEL50M
+0335  -         
+0335  -  FFA9   		JR		IBUC0
+0336  -         
+0336  -         NUEVAPIEZA:	;// ADD PIECA TO FIELD
+0336  -         ;		FOR (I=0;I<4;I++)
+0336  -         ;		    FOR (J=0;J<4;J++)
+0336  -         ;		    	IF (YP+I>=0 && YP+I<ALTO && XP+J>0 && XP+J<ANCHO+1)
+0336  -         ;		    	    CAMPO[YP+I][XP+J]|=PIEZA[I][J];
+0336  -  5600   		LDI		R6,0		; R6 = I
+0337  -  5500   MBUC6:	LDI		R5,0		; R5 = J
+0338  -  5141   MBUC7:	LDI		R1,YP
+0339  -  6020   		LD		R0,(R1)
+033A  -  0018   		ADD		R0,R0,R6	; R0 = YP+I
+033B  -  C017   		JMI		MBUC8
+033C  -  4814   		CMPI	R0,ALTO
+033D  -  A015   		JC		MBUC8
+033E  -  5140   		LDI		R1,XP
+033F  -  6120   		LD		R1,(R1)
+0340  -  0134   		ADD		R1,R1,R5	; R1 = XP+J
+0341  -  C011   		JMI		MBUC8
+0342  -  490B   		CMPI	R1,ANCHO+1
+0343  -  A00F   		JC		MBUC8
+0344  -  5A7A   		RORI	R2,R6,16-2
+0345  -  0254   		ADD		R2,R2,R5	; R2 = I*4+J
+0346  -  544F   		LDI		R4,PIEZA
+0347  -  0250   		ADD		R2,R2,R4
+0348  -  6440   		LD		R4,(R2)		; R4=PIEZA[I][J]; 
+0349  -  0200   		ADD		R2,R0,R0
+034A  -  0240   		ADD		R2,R2,R0
+034B  -  5A6A   		RORI	R2,R2,16-2
+034C  -  0244   		ADD		R2,R2,R1	; R2 = [YP+I]*12 + [XP+J]
+034D  -  59E0   		LDPC	R1
+034E  -  0433   		WORD	CAMPO
+034F  -  0128   		ADD		R1,R1,R2	; R1 = &CAMPO[YP+I][XP+J]
+0350  -  6220   		LD		R2,(R1)
+0351  -  0C89   		OR		R4,R4,R2
+0352  -  6C20   		ST		(R1),R4
+0353  -  1501   MBUC8:	ADDI	R5,1
+0354  -  4D04   		CMPI	R5,4
+0355  -  9FE2   		JNZ		MBUC7
+0356  -  1601   		ADDI	R6,1
+0357  -  4E04   		CMPI	R6,4
+0358  -  9FDE   		JNZ		MBUC6
+0359  -         
+0359  -         ;		// DO WE HAVE TO "burn" A LINE?
+0359  -         ;		XP=YP=-4;
+0359  -  5004   		LDI		R0,4
+035A  -  58A1   		NEG		R0,R0
+035B  -  5140   		LDI		R1,BVAR
+035C  -  6820   		ST		(R1+XP-BVAR),R0
+035D  -  6821   		ST		(R1+YP-BVAR),R0
+035E  -         ;		FOR (I=0;I<ALTO;I++) {
+035E  -  5600   		LDI		R6,0	; R6 = I
+035F  -         MBUC10:
+035F  -         ;		    FOR (J=1;J<ANCHO+1;J++) IF (!CAMPO[I][J]) BREAK;
+035F  -  02D8   		ADD		R2,R6,R6
+0360  -  0258   		ADD		R2,R2,R6
+0361  -  5A6A   		RORI	R2,R2,16-2	; R2 = K*12
+0362  -  59E0   		LDPC	R1
+0363  -  0433   		WORD	CAMPO
+0364  -  0128   		ADD		R1,R1,R2
+0365  -  1101   		ADDI	R1,1
+0366  -  550A   		LDI		R5,ANCHO
+0367  -  6020   MBUC11:	LD		R0,(R1)
+0368  -  8032   		JZ		MBUC30
+0369  -  1101   		ADDI	R1,1
+036A  -  1D01   		SUBI	R5,1
+036B  -  9FFB   		JNZ		MBUC11
+036C  -         ;		    IF (J==ANCHO+1) {	// LINEA COMPLETA: SCROLL HACIA ABAJO
+036C  -         ;			FOR (J=1;J<ANCHO+1;J++)
+036C  -         ;			    FOR (K=I;K>=0;K--)
+036C  -         ;				CAMPO[K][J]=(K)?CAMPO[K-1][J]:0;
+036C  -  5501   		LDI		R5,1
+036D  -  0CD9   MBUC12:	OR		R4,R6,R6	; R4 = K
+036E  -  0290   MBUC13:	ADD		R2,R4,R4
+036F  -  0250   		ADD		R2,R2,R4
+0370  -  5A6A   		RORI	R2,R2,16-2	; R2 = K*12
+0371  -  0254   		ADD		R2,R2,R5	; R2 = K*12 + J	
+0372  -  58E0   		LDPC	R0
+0373  -  0433   		WORD	CAMPO
+0374  -  0240   		ADD		R2,R2,R0	; R2 = &CAMPO[K][J]
+0375  -  0B49   		OR		R3,R2,R2
+0376  -  1B0C   		SUBI	R3,12	; R3 = &CAMPO[K-1][J]
+0377  -  5000   		LDI		R0,0
+0378  -  0C91   		OR		R4,R4,R4
+0379  -  8001   		JZ		MBUC14
+037A  -  6060   		LD		R0,(R3)
+037B  -  6840   MBUC14:	ST		(R2),R0
+037C  -  1C01   		SUBI	R4,1
+037D  -  DFF0   		JPL		MBUC13
+037E  -  1501   		ADDI	R5,1
+037F  -  4D0B   		CMPI	R5,ANCHO+1
+0380  -  9FEC   		JNZ		MBUC12		
+0381  -         
+0381  -         ;			NLINEAS++;
+0381  -  5145   		LDI		R1,NLINEAS
+0382  -  6020   		LD		R0,(R1)
+0383  -  1001   		ADDI	R0,1
+0384  -  6820   		ST		(R1),R0
+0385  -  0DD9   		OR		R5,R6,R6	; TEMP. COPY
+0386  -         ;			PRINTF("\033[%d;%dH",10,28);
+0386  -         ;			PRINTF("%d",NLINEAS);
+0386  -  58E0   		LDPC	R0
+0387  -  03D2   		WORD	STR6
+0388  -  7CF9   		JAL		PUTSLE
+0389  -  5145   		LDI		R1,NLINEAS
+038A  -  6020   		LD		R0,(R1)
 038B  -  7D0D   		JAL		PRTDEC
-038C  -         ;			DISPLAY();
-038C  -  7E25   MBUC15:	JAL		DISPLAY
-038D  -         ;			USLEEP(100000);
-038D  -  7CDA   		JAL		DEL50M
-038E  -  7CD9   		JAL		DEL50M
-038F  -         
-038F  -         ;		    }
-038F  -         ;		}
-038F  -  0EB5   		OR		R6,R5,R5
-0390  -         MBUC30:	
-0390  -  1601   		ADDI	R6,1
-0391  -  4E14   		CMPI	R6,ALTO
-0392  -  9FC1   		JNZ		MBUC10
-0393  -         
-0393  -         
-0393  -  FEE9   		JR	MBUC1
-0394  -         
-0394  -         MBUC100:
-0394  -  58E0   		LDPC	R0
-0395  -  03A6   		WORD	STR7
-0396  -  7CEB   		JAL		PUTSLE
-0397  -         		
-0397  -         		; STOP MUSIC
-0397  -  5000   		LDI		R0,0
-0398  -  5140   		LDI		R1,BVAR
-0399  -  682B   		ST		(R1+FREQ-BVAR),R0
-039A  -  682D   		ST		(R1+PNOTA-BVAR),R0
-039B  -         		
-039B  -         MBUC101:
-039B  -  7DA3   		JAL		RND
-039C  -  5120   		LDI		R1,IOBASE	; REPITE MIENTRAS NO HAY DATOS EN UART RX
-039D  -  6021   		LD		R0,(R1+PFLAGS-IOBASE)
-039E  -  3001   		ANDI	R0,1
-039F  -  8FFB   		JZ		MBUC101
-03A0  -         		; BORRA FLAG DE DATO RECIBIDO
-03A0  -  6022   		LD		R0,(R1+UARTDAT-IOBASE)
-03A1  -         		; START MUSIC
-03A1  -  58E0   		LDPC	R0
-03A2  -  0404   		WORD	MUSTAB
+038C  -         ;			IF (NLINEAS>MAX) {
+038C  -         ;				MAX=NLINEAS;
+038C  -         ;				PRINTF("\033[%d;%dH",13,28);
+038C  -         ;				PRINTF("%d",MAX);
+038C  -         ;			}
+038C  -  5240   		LDI		R2,BVAR
+038D  -  6345   		LD		R3,(R2+NLINEAS-BVAR)
+038E  -  6142   		LD		R1,(R2+MAX-BVAR)
+038F  -  0165   		SUB		R1,R3,R1
+0390  -  B006   		JNC		MBUC15
+0391  -  6B42   		ST		(R2+MAX-BVAR),R3
+0392  -  58E0   		LDPC	R0
+0393  -  03C8   		WORD	STR5
+0394  -  7CED   		JAL		PUTSLE
+0395  -  086D   		OR		R0,R3,R3
+0396  -  7D02   		JAL		PRTDEC
+0397  -         ;			DISPLAY();
+0397  -  7E25   MBUC15:	JAL		DISPLAY
+0398  -         ;			USLEEP(100000);
+0398  -  7CCF   		JAL		DEL50M
+0399  -  7CCE   		JAL		DEL50M
+039A  -         
+039A  -         ;		    }
+039A  -         ;		}
+039A  -  0EB5   		OR		R6,R5,R5
+039B  -         MBUC30:	
+039B  -  1601   		ADDI	R6,1
+039C  -  4E14   		CMPI	R6,ALTO
+039D  -  9FC1   		JNZ		MBUC10
+039E  -         
+039E  -         
+039E  -  FEE9   		JR	MBUC1
+039F  -         
+039F  -         MBUC100:
+039F  -  58E0   		LDPC	R0
+03A0  -  03B1   		WORD	STR7
+03A1  -  7CE0   		JAL		PUTSLE
+03A2  -         		
+03A2  -         		; STOP MUSIC
+03A2  -  5000   		LDI		R0,0
 03A3  -  5140   		LDI		R1,BVAR
-03A4  -  682D   		ST		(R1+PNOTA-BVAR),R0
-03A5  -         
-03A5  -  FEC4   		JR		MBUC0
-03A6  -         
-03A6  -         
-03A6  -  5B1B   STR7:	ASCZLE "\e[10;8HGAME OVER\e[12;2HPress any key to start"
-03A7  -  3031   
-03A8  -  383B   
-03A9  -  4748   
-03AA  -  4D41   
-03AB  -  2045   
-03AC  -  564F   
-03AD  -  5245   
-03AE  -  5B1B   
-03AF  -  3231   
-03B0  -  323B   
-03B1  -  5048   
-03B2  -  6572   
-03B3  -  7373   
-03B4  -  6120   
-03B5  -  796E   
-03B6  -  6B20   
-03B7  -  7965   
-03B8  -  7420   
-03B9  -  206F   
-03BA  -  7473   
-03BB  -  7261   
-03BC  -  0074   
-03BD  -  5B1B   STR5:	ASCZLE "\e[12;28HMAX\e[13;28H"
-03BE  -  3231   
-03BF  -  323B   
-03C0  -  4838   
-03C1  -  414D   
-03C2  -  1B58   
-03C3  -  315B   
-03C4  -  3B33   
-03C5  -  3832   
-03C6  -  0048   
-03C7  -  5B1B   STR6:	ASCZLE "\e[10;28H"
-03C8  -  3031   
-03C9  -  323B   
-03CA  -  4838   
-03CB  -  0000   
-03CC  -         
-03CC  -         ;-------------------------------------------------------------------
-03CC  -         ; CONSTANTES
-03CC  -         ;-------------------------------------------------------------------
-03CC  -         
-03CC  -         PIEZAS:	;PIEZAS[7][2][4]
-03CC  -  0001   	WORD 1	; 0 BARRA ####
-03CD  -  0001   	WORD 1	;         .... 
-03CE  -  0001       WORD 1
-03CF  -  0001       WORD 1
-03D0  -  0000   	WORD 0
-03D1  -  0000   	WORD 0
-03D2  -  0000   	WORD 0
-03D3  -  0000   	WORD 0
-03D4  -         
-03D4  -  0002   	WORD 2	; 1 /L    ###.
-03D5  -  0002   	WORD 2	;         ..#.
-03D6  -  0002   	WORD 2
-03D7  -  0000   	WORD 0
-03D8  -  0000   	WORD 0
-03D9  -  0000   	WORD 0
-03DA  -  0002   	WORD 2
+03A4  -  682B   		ST		(R1+FREQ-BVAR),R0
+03A5  -  682D   		ST		(R1+PNOTA-BVAR),R0
+03A6  -         		
+03A6  -         MBUC101:	
+03A6  -  7DA3   		JAL		RND			; ITERATE UNTIL NEW UART RX DATA
+03A7  -  5120   		LDI		R1,IOBASE	
+03A8  -  6021   		LD		R0,(R1+PFLAGS-IOBASE)
+03A9  -  3001   		ANDI	R0,1
+03AA  -  8FFB   		JZ		MBUC101
+03AB  -         		; CLEAR RX AVAILABLE FLAG
+03AB  -  6022   		LD		R0,(R1+UARTDAT-IOBASE)
+03AC  -         		; START MUSIC
+03AC  -  58E0   		LDPC	R0
+03AD  -  040F   		WORD	MUSTAB
+03AE  -  5140   		LDI		R1,BVAR
+03AF  -  682D   		ST		(R1+PNOTA-BVAR),R0
+03B0  -         
+03B0  -  FEC4   		JR		MBUC0
+03B1  -         
+03B1  -         
+03B1  -  5B1B   STR7:	ASCZLE "\e[10;8HGAME OVER\e[12;2HPress any key to start"
+03B2  -  3031   
+03B3  -  383B   
+03B4  -  4748   
+03B5  -  4D41   
+03B6  -  2045   
+03B7  -  564F   
+03B8  -  5245   
+03B9  -  5B1B   
+03BA  -  3231   
+03BB  -  323B   
+03BC  -  5048   
+03BD  -  6572   
+03BE  -  7373   
+03BF  -  6120   
+03C0  -  796E   
+03C1  -  6B20   
+03C2  -  7965   
+03C3  -  7420   
+03C4  -  206F   
+03C5  -  7473   
+03C6  -  7261   
+03C7  -  0074   
+03C8  -  5B1B   STR5:	ASCZLE "\e[12;28HMAX\e[13;28H"
+03C9  -  3231   
+03CA  -  323B   
+03CB  -  4838   
+03CC  -  414D   
+03CD  -  1B58   
+03CE  -  315B   
+03CF  -  3B33   
+03D0  -  3832   
+03D1  -  0048   
+03D2  -  5B1B   STR6:	ASCZLE "\e[10;28H"
+03D3  -  3031   
+03D4  -  323B   
+03D5  -  4838   
+03D6  -  0000   
+03D7  -         
+03D7  -         ;-------------------------------------------------------------------
+03D7  -         ; CONSTANTS
+03D7  -         ;-------------------------------------------------------------------
+03D7  -         
+03D7  -         PIEZAS:	;PIEZAS[7][2][4] (TETROMINS)
+03D7  -  0001   	WORD 1	; 0 BAR   ####
+03D8  -  0001   	WORD 1	;         .... 
+03D9  -  0001       WORD 1
+03DA  -  0001       WORD 1
 03DB  -  0000   	WORD 0
-03DC  -         
-03DC  -  0000   	WORD 0	; 2 L     .###
-03DD  -  0003   	WORD 3  ;         .#..
-03DE  -  0003   	WORD 3
-03DF  -  0003   	WORD 3
-03E0  -  0000   	WORD 0
-03E1  -  0003   	WORD 3
+03DC  -  0000   	WORD 0
+03DD  -  0000   	WORD 0
+03DE  -  0000   	WORD 0
+03DF  -         
+03DF  -  0002   	WORD 2	; 1 /L    ###.
+03E0  -  0002   	WORD 2	;         ..#.
+03E1  -  0002   	WORD 2
 03E2  -  0000   	WORD 0
 03E3  -  0000   	WORD 0
-03E4  -         
-03E4  -  0000   	WORD 0	; 3 S     ..##
-03E5  -  0000   	WORD 0	;         .##.
-03E6  -  0004   	WORD 4
-03E7  -  0004   	WORD 4
-03E8  -  0000   	WORD 0
-03E9  -  0004   	WORD 4
-03EA  -  0004   	WORD 4
+03E4  -  0000   	WORD 0
+03E5  -  0002   	WORD 2
+03E6  -  0000   	WORD 0
+03E7  -         
+03E7  -  0000   	WORD 0	; 2 L     .###
+03E8  -  0003   	WORD 3  ;         .#..
+03E9  -  0003   	WORD 3
+03EA  -  0003   	WORD 3
 03EB  -  0000   	WORD 0
-03EC  -         
-03EC  -  0005   	WORD 5	; 4 /S    ##..
-03ED  -  0005   	WORD 5	;         .##.
+03EC  -  0003   	WORD 3
+03ED  -  0000   	WORD 0
 03EE  -  0000   	WORD 0
-03EF  -  0000   	WORD 0
-03F0  -  0000   	WORD 0
-03F1  -  0005   	WORD 5
-03F2  -  0005   	WORD 5
+03EF  -         
+03EF  -  0000   	WORD 0	; 3 S     ..##
+03F0  -  0000   	WORD 0	;         .##.
+03F1  -  0004   	WORD 4
+03F2  -  0004   	WORD 4
 03F3  -  0000   	WORD 0
-03F4  -         
-03F4  -  0000   	WORD 0	; 5 T     .###
-03F5  -  0006   	WORD 6	;         ..#.
-03F6  -  0006   	WORD 6
-03F7  -  0006   	WORD 6
-03F8  -  0000   	WORD 0
+03F4  -  0004   	WORD 4
+03F5  -  0004   	WORD 4
+03F6  -  0000   	WORD 0
+03F7  -         
+03F7  -  0005   	WORD 5	; 4 /S    ##..
+03F8  -  0005   	WORD 5	;         .##.
 03F9  -  0000   	WORD 0
-03FA  -  0006   	WORD 6
+03FA  -  0000   	WORD 0
 03FB  -  0000   	WORD 0
-03FC  -         
-03FC  -  0000   	WORD 0	; 6 CUADR .##.
-03FD  -  0007   	WORD 7	;         .##.
-03FE  -  0007   	WORD 7
-03FF  -  0000   	WORD 0
-0400  -  0000   	WORD 0
-0401  -  0007   	WORD 7
-0402  -  0007   	WORD 7
+03FC  -  0005   	WORD 5
+03FD  -  0005   	WORD 5
+03FE  -  0000   	WORD 0
+03FF  -         
+03FF  -  0000   	WORD 0	; 5 T     .###
+0400  -  0006   	WORD 6	;         ..#.
+0401  -  0006   	WORD 6
+0402  -  0006   	WORD 6
 0403  -  0000   	WORD 0
-0404  -         
-0404  -         ; MELODIAS: CADA NOTA CONSTA DE 4 BITS DE DURACIóN (MSB)
-0404  -         ; Y DE 4 BITS DE SELECCIóN DE NOTA (LSB) 0=DO, 1=RE, ...
-0404  -         ; 2 NOTAS POR DATO, LSB: PRIMERA NOTA
-0404  -         ; LA MELODíA TERMINA EN 0
-0404  -         MUSTAB:	
-0404  -  1110   		WORD	0X1110
-0405  -  1422   		WORD	0X1422
-0406  -  3418   		WORD	0X3418
-0407  -  2415   		WORD	0X2415
-0408  -  3022   		WORD	0X3022
-0409  -  1211   		WORD	0X1211
-040A  -  2218   		WORD	0X2218
-040B  -  2021   		WORD	0X2021
-040C  -  1851   		WORD	0X1851
-040D  -  1110   		WORD	0X1110
-040E  -  1422   		WORD	0X1422
-040F  -  3418   		WORD	0X3418
-0410  -  2415   		WORD	0X2415
-0411  -  3022   		WORD	0X3022
-0412  -  1211   		WORD	0X1211
-0413  -  2218   		WORD	0X2218
-0414  -  1811   		WORD	0X1811
-0415  -  6021   		WORD	0X6021
-0416  -  3328   		WORD	0X3328
-0417  -  4318   		WORD	0X4318
-0418  -  1815   		WORD	0X1815
-0419  -  1835   		WORD	0X1835
-041A  -  3425   		WORD	0X3425
+0404  -  0000   	WORD 0
+0405  -  0006   	WORD 6
+0406  -  0000   	WORD 0
+0407  -         
+0407  -  0000   	WORD 0	; 6 SQUARE .##.
+0408  -  0007   	WORD 7	;          .##.
+0409  -  0007   	WORD 7
+040A  -  0000   	WORD 0
+040B  -  0000   	WORD 0
+040C  -  0007   	WORD 7
+040D  -  0007   	WORD 7
+040E  -  0000   	WORD 0
+040F  -         
+040F  -         ; MUSIC: EACH NOTE IS CODED A 4 BITS FOR LENGHT (MSB, LEN ~ VAL*125 MS)
+040F  -         ; AND 4 BITS FOR TONE (LSB, #0 = C, #1 = D, ... #8 = SILENCE)
+040F  -         ; AND A WORD CONTAINS TWO NOTES (LSB: FIRST NOTE)
+040F  -         ; 0X0000: END OF MUSIC
+040F  -         
+040F  -         MUSTAB:	; (SUSANNA)
+040F  -  1110   		WORD	0X1110
+0410  -  1422   		WORD	0X1422
+0411  -  3418   		WORD	0X3418
+0412  -  2415   		WORD	0X2415
+0413  -  3022   		WORD	0X3022
+0414  -  1211   		WORD	0X1211
+0415  -  2218   		WORD	0X2218
+0416  -  2021   		WORD	0X2021
+0417  -  1851   		WORD	0X1851
+0418  -  1110   		WORD	0X1110
+0419  -  1422   		WORD	0X1422
+041A  -  3418   		WORD	0X3418
 041B  -  2415   		WORD	0X2415
-041C  -  5122   		WORD	0X5122
-041D  -  1018   		WORD	0X1018
-041E  -  2211   		WORD	0X2211
-041F  -  1814   		WORD	0X1814
-0420  -  1534   		WORD	0X1534
-0421  -  2224   		WORD	0X2224
-0422  -  1130   		WORD	0X1130
-0423  -  1812   		WORD	0X1812
-0424  -  1122   		WORD	0X1122
-0425  -  2118   		WORD	0X2118
-0426  -  F850   		WORD	0XF850
-0427  -  0000   		WORD	0
-0428  -         
-0428  -         PEND:
-0428  -         ;-------------------------------------------------------------------
-0428  -         ; VARIABLES Y TABLAS
-0428  -         ;-------------------------------------------------------------------
-0428  -         
-0428  -         CAMPO:	; CAMPO[ALTO+1][ANCHO+2]
-0428  -         OLDC= CAMPO+(ALTO+1)*(ANCHO+2)
-0428  -         	
-0428  -         
-0428  -         
+041C  -  3022   		WORD	0X3022
+041D  -  1211   		WORD	0X1211
+041E  -  2218   		WORD	0X2218
+041F  -  1811   		WORD	0X1811
+0420  -  6021   		WORD	0X6021
+0421  -  3328   		WORD	0X3328
+0422  -  4318   		WORD	0X4318
+0423  -  1815   		WORD	0X1815
+0424  -  1835   		WORD	0X1835
+0425  -  3425   		WORD	0X3425
+0426  -  2415   		WORD	0X2415
+0427  -  5122   		WORD	0X5122
+0428  -  1018   		WORD	0X1018
+0429  -  2211   		WORD	0X2211
+042A  -  1814   		WORD	0X1814
+042B  -  1534   		WORD	0X1534
+042C  -  2224   		WORD	0X2224
+042D  -  1130   		WORD	0X1130
+042E  -  1812   		WORD	0X1812
+042F  -  1122   		WORD	0X1122
+0430  -  2118   		WORD	0X2118
+0431  -  F850   		WORD	0XF850
+0432  -  0000   		WORD	0
+0433  -         
+0433  -         PEND:	; END OF CODE
+0433  -         ;-------------------------------------------------------------------
+0433  -         ; DATA ARRAYS
+0433  -         ;-------------------------------------------------------------------
+0433  -         
+0433  -         CAMPO:	; CAMPO[ALTO+1][ANCHO+2]
+0433  -         OLDC= CAMPO+(ALTO+1)*(ANCHO+2)
+0433  -         	
+0433  -         
+0433  -         

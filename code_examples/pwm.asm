@@ -58,6 +58,8 @@ pinit:
 		org		0x40
 bvar:
 nint:	word	0
+phase:	word	0
+freq:	word	1225	;440Hz
 
 
 ;-------------------------------------------------------------------
@@ -175,22 +177,30 @@ irq1:	;jr	TXIRQ
 		org	0x108
 irq2:	;jr	timerIRQ
 		org	0x10c
-irq3:	;jr	PWMIRQ
+irq3:	jr	PWMIRQ
+		org	0x110
+irq4:	word	0
 
 PWMIRQ:
 		subi	r7,3
 		st		(r7),r0
 		st		(r7+1),r1
 		st		(r7+2),r2
-
-		ldi		r1,IOBASE		
-
-		ldi		r2,nint
-		ld		r0,(r2)
+	
+		ldi		r2,bvar
+		ld		r0,(r2+nint-bvar)
 		addi	r0,1
-		st		(r2),r0
+		st		(r2+nint-bvar),r0
+		ld		r0,(r2+phase-bvar)
+		ld		r1,(r2+freq-bvar)
+		add		r0,r0,r1
+		st		(r2+phase-bvar),r0
+		jpl		il2
+		not		r0,r0
+il2:	rori	r0,r0,7
+		andi	r0,255
+		ldi		r1,IOBASE	
 		st		(r1+PWM-IOBASE),r0
-
 		
 iend:	ld		r0,(r7)
 		ld		r1,(r7+1)
@@ -207,14 +217,16 @@ iend:	ld		r0,(r7)
 pstart:	
 start:	
 		ldpc	r7
-		word	0x8000			; Stack below Video
+		word	0x0000			; Stack 
 	
 		ldpc	r0
 		word	txt
 		jal		putsle
 		
-		ldi		r0,0x8			; enable PWM IRQ
+		; enable PWM IRQ
 		ldi		r1,IOBASE
+		ld		r0,(r1)
+		ori		r0,0x8
 		st		(r1),r0
 
 		jr		.
@@ -229,6 +241,90 @@ start:
 		
 
 txt:	asczle "\nPruebas PWM\n"
+
+fnotas:	word	523*65536/23529	; 523.251 Hz DO
+		word	587*65536/23529	; 587,330 Hz RE
+		word	659*65536/23529	; 659,255 Hz MI
+		word	698*65536/23529	; 698,456 Hz FA
+		word	784*65536/23529	; 783,991 Hz SOL
+		word	880*65536/23529	; 880.000 Hz LA
+		word	988*65536/23529	; 987,767 Hz SI
+		word	1046*65536/23529	; 1046,50 Hz DO
+		word	0		; 0Hz (silencio)
+		
+; Melodias: Cada nota consta de 4 bits de duración (MSB)
+; y de 4 bits de selección de nota (LSB) 0=DO, 1=RE, ...
+; La melodía termina en 0
+mustab:	word	0x10
+		word	0x11
+		word	0x22,
+		word	0x14
+		word	0x18,
+		word	0x34,
+		word	0x15,
+		word	0x24,
+		word	0x22,
+		word	0x30,
+		word	0x11,
+		word	0x12,
+		word	0x18,
+		word	0x22,
+		word	0x21,
+		word	0x20,
+		word	0x51,
+		word	0x18,
+		word	0x10,
+		word	0x11,
+		word	0x22,
+		word	0x14,
+		word	0x18,
+		word	0x34,
+		word	0x15,
+		word	0x24,
+		word	0x22,
+		word	0x30,
+		word	0x11,
+		word	0x12,
+		word	0x18,
+		word	0x22,
+		word	0x11,
+		word	0x18,
+		word	0x21,
+		word	0x60,
+		word	0x28,
+		word	0x33,
+		word	0x18,
+		word	0x43,
+		word	0x15,
+		word	0x18,
+		word	0x35,
+		word	0x18,
+		word	0x25,
+		word	0x34,
+		word	0x15,
+		word	0x24,
+		word	0x22,
+		word	0x51,
+		word	0x18,
+		word	0x10,
+		word	0x11,
+		word	0x22,
+		word	0x14,
+		word	0x18,
+		word	0x34,
+		word	0x15,
+		word	0x24,
+		word	0x22,
+		word	0x30,
+		word	0x11,
+		word	0x12,
+		word	0x18,
+		word	0x22,
+		word	0x11,
+		word	0x18,
+		word	0x21,
+		word	0x50,
+		word	0
 		
 pend:
 ;-------------------------------------------------------------------

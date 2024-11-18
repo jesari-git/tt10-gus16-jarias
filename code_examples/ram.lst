@@ -1,0 +1,373 @@
+
+Processor: GUS16 v6
+
+; Label listing -----------------------------------
+
+0006   (    6)   CPUMODEL
+0020   (   32)   IOBASE
+0020   (   32)   IRQEN
+0021   (   33)   PFLAGS
+0021   (   33)   PWM
+0022   (   34)   UARTDAT
+0023   (   35)   TIMER
+0001   (    1)   IRQRXEN
+0002   (    2)   IRQTXEN
+0004   (    4)   IRQTIMEN
+0008   (    8)   IRQHDEEN
+0010   (   16)   IRQVDEEN
+0001   (    1)   UARTDV
+0002   (    2)   UARTRDY
+0004   (    4)   UARTOVER
+0008   (    8)   UARTFER
+0010   (   16)   HDE
+0020   (   32)   VDE
+8000   (32768)   TIMOV
+0040   (   64)   PINIT
+0040   (   64)   PUTSLE
+0041   (   65)   PUTSLE1
+004C   (   76)   PUTSLE3
+004D   (   77)   PUTCH
+0050   (   80)   PRTDEC
+0055   (   85)   PRTD0
+0057   (   87)   PRTD1
+005D   (   93)   PRTD2
+005E   (   94)   PRTD5
+0063   (   99)   PRTD6
+0069   (  105)   PRTD3
+006E   (  110)   PRTD9
+0072   (  114)   PSTART
+0072   (  114)   START
+007A   (  122)   BUC0
+007B   (  123)   BUC
+008A   (  138)   PR2
+008C   (  140)   PR3
+0093   (  147)   PR4
+0097   (  151)   PR5
+009D   (  157)   PR6
+00A3   (  163)   PR7
+00A8   (  168)   PERR
+00B3   (  179)   PR8
+00B7   (  183)   TXT
+00BB   (  187)   TXT64K
+00BE   (  190)   TXT2
+00C5   (  197)   TXTOK
+00C7   (  199)   TXTERR
+00CC   (  204)   TXTBAK
+00D7   (  215)   PEND
+
+; Program listing ----------------------------------
+
+0000  -         ;---------------------------------------------------------------------
+0000  -         ; FIND THE AMOUNT OF ATTACHED RAM AND CHECK IT
+0000  -         ;  RAM UNDER 0X100 HAS TO BE WORKING FOR THIS PROGRAM TO RUN
+0000  -         ;  J. ARIAS (2024)
+0000  -         ;---------------------------------------------------------------------
+0000  -         ; PROGRAMMING CONVENTIONS:
+0000  -         ; STRICT:
+0000  -         ; - CORE REVISION 6 INSTRUCTION SET
+0000  -         ; - R7 IS THE STACK POINTER	(SOFTWARE)
+0000  -         ; - R6 HOLDS THE RETURN ADDRESS FOR SUBROUTINES (JAL)
+0000  -         ; - FULL-DESCENDING STACK
+0000  -         ; LOOSE GUIDELINES:
+0000  -         ; - R0, R1, R2 ARE USED FOR ARGUMENTS / RESULTS
+0000  -         ;              VALUES MAY CHANGE ON SUBROUTINE CALLS
+0000  -         ; - R3, R4, R5 ARE USED FOR LOCAL VARIABLES
+0000  -         ;              VALUES ARE PRESERVED ON SUBROUTINE CALLS
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;----------- I/O MAP  -----------
+0000  -         
+0000  -         IOBASE=		0X20
+0000  -         IRQEN=		0X20
+0000  -         PFLAGS=		0X21
+0000  -         PWM=		0X21
+0000  -         UARTDAT=	0X22
+0000  -         TIMER=		0X23
+0000  -         
+0000  -         ;--------- INTERRUPT ENABLE --------
+0000  -         IRQRXEN=	1
+0000  -         IRQTXEN=	2
+0000  -         IRQTIMEN=	4
+0000  -         IRQHDEEN=	8
+0000  -         IRQVDEEN=	16
+0000  -         ;--------- PFLAGS REGISTER BITS -----------
+0000  -         UARTDV=		1		; DATA VALID (UART RX)
+0000  -         UARTRDY=	2		; TRANSMITTER READY (UART TX)
+0000  -         UARTOVER=	4		; RX OVERRUN ERROR
+0000  -         UARTFER=	8		; RX FRAME ERROR
+0000  -         HDE=		16		; HORIZONTAL DISPLAY ENABLE
+0000  -         VDE=		32		; VERTICAL DISPLAY ENABLE
+0000  -         TIMOV=		0X8000	; TIMER OVERFLOW (SIGN BIT)
+0000  -         
+0000  -         ;--------------------------------------
+0000  -         ;------- HEADER FOR BOOTLOADER --------
+0000  -         ;--------------------------------------
+0000  -         
+0000  -         		ORG		0X40-4
+003C  -         		
+003C  -  4CFF   		WORD	0X4CFF			; MARK
+003D  -  0040   		WORD	PINIT			; DESTINATION ADDRESS
+003E  -  0097   		WORD	PEND-PINIT		; SIZE (WORDS)
+003F  -  0072   		WORD	PSTART			; EXECUTION ADDRESS
+0040  -         
+0040  -         ;--------------------------------------
+0040  -         ;------------- CODE -----------------
+0040  -         ;--------------------------------------
+0040  -         PINIT:
+0040  -         
+0040  -         ;------------------------------------------------------------------------
+0040  -         ; FAST ADDRESS VARIABLES (SINGLE LDI FOR ADDRESS LOADING)
+0040  -         ;------------------------------------------------------------------------
+0040  -         		ORG		0X40
+0040  -         
+0040  -         ;-------------------------------------------------------------------
+0040  -         ; I/O SUBROUTINES
+0040  -         ;-------------------------------------------------------------------
+0040  -         
+0040  -         ;------------------------------------------------------------
+0040  -         ; PRINTS ASCIIZ (16-BIT PACKED, LITTLE ENDIAN) STRING ON UART 
+0040  -         ; PARAMETERS:
+0040  -         ;	R0: POINTER TO STRING
+0040  -         ;	R6: RETURN ADDRESS (JAL)
+0040  -         ; RETURS:
+0040  -         ; 	R0-R2: MODIFIED
+0040  -         
+0040  -  5222   PUTSLE:	LDI		R2,UARTDAT
+0041  -         PUTSLE1:
+0041  -  6100   		LD		R1,(R0)
+0042  -  31FF   		ANDI	R1,0XFF
+0043  -  8008   		JZ		PUTSLE3
+0044  -  6940   		ST		(R2),R1
+0045  -         		
+0045  -  6100   		LD		R1,(R0)
+0046  -  5944   		RORI	R1,R1,8
+0047  -  31FF   		ANDI	R1,0XFF
+0048  -  8003   		JZ		PUTSLE3
+0049  -  6940   		ST		(R2),R1
+004A  -  1001   		ADDI	R0,1
+004B  -  FFF5   		JR		PUTSLE1
+004C  -         
+004C  -         PUTSLE3:
+004C  -  58FA   		JIND	R6
+004D  -         ;----------------------------------------------
+004D  -         ; SENDS CHARACTER TO UART
+004D  -         ; PARAMETERS:
+004D  -         ;	R0: CHARACTER TO SEND
+004D  -         ;	R6: RETURN ADDRESS (JAL)
+004D  -         ; RETURNS:
+004D  -         ; 	R1: MODIFFIED
+004D  -         ; NOTES: CPU CLOCK STOPS IF UART NOT READY FOR TRANSMISSION
+004D  -         
+004D  -  5122   PUTCH:	LDI		R1,UARTDAT
+004E  -  6820   		ST		(R1),R0		
+004F  -  58FA   		JIND	R6			
+0050  -         
+0050  -         ;----------------------------------------------
+0050  -         ; RECEIVES CHARACTER FROM UART
+0050  -         ; PARAMETERS:
+0050  -         ;	R6: RETURN ADDRESS (JAL)
+0050  -         ; RETURNS:
+0050  -         ;	R0: REVEIVED CHAR
+0050  -         ; 	R1: MODIFFIED
+0050  -         ; NOTES: CPU CLOCK STOPS UNTIL A CHARACTER IS RECEIVED
+0050  -         
+0050  -         ; GETCH:	LDI		R1,UARTDAT	
+0050  -         ; 		LD		R0,(R1)		
+0050  -         ; 		JIND	R6			
+0050  -         
+0050  -         ;----------------------------------------------
+0050  -         ; PRINTS DECIMAL NUMBER (OR HEX, OCTAL,...)
+0050  -         ; PARAMETERS:
+0050  -         ;	R0: NUMBER TO PRINT
+0050  -         ;   R2: BASE
+0050  -         ;	R6: RETURN ADDRESS (JAL)
+0050  -          
+0050  -         ; RETURNS:
+0050  -         ;	R0, R1: MODIFFIED
+0050  -         ; NOTES:
+0050  -         ;	AVOIDS PRINTING ZEROES ON THE LEFT
+0050  -         ;   STACK USED FOR TEMPORARY DIGIT STORAGE
+0050  -         
+0050  -         PRTDEC:
+0050  -  1F01   		SUBI	R7,1
+0051  -  6EE0   		ST		(R7),R6
+0052  -         
+0052  -  5100   		LDI		R1,0		; END OF STRING MARK
+0053  -  1F01   		SUBI	R7,1		; TO STACK
+0054  -  69E0   		ST		(R7),R1
+0055  -  5100   PRTD0:	LDI		R1,0		; R0=R0/R2, R1=REMAINDER
+0056  -  5610   		LDI		R6,16		
+0057  -  0000   PRTD1:	ADD		R0,R0,R0
+0058  -  0126   		ADC		R1,R1,R1
+0059  -  0129   		SUB		R1,R1,R2
+005A  -  B002   		JNC		PRTD2
+005B  -  1001   		ADDI	R0,1
+005C  -  F001   		JR		PRTD5
+005D  -  0128   PRTD2:	ADD		R1,R1,R2
+005E  -  1E01   PRTD5:	SUBI	R6,1
+005F  -  9FF7   		JNZ		PRTD1
+0060  -  490A   		CMPI	R1,10		; DIGITS OVER '9' TRANSLATED TO 'A','B'...
+0061  -  C001   		JMI		PRTD6
+0062  -  1107   		ADDI	R1,7
+0063  -  5630   PRTD6:	LDI		R6,'0'		; REMAINDER IN ASCII GOES TO STACK
+0064  -  0138   		ADD		R1,R1,R6
+0065  -  1F01   		SUBI	R7,1
+0066  -  69E0   		ST		(R7),R1
+0067  -  0801   		OR		R0,R0,R0	; REPEAT UNTIL ZERO
+0068  -  9FEC   		JNZ		PRTD0
+0069  -         
+0069  -  60E0   PRTD3:	LD		R0,(R7)		; RETRIEVE CHARACTER FROM STACK
+006A  -  8003   		JZ		PRTD9		; END OF STRING?
+006B  -  1701   		ADDI	R7,1
+006C  -  7FE0   		JAL		PUTCH
+006D  -  FFFB   		JR		PRTD3
+006E  -         
+006E  -  1701   PRTD9:	ADDI	R7,1
+006F  -  66E0   		LD		R6,(R7)
+0070  -  1701   		ADDI	R7,1
+0071  -  58FA   		JIND	R6
+0072  -         
+0072  -         
+0072  -         
+0072  -         ;-------------------------------------------------------------------
+0072  -         ; INTERRUPTS
+0072  -         ;-------------------------------------------------------------------
+0072  -         ;		ORG	0X100
+0072  -         ;IRQ0:	;JR	RXIRQ
+0072  -         ;		ORG	0X104
+0072  -         ;IRQ1:	;JR	TXIRQ
+0072  -         ;		ORG	0X108
+0072  -         ;IRQ2:	;JR	TIMERIRQ
+0072  -         ;		ORG	0X10C
+0072  -         ;IRQ3:	;JR	PWMIRQ
+0072  -         
+0072  -         ;-------------------------------------------------------------------
+0072  -         ;
+0072  -         ;		MAIN
+0072  -         ;
+0072  -         ;-------------------------------------------------------------------
+0072  -         PSTART:	
+0072  -         START:	
+0072  -  57FF   		LDI		R7,0XFF		; STACK POINTER
+0073  -         	
+0073  -  50B7   		LDI	R0	TXT
+0074  -  7FCB   		JAL		PUTSLE
+0075  -         
+0075  -         
+0075  -  5DE0   		LDPC	R5			; TEST VALUE
+0076  -  72A5   		WORD	0X72A5
+0077  -         
+0077  -  5CE0   		LDPC	R4			; START ADDRESS
+0078  -  0100   		WORD	0X100
+0079  -  0B91   		OR		R3,R4,R4	; SAME AS INCREMENT (256)
+007A  -  6D60   BUC0:	ST		(R3),R5
+007B  -  048C   BUC:	ADD		R4,R4,R3
+007C  -  6080   		LD		R0,(R4)
+007D  -  0816   		XOR		R0,R0,R5
+007E  -  9FFC   		JNZ		BUC
+007F  -         		; FOUND VALUE: CHECK AGAIN WITH INVERTED BITS
+007F  -  58B4   		NOT		R0,R5
+0080  -  6860   		ST		(R3),R0
+0081  -  6180   		LD		R1,(R4)
+0082  -  0822   		XOR		R0,R1,R0
+0083  -  9FF6   		JNZ		BUC0		; FAIL: THE VALUE FOUND WAS A RANDOM COINCIDENCE
+0084  -         		
+0084  -  008D   		SUB		R0,R4,R3	; PRINT THE AMOUNT OF RAM
+0085  -  9004   		JNZ		PR2			; A VALUE OF 0 MEANS 64K
+0086  -  58E0   		LDPC	R0
+0087  -  00BB   		WORD	TXT64K
+0088  -  7FB7   		JAL		PUTSLE
+0089  -  F002   		JR		PR3
+008A  -  520A   PR2:	LDI		R2,10		; DECIMAL
+008B  -  7FC4   		JAL		PRTDEC	
+008C  -  58E0   PR3:	LDPC	R0
+008D  -  00BE   		WORD	TXT2
+008E  -  7FB1   		JAL		PUTSLE
+008F  -         
+008F  -         		; NOW DO AN ALMOST WHOLE MEMORY TEST
+008F  -         		; 1- FILL WITH PSEUDO-RANDOM VALUES
+008F  -  5EE0   		LDPC	R6			; LFSR POLY
+0090  -  1021   		WORD	0X1021
+0091  -  048D   		SUB		R4,R4,R3	; AMOUNT OF RAM (R3=0X100)
+0092  -  08B5   		OR		R0,R5,R5	; INITIAL VALUE
+0093  -  6860   PR4:	ST		(R3),R0
+0094  -  0000   		ADD		R0,R0,R0
+0095  -  B001   		JNC		PR5
+0096  -  081A   		XOR		R0,R0,R6
+0097  -  1301   PR5:	ADDI	R3,1
+0098  -  018D   		SUB		R1,R4,R3
+0099  -  9FF9   		JNZ		PR4
+009A  -         
+009A  -         		; FORCED ERROR (ADDRESS=0X1021)
+009A  -         		;LD		R0,(R6)
+009A  -         		;XORI	R0,0X30
+009A  -         		;ST		(R6),R0
+009A  -         		
+009A  -         		; 2- CHECK THE STORED VALUES
+009A  -  5BE0   		LDPC	R3			; INITIAL ADDRESS
+009B  -  0100   		WORD	0X100
+009C  -  08B5   		OR		R0,R5,R5	; INITIAL VALUE
+009D  -  6160   PR6:	LD		R1,(R3)
+009E  -  0A22   		XOR		R2,R1,R0
+009F  -  9008   		JNZ		PERR		
+00A0  -  0000   		ADD		R0,R0,R0
+00A1  -  B001   		JNC		PR7
+00A2  -  081A   		XOR		R0,R0,R6
+00A3  -  1301   PR7:	ADDI	R3,1
+00A4  -  018D   		SUB		R1,R4,R3
+00A5  -  9FF7   		JNZ		PR6		
+00A6  -  50C5   		LDI		R0,TXTOK
+00A7  -  F00B   		JR		PR8
+00A8  -  086D   PERR:	OR		R0,R3,R3	; OFFENDING ADDRESS
+00A9  -  0C49   		OR		R4,R2,R2	; ERROR BITMASK
+00AA  -  5210   		LDI		R2,16		; HEX VALUES
+00AB  -  7FA4   		JAL		PRTDEC
+00AC  -  5068   		LDI		R0,'h'
+00AD  -  7F9F   		JAL		PUTCH
+00AE  -  503A   		LDI		R0,':'
+00AF  -  7F9D   		JAL		PUTCH
+00B0  -  0891   		OR		R0,R4,R4
+00B1  -  7F9E   		JAL		PRTDEC
+00B2  -  50C7   		LDI		R0,TXTERR
+00B3  -  7F8C   PR8:	JAL		PUTSLE	
+00B4  -  50CC   		LDI		R0,TXTBAK
+00B5  -  7F8A   		JAL		PUTSLE
+00B6  -         
+00B6  -  FF49   		JR		0		; AND JUMP TO BOOTLOADER
+00B7  -         
+00B7  -  520A   TXT:	ASCZLE	"\nRAM: "
+00B8  -  4D41   
+00B9  -  203A   
+00BA  -  0000   
+00BB  -  3536   TXT64K:	ASCZLE	"65536"
+00BC  -  3335   
+00BD  -  0036   
+00BE  -  7720   TXT2:	ASCZLE	" words\nRAM  "
+00BF  -  726F   
+00C0  -  7364   
+00C1  -  520A   
+00C2  -  4D41   
+00C3  -  2020   
+00C4  -  0000   
+00C5  -  4B4F   TXTOK:	ASCZLE	"OK\n"
+00C6  -  000A   
+00C7  -  2068   TXTERR:	ASCZLE	"h error\n"
+00C8  -  7265   
+00C9  -  6F72   
+00CA  -  0A72   
+00CB  -  0000   
+00CC  -  622D   TXTBAK: ASCZLE  "-back to bootloader-\n"		
+00CD  -  6361   
+00CE  -  206B   
+00CF  -  6F74   
+00D0  -  6220   
+00D1  -  6F6F   
+00D2  -  6C74   
+00D3  -  616F   
+00D4  -  6564   
+00D5  -  2D72   
+00D6  -  000A   
+00D7  -         
+00D7  -         
+00D7  -         PEND:
+00D7  -         
