@@ -117,13 +117,13 @@ FEC5   (65221)   BREAK
 FEC6   (65222)   RUTSP
 FEC7   (65223)   CADDR
 FEC8   (65224)   MSGHELP
-FF37   (65335)   TXTLOAD
-FF44   (65348)   PSTART
-FF44   (65348)   START
-FF49   (65353)   BUC1
-FF53   (65363)   BUC2
-FF65   (65381)   GETW
-FF6A   (65386)   PEND
+FF42   (65346)   TXTLOAD
+FF4F   (65359)   PSTART
+FF4F   (65359)   START
+FF54   (65364)   BUC1
+FF5E   (65374)   BUC2
+FF70   (65392)   GETW
+FF75   (65397)   PEND
 
 ; Program listing ----------------------------------
 
@@ -176,8 +176,8 @@ FF6A   (65386)   PEND
 FBFC  -         		
 FBFC  -  4CFF   		WORD	0X4CFF			; MARK
 FBFD  -  FC00   		WORD	PINIT			; DESTINATION ADDRESS
-FBFE  -  036A   		WORD	PEND-PINIT		; SIZE (WORDS)
-FBFF  -  FF44   		WORD	PSTART			; EXECUTION ADDRESS
+FBFE  -  0375   		WORD	PEND-PINIT		; SIZE (WORDS)
+FBFF  -  FF4F   		WORD	PSTART			; EXECUTION ADDRESS
 FC00  -         
 FC00  -         ;--------------------------------------
 FC00  -         ;------------- CODE -----------------
@@ -1030,191 +1030,202 @@ FEC8  -
 FEC8  -         ;-------------------------------------------------------------------
 FEC8  -         ; TEXT (OVERWRITABLE BY THE STACK...MAYBE)
 FEC8  -         ;-------------------------------------------------------------------
-FEC8  -  0A63   MSGHELP:	ASCZBE "\nc\tContinue (no stop)\ne\tExecute (w breakpoint)\ns\tSingle step\nn\texec until Next instr\nr\texec until return (JIND R6)\nR\texec until return at higher stack level\nb [adr]\tset Breakpoint\nd [adr]\tDissasemble\nm [adr]\tMemory dump\n"
-FEC9  -  0943   
-FECA  -  6F6E   
-FECB  -  7469   
-FECC  -  6E75   
-FECD  -  6520   
-FECE  -  286E   
-FECF  -  6F20   
-FED0  -  7374   
-FED1  -  6F70   
-FED2  -  290A   
-FED3  -  6509   
-FED4  -  4578   
-FED5  -  6563   
-FED6  -  7574   
-FED7  -  6520   
-FED8  -  2877   
-FED9  -  2062   
-FEDA  -  7265   
-FEDB  -  616B   
-FEDC  -  706F   
-FEDD  -  696E   
-FEDE  -  7429   
-FEDF  -  0A73   
-FEE0  -  0953   
-FEE1  -  696E   
-FEE2  -  676C   
-FEE3  -  6520   
-FEE4  -  7374   
-FEE5  -  6570   
-FEE6  -  0A6E   
-FEE7  -  0965   
-FEE8  -  7865   
-FEE9  -  6320   
-FEEA  -  756E   
-FEEB  -  7469   
-FEEC  -  6C20   
-FEED  -  4E65   
-FEEE  -  7874   
-FEEF  -  2069   
-FEF0  -  6E73   
-FEF1  -  7472   
-FEF2  -  0A72   
-FEF3  -  0965   
-FEF4  -  7865   
-FEF5  -  6320   
-FEF6  -  756E   
-FEF7  -  7469   
-FEF8  -  6C20   
-FEF9  -  7265   
-FEFA  -  7475   
-FEFB  -  726E   
-FEFC  -  2028   
-FEFD  -  4A49   
-FEFE  -  4E44   
-FEFF  -  2052   
-FF00  -  3629   
-FF01  -  0A52   
-FF02  -  0965   
-FF03  -  7865   
-FF04  -  6320   
-FF05  -  756E   
-FF06  -  7469   
-FF07  -  6C20   
-FF08  -  7265   
-FF09  -  7475   
-FF0A  -  726E   
-FF0B  -  2061   
-FF0C  -  7420   
-FF0D  -  6869   
-FF0E  -  6768   
-FF0F  -  6572   
-FF10  -  2073   
-FF11  -  7461   
-FF12  -  636B   
-FF13  -  206C   
-FF14  -  6576   
-FF15  -  656C   
-FF16  -  0A62   
-FF17  -  205B   
-FF18  -  6164   
-FF19  -  725D   
-FF1A  -  0973   
-FF1B  -  6574   
-FF1C  -  2042   
-FF1D  -  7265   
-FF1E  -  616B   
-FF1F  -  706F   
-FF20  -  696E   
-FF21  -  740A   
-FF22  -  6420   
-FF23  -  5B61   
-FF24  -  6472   
-FF25  -  5D09   
-FF26  -  4469   
-FF27  -  7373   
-FF28  -  6173   
-FF29  -  656D   
-FF2A  -  626C   
-FF2B  -  650A   
-FF2C  -  6D20   
-FF2D  -  5B61   
-FF2E  -  6472   
-FF2F  -  5D09   
-FF30  -  4D65   
-FF31  -  6D6F   
-FF32  -  7279   
-FF33  -  2064   
-FF34  -  756D   
-FF35  -  700A   
-FF36  -  0000   
-FF37  -  0A55   TXTLOAD:	ASCZBE "\nUpload program to debug\n"
-FF38  -  706C   
-FF39  -  6F61   
-FF3A  -  6420   
-FF3B  -  7072   
-FF3C  -  6F67   
-FF3D  -  7261   
-FF3E  -  6D20   
-FF3F  -  746F   
-FF40  -  2064   
-FF41  -  6562   
-FF42  -  7567   
-FF43  -  0A00   
-FF44  -         ;-------------------------------------------------------------------
-FF44  -         ;
-FF44  -         ;		MAIN (OVERWRITABLE BY THE STACK)
-FF44  -         ;
-FF44  -         ;-------------------------------------------------------------------
-FF44  -         PSTART:	
-FF44  -         START:	
-FF44  -  5700   		LDI		R7,0
-FF45  -         
-FF45  -  58E0   		LDPC	R0
-FF46  -  FF37   		WORD	TXTLOAD
-FF47  -  7F2F   		JAL		PUTSBE
-FF48  -         
-FF48  -         		; BOOTLOADER-LIKE CODE
-FF48  -  5520   		LDI		R5,IOBASE
-FF49  -  60A2   BUC1:	LD		R0,(R5+UARTDAT-IOBASE)
-FF4A  -  484C   		CMPI	R0,'L'
-FF4B  -  9FFD   		JNZ		BUC1
-FF4C  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
-FF4D  -  7017   		JAL		GETW
-FF4E  -  0A01   		OR		R2,R0,R0		; ADDRESS
-FF4F  -  7015   		JAL		GETW
-FF50  -  0B01   		OR		R3,R0,R0		; COUNT
-FF51  -  7013   		JAL		GETW
-FF52  -  0C01   		OR		R4,R0,R0		; ENTRY POINT
+FEC8  -  0A3C   MSGHELP:	ASCZBE "\n<space>\tredraw screen\nc\tContinue (no stop)\ne\tExecute (w breakpoint)\ns\tSingle step\nn\texec until Next instr\nr\texec until return (JIND R6)\nR\texec until return at higher stack level\nb [adr]\tset Breakpoint\nd [adr]\tDissasemble\nm [adr]\tMemory dump\n"
+FEC9  -  7370   
+FECA  -  6163   
+FECB  -  653E   
+FECC  -  0972   
+FECD  -  6564   
+FECE  -  7261   
+FECF  -  7720   
+FED0  -  7363   
+FED1  -  7265   
+FED2  -  656E   
+FED3  -  0A63   
+FED4  -  0943   
+FED5  -  6F6E   
+FED6  -  7469   
+FED7  -  6E75   
+FED8  -  6520   
+FED9  -  286E   
+FEDA  -  6F20   
+FEDB  -  7374   
+FEDC  -  6F70   
+FEDD  -  290A   
+FEDE  -  6509   
+FEDF  -  4578   
+FEE0  -  6563   
+FEE1  -  7574   
+FEE2  -  6520   
+FEE3  -  2877   
+FEE4  -  2062   
+FEE5  -  7265   
+FEE6  -  616B   
+FEE7  -  706F   
+FEE8  -  696E   
+FEE9  -  7429   
+FEEA  -  0A73   
+FEEB  -  0953   
+FEEC  -  696E   
+FEED  -  676C   
+FEEE  -  6520   
+FEEF  -  7374   
+FEF0  -  6570   
+FEF1  -  0A6E   
+FEF2  -  0965   
+FEF3  -  7865   
+FEF4  -  6320   
+FEF5  -  756E   
+FEF6  -  7469   
+FEF7  -  6C20   
+FEF8  -  4E65   
+FEF9  -  7874   
+FEFA  -  2069   
+FEFB  -  6E73   
+FEFC  -  7472   
+FEFD  -  0A72   
+FEFE  -  0965   
+FEFF  -  7865   
+FF00  -  6320   
+FF01  -  756E   
+FF02  -  7469   
+FF03  -  6C20   
+FF04  -  7265   
+FF05  -  7475   
+FF06  -  726E   
+FF07  -  2028   
+FF08  -  4A49   
+FF09  -  4E44   
+FF0A  -  2052   
+FF0B  -  3629   
+FF0C  -  0A52   
+FF0D  -  0965   
+FF0E  -  7865   
+FF0F  -  6320   
+FF10  -  756E   
+FF11  -  7469   
+FF12  -  6C20   
+FF13  -  7265   
+FF14  -  7475   
+FF15  -  726E   
+FF16  -  2061   
+FF17  -  7420   
+FF18  -  6869   
+FF19  -  6768   
+FF1A  -  6572   
+FF1B  -  2073   
+FF1C  -  7461   
+FF1D  -  636B   
+FF1E  -  206C   
+FF1F  -  6576   
+FF20  -  656C   
+FF21  -  0A62   
+FF22  -  205B   
+FF23  -  6164   
+FF24  -  725D   
+FF25  -  0973   
+FF26  -  6574   
+FF27  -  2042   
+FF28  -  7265   
+FF29  -  616B   
+FF2A  -  706F   
+FF2B  -  696E   
+FF2C  -  740A   
+FF2D  -  6420   
+FF2E  -  5B61   
+FF2F  -  6472   
+FF30  -  5D09   
+FF31  -  4469   
+FF32  -  7373   
+FF33  -  6173   
+FF34  -  656D   
+FF35  -  626C   
+FF36  -  650A   
+FF37  -  6D20   
+FF38  -  5B61   
+FF39  -  6472   
+FF3A  -  5D09   
+FF3B  -  4D65   
+FF3C  -  6D6F   
+FF3D  -  7279   
+FF3E  -  2064   
+FF3F  -  756D   
+FF40  -  700A   
+FF41  -  0000   
+FF42  -  0A55   TXTLOAD:	ASCZBE "\nUpload program to debug\n"
+FF43  -  706C   
+FF44  -  6F61   
+FF45  -  6420   
+FF46  -  7072   
+FF47  -  6F67   
+FF48  -  7261   
+FF49  -  6D20   
+FF4A  -  746F   
+FF4B  -  2064   
+FF4C  -  6562   
+FF4D  -  7567   
+FF4E  -  0A00   
+FF4F  -         ;-------------------------------------------------------------------
+FF4F  -         ;
+FF4F  -         ;		MAIN (OVERWRITABLE BY THE STACK)
+FF4F  -         ;
+FF4F  -         ;-------------------------------------------------------------------
+FF4F  -         PSTART:	
+FF4F  -         START:	
+FF4F  -  5700   		LDI		R7,0
+FF50  -         
+FF50  -  58E0   		LDPC	R0
+FF51  -  FF42   		WORD	TXTLOAD
+FF52  -  7F24   		JAL		PUTSBE
 FF53  -         
-FF53  -  7011   BUC2:	JAL		GETW
-FF54  -  6840   		ST		(R2),R0
-FF55  -  1201   		ADDI	R2,1
-FF56  -  1B01   		SUBI	R3,1
-FF57  -  9FFB   		JNZ		BUC2
-FF58  -         
-FF58  -         		; SET IRQ JUMP 
-FF58  -  51FF   		LDI		R1,0XFF
-FF59  -  58E0   		LDPC	R0
-FF5A  -  FAEF   		WORD	JMPIRQ
-FF5B  -  6831   		ST		(R1+0X110-0XFF),R0
-FF5C  -         		; SET TRACE, BREAK
-FF5C  -  5AE0   		LDPC	R2
-FF5D  -  FEC3   		WORD	BVAR
-FF5E  -  5000   		LDI		R0,0
-FF5F  -  6941   		ST		(R2+TRACE-BVAR),R1
-FF60  -  6842   		ST		(R2+BREAK-BVAR),R0	
-FF61  -         
-FF61  -         		; ENABLE SSTEP IRQ
-FF61  -  60A0   		LD		R0,(R5+IRQEN-IOBASE)
-FF62  -  3810   		ORI		R0,0X10
-FF63  -  68A0   		ST		(R5+IRQEN-IOBASE),R0
-FF64  -         		; AND JUMP TO CODE
-FF64  -  58F2   		JIND	R4
-FF65  -         
-FF65  -         ;-------------------------------------------------------------------
-FF65  -         ; GET 16-BIT WORD FROM UART (TWO BYTES)
-FF65  -  60A2   GETW:	LD		R0,(R5+UARTDAT-IOBASE)	; LSB
-FF66  -  61A2   		LD		R1,(R5+UARTDAT-IOBASE)	; MSB
-FF67  -  5944   		RORI	R1,R1,8
-FF68  -  0805   		OR		R0,R0,R1
-FF69  -  58FA   		JIND	R6
-FF6A  -         
-FF6A  -         
-FF6A  -         PEND:
-FF6A  -         
-FF6A  -         
-FF6A  -         
+FF53  -         		; BOOTLOADER-LIKE CODE
+FF53  -  5520   		LDI		R5,IOBASE
+FF54  -  60A2   BUC1:	LD		R0,(R5+UARTDAT-IOBASE)
+FF55  -  484C   		CMPI	R0,'L'
+FF56  -  9FFD   		JNZ		BUC1
+FF57  -  68A2   		ST		(R5+UARTDAT-IOBASE),R0
+FF58  -  7017   		JAL		GETW
+FF59  -  0A01   		OR		R2,R0,R0		; ADDRESS
+FF5A  -  7015   		JAL		GETW
+FF5B  -  0B01   		OR		R3,R0,R0		; COUNT
+FF5C  -  7013   		JAL		GETW
+FF5D  -  0C01   		OR		R4,R0,R0		; ENTRY POINT
+FF5E  -         
+FF5E  -  7011   BUC2:	JAL		GETW
+FF5F  -  6840   		ST		(R2),R0
+FF60  -  1201   		ADDI	R2,1
+FF61  -  1B01   		SUBI	R3,1
+FF62  -  9FFB   		JNZ		BUC2
+FF63  -         
+FF63  -         		; SET IRQ JUMP 
+FF63  -  51FF   		LDI		R1,0XFF
+FF64  -  58E0   		LDPC	R0
+FF65  -  FAEF   		WORD	JMPIRQ
+FF66  -  6831   		ST		(R1+0X110-0XFF),R0
+FF67  -         		; SET TRACE, BREAK
+FF67  -  5AE0   		LDPC	R2
+FF68  -  FEC3   		WORD	BVAR
+FF69  -  5000   		LDI		R0,0
+FF6A  -  6941   		ST		(R2+TRACE-BVAR),R1
+FF6B  -  6842   		ST		(R2+BREAK-BVAR),R0	
+FF6C  -         
+FF6C  -         		; ENABLE SSTEP IRQ
+FF6C  -  60A0   		LD		R0,(R5+IRQEN-IOBASE)
+FF6D  -  3810   		ORI		R0,0X10
+FF6E  -  68A0   		ST		(R5+IRQEN-IOBASE),R0
+FF6F  -         		; AND JUMP TO CODE
+FF6F  -  58F2   		JIND	R4
+FF70  -         
+FF70  -         ;-------------------------------------------------------------------
+FF70  -         ; GET 16-BIT WORD FROM UART (TWO BYTES)
+FF70  -  60A2   GETW:	LD		R0,(R5+UARTDAT-IOBASE)	; LSB
+FF71  -  61A2   		LD		R1,(R5+UARTDAT-IOBASE)	; MSB
+FF72  -  5944   		RORI	R1,R1,8
+FF73  -  0805   		OR		R0,R0,R1
+FF74  -  58FA   		JIND	R6
+FF75  -         
+FF75  -         
+FF75  -         PEND:
+FF75  -         
+FF75  -         
+FF75  -         
