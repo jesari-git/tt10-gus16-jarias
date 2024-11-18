@@ -866,7 +866,7 @@ caddr:	word	0x100
 ;-------------------------------------------------------------------
 ; text (overwritable by the stack...maybe)
 ;-------------------------------------------------------------------
-msghelp:	asczbe "\nc\tContinue (no stop)\ne\tExecute (w breakpoint)\ns\tSingle step\nn\texec until Next instr\nr\texec until return (JIND R6)\nR\texec until return at higher stack level\nb [adr]\tset Breakpoint\nd [adr]\tDissasemble\nm [adr]\tMemory dump\n"
+msghelp:	asczbe "\n<space>\tredraw screen\nc\tContinue (no stop)\ne\tExecute (w breakpoint)\ns\tSingle step\nn\texec until Next instr\nr\texec until return (JIND R6)\nR\texec until return at higher stack level\nb [adr]\tset Breakpoint\nd [adr]\tDissasemble\nm [adr]\tMemory dump\n"
 txtload:	asczbe "\nUpload program to debug\n"
 ;-------------------------------------------------------------------
 ;
