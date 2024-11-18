@@ -1,7 +1,8 @@
-all:	hello.bin ansitris.bin mandelSDL.bin pwm.bin
+all:	hello.bin ansitris.bin mandelSDL.bin pwm.bin ram.bin sstep.bin debug.bin pru.bin
+hex:	hello.hex ansitris.hex mandelSDL.hex pwm.hex ram.hex sstep.hex
 
 %.hex : %.asm
-	../util/gus6asm -o $@ $<
+	../util6/gus6asm -o $@ $<
 
 %.bin : %.hex
 	./h2bin $< $@

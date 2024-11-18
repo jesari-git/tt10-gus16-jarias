@@ -65,41 +65,14 @@ irq0:
 irq1:	
 		org	0x108
 irq2:	
-timerIRQ:		
-		subi	r7,2
-		st		(r7),r0
-		st		(r7+1),r1
-
-		ldi		r1,TIMER	; La lectura borra la IRQ del timer
-		ld		r0,(r1)
-
-		ldi		r1,nintms	; nintms++ 
-		ld		r0,(r1)
-		addi	r0,1
-		st		(r1),r0
-		cmpi	r0,250	; if (nintms==250)
-		jnz		lirq1
-
-		ldi		r0,0
-		ldi		r1,nintms	; nintms=0
-		st		(r1),r0
-		ld		r0,(r1+1)	; nints++
-		addi	r0,1
-		st		(r1+1),r0
-
-		ldi		r1,GPIO	; Blink GPOUT
-		ld		r0,(r1)
-		xori	r0,1
-		st		(r1),r0
-
-lirq1:	
-		ld		r1,(r7+1)
-		ld		r0,(r7)
-		addi	r7,2
-		reti
+		org	0x10C
+irq3:
+		org	0x110
+irq4:
 ;-------------------------------------------------------------------
 ;		INICIO
 ;-------------------------------------------------------------------
+		org	0x114
 
 X0VAL=	-4080
 Y0VAL=	2400
@@ -109,14 +82,6 @@ pstart:
 		;subi	r7,1
 		ldpc	r7
 		word	0x7fff
-
-		ldi		r1,IOBASE	; Interrupción cada ms
-		ldpc	r0
-		word	999
-		st		(r1+TIMER-IOBASE),r0
-		ld		r0,(r1+TIMER-IOBASE)	; Borramos flag
-		ldi		r0,4		; Enable timer IRQ
-		st		(r1),r0
 
 		ldi		r0,1		; Open graphics
 		jal		cmd

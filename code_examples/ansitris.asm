@@ -220,7 +220,11 @@ irq1:
 		org	0x108
 irq2:	
 		org	0x10C
-irq3:
+irq3:	jr		pwmIRQ
+		org	0x110
+irq4:
+		org	0x114
+		
 pwmIRQ:
 		subi	r7,3
 		st		(r7),r0
@@ -661,10 +665,10 @@ rota3:	ld		r0,(r7)
 ;-------------------------------------------------------------------
 pstart:	
 start:	
-		ldpc	r7			; Stack pointer at the end of RAM
-		word	0x8000
-		ldi		r1,IOBASE	
-		ldi		r0,8		; Enable PWM IRQ
+		ldi		r7,0			; Stack pointer at the end of RAM
+		ldi		r1,IOBASE
+		ld		r0,(r1+IRQEN-IOBASE)
+		ori		r0,8		; Enable PWM IRQ
 		st		(r1+IRQEN-IOBASE),r0
 		
 ;	max=0;
