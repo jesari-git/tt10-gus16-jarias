@@ -73,13 +73,13 @@ db00:	ldi		r5,IOBASE
 		ldpc	r3
 		word	bvar
 		
+		ld		r4,(r5+PC0-IOBASE)		; R4: PC normal mode
 		ld		r1,(r5+PFLAGS-IOBASE)
-		andi	r1,0x40
+		andi	r1,0x40					; Ctrl-C flag set?
 		jz		db001
-		ld		r1,(r5+UARTDAT-IOBASE)
+		ld		r1,(r5+UARTDAT-IOBASE)	; flush RX
 		jr		db002
-db001:	ld		r4,(r5+PC0-IOBASE)	; R4: PC normal mode
-		ld		r1,(r3+break-bvar)	; if(break==PC) set_trace
+db001:	ld		r1,(r3+break-bvar)	; if(break==PC) set_trace
 		xor		r1,r4,r1			; check for breakpoint
 		jnz		db01
 db002:	st		(r3+trace-bvar),r5	
@@ -111,6 +111,7 @@ db03:	ld		r0,(r5+PFLAGS-IOBASE)
 		jal		putsbe
 		ld		r0,(r5+UARTDAT-IOBASE)	; getch
 
+dbupd:	ld		r4,(r5+PC0-IOBASE)
 db04:	ldi		r1,0
 		st		(r3+ldpcf-bvar),r1	; clear ldpc flag
 
@@ -250,7 +251,7 @@ db50:	cmpi	r0,'b'		; set breakpoint
 		ldpc	r3
 		word	bvar
 		st		(r3+break-bvar),r0
-		jr		db00
+		jr		dbupd
 
 db60:	cmpi	r0,'m'		; dump memory
 		jnz		db70
