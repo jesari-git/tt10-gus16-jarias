@@ -61,7 +61,7 @@ pinit:
 		
 SSTEPIRQ:
 
-JMPIRQ= ~(0x10110-SSTEPIRQ)		; opecode of: JR from 0x110 to here
+JMPIRQ= ~(0x10110-SSTEPIRQ)		; opcode of: JR from 0x110 to here
 
 		subi	r7,7
 		st		(r7+1),r1
@@ -73,12 +73,18 @@ db00:	ldi		r5,IOBASE
 		ldpc	r3
 		word	bvar
 		
+		ld		r1,(r5+PFLAGS-IOBASE)
+		andi	r1,0x40
+		jz		db001
+		ld		r1,(r5+UARTDAT-IOBASE)
+		jr		db002
+db001:	ld		r4,(r5+PC0-IOBASE)	; R4: PC normal mode
 		ld		r1,(r3+break-bvar)	; if(break==PC) set_trace
-		ld		r4,(r5+PC0-IOBASE)	; R4: PC normal mode
 		xor		r1,r4,r1			; check for breakpoint
 		jnz		db01
-		st		(r3+trace-bvar),r5	
-db01:	ld		r1,(r3+trace-bvar)	; if (!trace) return
+db002:	st		(r3+trace-bvar),r5	
+db01:		
+		ld		r1,(r3+trace-bvar)	; if (!trace) return
 		jz		iend2
 		st		(r7+0),r0			; save rest of registers
 		st		(r7+2),r2
@@ -97,7 +103,15 @@ db01:	ld		r1,(r3+trace-bvar)	; if (!trace) return
 db02:	ldi		r1,2
 		st		(r3+trace-bvar),r1	; trace positive
 
-db03:	ldi		r1,0
+db03:	ld		r0,(r5+PFLAGS-IOBASE)
+		andi	r0,0x20				; screen dirty?
+		jz		db04
+		ldpc	r0
+		word	msgpause
+		jal		putsbe
+		ld		r0,(r5+UARTDAT-IOBASE)	; getch
+
+db04:	ldi		r1,0
 		st		(r3+ldpcf-bvar),r1	; clear ldpc flag
 
 		ldpc	r0					; clear screen
@@ -164,7 +178,7 @@ db5:	jal		prthex
 		jal		prthex
 		ldpc	r0
 		word	msgebrk
-		jal		putsbe
+dbprom:	jal		putsbe
 		;------------------
 		; User commands
 		;------------------
@@ -177,6 +191,7 @@ dbkey:	ld		r0,(r5+UARTDAT-IOBASE)
 db51:	ldpc	r0
 		word	msgcls
 		jal		putsbe
+		st		(r5+FLAG0-IOBASE),r0	; clear dirty
 		jr		iend
 		
 db10:	cmpi	r0,'n'		; break on next instr
@@ -211,7 +226,7 @@ db35:	cmpi	r0,'R'	; Exec until return (higher stack)
 		jr		db31
 
 db40:	cmpi	r0,'s'		; Step
-		jz		iend
+		jz		iend0
 		;cmpi	r0,'\n'
 		;jz		db00
 		cmpi	r0,' '
@@ -225,9 +240,9 @@ db40:	cmpi	r0,'s'		; Step
 db45:	ldpc	r3
 		word	bvar
 		st		(r3+caddr-bvar),r4
-db44:	ldi		r0,'>'
-		st		(r5+UARTDAT-IOBASE),r0
-		jr		dbkey
+db44:	ldpc	r0
+		word	msgebrk+4
+		jr		dbprom
 			
 db50:	cmpi	r0,'b'		; set breakpoint
 		jnz		db60
@@ -249,8 +264,9 @@ db70:	cmpi	r0,'h'		; print help
 		ldpc	r0
 		word	msghelp
 		jal		putsbe
-		jr		dbkey
-		
+		jr		db44
+
+iend0:	st		(r5+FLAG0-IOBASE),r0	; clear dirty
 iend:	ld		r0,(r7+0)
 		ld		r2,(r7+2)
 		ld		r6,(r7+6)
@@ -271,7 +287,8 @@ flgtbl: word 'V'
 msgpos:	asczbe "\e["
 msgreg:	asczbe ";42HR"
 msgbrk:	asczbe "\e[13;39HBreak: "
-msgebrk:	asczbe "\e[22;1HhcesnrRbdm>"
+msgebrk:	asczbe "\e[22;01HhcesnrRbdm>"
+msgpause:	asczbe "<paused>"
 
 ;------------------------------------------------------
 ; dissasemble 20 instr at (R4)
@@ -905,12 +922,13 @@ buc2:	jal		getw
 		ldpc	r0
 		word	JMPIRQ
 		st		(r1+0x110-0xff),r0
-		; set Trace, break
+		; set Trace, break, clear dirty
 		ldpc	r2
 		word	bvar
 		ldi		r0,0
 		st		(r2+trace-bvar),r1
-		st		(r2+break-bvar),r0	
+		st		(r2+break-bvar),r0
+		st		(r5+FLAG0-IOBASE),r0
 
 		; enable SSTEP IRQ
 		ld		r0,(r5+IRQEN-IOBASE)
