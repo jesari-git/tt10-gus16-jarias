@@ -247,7 +247,7 @@ reg [15:0]iodo;
 always@*
   case (ca[2:0])
      0 : iodo <=  {15'h0,irqen}; // IRQ Enable
-     1 : iodo <=  {tflag,9'h0,sdty,pwmirq,uflags}; // PFLAGS
+     1 : iodo <=  {tflag,8'h0,ctlc,sdty,pwmirq,uflags}; // PFLAGS
      2 : iodo <=  {8'h0,urxdata}; // UART data
      3 : iodo <=  timer;
      4 : iodo <=  {8'b0,ui_in[7:4],ui_in[2:0],gpo};
@@ -274,6 +274,9 @@ UART_core #(.DIVIDER(DIVIDER)) uart0
 		.nstop(1'b0),
 		.txd(txd), .rxd(rxd)
 	);
+
+wire ctlc = (urxdata==3)&uflags[0]; // Ctrl-C received flag
+
 
 ///////////////////////////////
 // Screen dirty flag
