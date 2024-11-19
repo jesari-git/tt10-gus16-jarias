@@ -159,7 +159,7 @@ wire iowe2=(we)&(iocs)&(ca[2:0]==2);
 wire iowe3=(~stopcpu)&(we)&(iocs)&(ca[2:0]==3);
 wire iowe4=(we)&(iocs)&(ca[2:0]==4);
 //wire iowe5=(we)&(iocs)&(ca[2:0]==5);
-//wire iowe6=(we)&(iocs)&(ca[2:0]==6);
+wire iowe6=(we)&(iocs)&(ca[2:0]==6);
 //wire iowe7=(we)&(iocs)&(ca[2:0]==7);
 // Read strobes
 wire iore2=(~we)&(iocs)&(ca[2:0]==2);
@@ -247,7 +247,7 @@ reg [15:0]iodo;
 always@*
   case (ca[2:0])
      0 : iodo <=  {15'h0,irqen}; // IRQ Enable
-     1 : iodo <=  {tflag,10'h0,pwmirq,uflags}; // PFLAGS
+     1 : iodo <=  {tflag,9'h0,sdty,pwmirq,uflags}; // PFLAGS
      2 : iodo <=  {8'h0,urxdata}; // UART data
      3 : iodo <=  timer;
      4 : iodo <=  {8'b0,ui_in[7:4],ui_in[2:0],gpo};
@@ -274,6 +274,11 @@ UART_core #(.DIVIDER(DIVIDER)) uart0
 		.nstop(1'b0),
 		.txd(txd), .rxd(rxd)
 	);
+
+///////////////////////////////
+// Screen dirty flag
+reg sdty;
+always @(posedge cclk) sdty <= iowe2 ? 1 :( iowe6 ? 0 : sdty);
 
 endmodule
 
