@@ -1,8 +1,8 @@
 all:	bin lst
 
-bin:	hello.bin ansitris.bin mandelSDL.bin pwm.bin ram.bin debug.bin
-hex:	hello.hex ansitris.hex mandelSDL.hex pwm.hex ram.hex debug.hex
-lst:	hello.lst ansitris.lst mandelSDL.lst pwm.lst ram.lst debug.lst
+bin:	hello.bin ansitris.bin mandelpgm.bin pwm.bin ram.bin debug.bin
+hex:	hello.hex ansitris.hex mandelpgm.hex pwm.hex ram.hex debug.hex
+lst:	hello.lst ansitris.lst mandelpgm.lst pwm.lst ram.lst debug.lst
 
 %.hex : %.asm
 	../util6/gus6asm -o $@ $<

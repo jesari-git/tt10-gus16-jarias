@@ -112,6 +112,8 @@ db03:	ld		r0,(r5+PFLAGS-IOBASE)
 		ld		r0,(r5+UARTDAT-IOBASE)	; getch
 
 dbupd:	ld		r4,(r5+PC0-IOBASE)
+		ldpc	r3
+		word	bvar
 db04:	ldi		r1,0
 		st		(r3+ldpcf-bvar),r1	; clear ldpc flag
 
@@ -146,7 +148,10 @@ db4:	ldpc	r0
 		jal		putsbe
 		ldi		r0,3
 		add		r0,r3,r0
-		jal		prtdec
+		cmpi	r0,10		; translate 0x0A-0x0F to 0x10-0x15
+		jmi		db41
+		addi	r0,6
+db41:	jal		prthexv
 		ldpc	r0
 		word	msgreg
 		jal		putsbe
@@ -229,9 +234,9 @@ db35:	cmpi	r0,'R'	; Exec until return (higher stack)
 db40:	cmpi	r0,'s'		; Step
 		jz		iend0
 		;cmpi	r0,'\n'
-		;jz		db00
+		;jz		dbupd
 		cmpi	r0,' '
-		jz		db00
+		jz		dbupd
 		
 		cmpi	r0,'d'		; disassemble
 		jnz		db50
@@ -385,7 +390,7 @@ dis1:	cmpi	r0,6
 		jal		putch
 		ld		r0,(r4)
 		andi	r0,31
-		jal		prtdec
+		jal		prthexv
 dis13:	ldi		r0,')'
 		jal		putch
 		jr		dis99
@@ -401,7 +406,7 @@ dis11:	ldi		r0,'('	; ST
 		jal		putch
 		ld		r0,(r4)
 		andi	r0,31
-		jal		prtdec		
+		jal		prthexv		
 dis12:	ldi		r0,')'
 		jal		putch
 		ldi		r0,','
@@ -483,7 +488,7 @@ dis23:	rori	r0,r0,4
 		andi	r1,0xc
 		or		r0,r0,r1
 		ldi		r2,10
-		jal		prtdec
+		jal		prthexv
 		jr		dis99
 dis24:	; LDI
 dis3:	ld		r0,(r4)		; immediate instrs
@@ -646,13 +651,14 @@ nmtab:	word ('A'<<8)|'D'	; 0: ADD
 ; 	get an hex value from UART, with editing
 ;     caddr holds the initial value
 ;     R0 contents are printed as char in front to the hex value
+;	  R5 must be 0x20 (IOBASE)
 ;     R0 returns the edited value
 ;   hex digits are shifted to the left until an new-line is received
 gethex:	subi	r7,1
 		st		(r7),r6
-		jal		putch
+		st		(r5+UARTDAT-IOBASE),r0
 		ldi		r0,' '
-		jal		putch
+		st		(r5+UARTDAT-IOBASE),r0
 		ldpc	r3
 		word	bvar
 		ld		r0,(r3+caddr-bvar)
@@ -787,57 +793,18 @@ putch:	ldi		r1,UARTDAT
 		st		(r1),r0		
 		jind	r6			
 
-;----------------------------------------------
-; Prints decimal number (or hex, octal,...)
-; parameters:
-;	R0: number to print
-;	R6: return address (JAL)
- 
-; returns:
-;	R0, R1: modiffied
-; notes:
-;	Avoids printing zeroes on the left
-;   Stack used for temporary digit storage
-
-prtdec:
-		subi	r7,1
-		st		(r7),r6
-
-		ldi		r1,0		; end of string mark
-		subi	r7,1		; to stack
-		st		(r7),r1
-prtd0:	ldi		r1,0		; R0=R0/R2, R1=remainder
-		ldi		r6,16		
-prtd1:	add		r0,r0,r0
-		adc		r1,r1,r1
-		subi	r1,10
-		jnc		prtd2
-		addi	r0,1
-		jr		prtd5
-prtd2:	addi	r1,10
-prtd5:	subi	r6,1
-		jnz		prtd1
-		cmpi	r1,10		; digits over '9' translated to 'A','B'...
-		jmi		prtd6
-		addi	r1,7
-prtd6:	ldi		r6,'0'		; remainder in ASCII goes to stack
-		add		r1,r1,r6
-		subi	r7,1
-		st		(r7),r1
-		or		r0,r0,r0	; repeat until zero
-		jnz		prtd0
-
-prtd3:	ld		r0,(r7)		; retrieve character from stack
-		jz		prtd9		; end of string?
-		addi	r7,1
-		jal		putch
-		jr		prtd3
-
-prtd9:	addi	r7,1
-		ld		r6,(r7)
-		addi	r7,1
-		jind	r6
-
+;------------------------------------------------
+; print lower 8 bits of R0 as hex (1 or 2 digits)
+prthexv:
+		subi	r7,2
+		st		(r7),r2
+		st		(r7+1),r6
+		ldi		r6,UARTDAT
+		cmpi	r0,0x10
+		jpl		prth81
+		ldi		r2,1
+		rori	r0,r0,4
+		jr		ptx1
 ;-------------------------------------------
 ; print lower 8 bits of R0 as hex (2 digits)
 prthex8:
@@ -845,7 +812,7 @@ prthex8:
 		st		(r7),r2
 		st		(r7+1),r6
 		ldi		r6,UARTDAT
-		ldi		r2,2
+prth81:	ldi		r2,2
 		rori	r0,r0,8
 		jr		ptx1
 

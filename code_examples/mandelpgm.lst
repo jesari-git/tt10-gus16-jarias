@@ -1,0 +1,472 @@
+
+Processor: GUS16 v6
+
+; Label listing -----------------------------------
+
+0006   (    6)   CPUMODEL
+0020   (   32)   IOBASE
+0020   (   32)   IRQEN
+0021   (   33)   PFLAGS
+0021   (   33)   PWM
+0022   (   34)   UARTDAT
+0023   (   35)   TIMER
+0024   (   36)   GPIO
+0001   (    1)   IRQ0EN
+0001   (    1)   UARTDV
+0002   (    2)   UARTRDY
+000A   (   10)   ANCHO
+0014   (   20)   ALTO
+0040   (   64)   PINIT
+0040   (   64)   VARS
+0040   (   64)   SEGS
+0041   (   65)   NINTS
+0100   (  256)   IRQ0
+0104   (  260)   IRQ1
+0108   (  264)   IRQ2
+010D   (  269)   IRQ3
+0110   (  272)   IRQ4
+0114   (  276)   PWMIRQ
+0123   (  291)   PWIR2
+F010   (61456)   X0VAL
+0960   ( 2400)   Y0VAL
+0008   (    8)   DELTA
+0128   (  296)   PSTART
+012A   (  298)   RESTART
+0139   (  313)   BUC1
+013D   (  317)   BUC2
+014B   (  331)   MBUC
+0156   (  342)   TXT1
+0168   (  360)   TXT2
+016A   (  362)   TXT3
+016F   (  367)   PUTSLE
+0173   (  371)   PUTSLE1
+017E   (  382)   PUTSLE3
+0182   (  386)   PUTCH
+0189   (  393)   GETCH
+018F   (  399)   PRTDEC
+0194   (  404)   PRTD0
+0196   (  406)   PRTD1
+019C   (  412)   PRTD2
+01A4   (  420)   PRTD3
+01A9   (  425)   PRTD9
+01AD   (  429)   FMUL11
+01B3   (  435)   FML2
+01B9   (  441)   FML3
+01BF   (  447)   FML5
+01C4   (  452)   FML4
+01C5   (  453)   FML7
+01CA   (  458)   FML6
+01CD   (  461)   MANDEL_ITER
+01D8   (  472)   MITR1
+01F5   (  501)   MITR9
+01FC   (  508)   PEND
+
+; Program listing ----------------------------------
+
+0000  -         ;---------------------------------------------------------------------
+0000  -         ; PROGRAMMING CONVENTIONS:
+0000  -         ; STRICT:
+0000  -         ; - CORE REVISION 6
+0000  -         ; - R7 IS THE STACK POINTER	(SOFTWARE)
+0000  -         ; - R6 HOLDS THE RETURN ADDRESS FOR SUBROUTINES (CORE PARAMETER)
+0000  -         ; - FULL-DESCENDING STACK
+0000  -         ; LOOSE GUIDELINES:
+0000  -         ; - R0, R1, R2 ARE USED FOR ARGUMENTS / RESULTS
+0000  -         ;              VALUES MAY CHANGE ON SUBROUTINE CALLS
+0000  -         ; - R3, R4, R5 ARE USED FOR LOCAL VARIABLES
+0000  -         ;              VALUES ARE PRESERVED ON SUBROUTINE CALLS
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;---------------------------------------------------------------------
+0000  -         ;----------- I/O MAP  -----------
+0000  -         
+0000  -         IOBASE=		0X20
+0000  -         IRQEN=		0X20
+0000  -         PFLAGS=		0X21
+0000  -         PWM=		0X21
+0000  -         UARTDAT=	0X22
+0000  -         TIMER=		0X23
+0000  -         GPIO=		0X24
+0000  -         
+0000  -         
+0000  -         ;--------- INTERRUPTS --------
+0000  -         IRQ0EN=		1
+0000  -         ;--------- PFLAGS REGISTER BITS -----------
+0000  -         UARTDV=		1		; DATA VALID (UART RX)
+0000  -         UARTRDY=	2		; TRANSMITTER BUSY (UART TX)
+0000  -         
+0000  -         ;------- SIMBOLOS -------
+0000  -         ANCHO=10
+0000  -         ALTO=20
+0000  -         
+0000  -         ;--------------------------------------
+0000  -         ;------- HEADER FOR BOOTLOADER --------
+0000  -         ;--------------------------------------
+0000  -         
+0000  -         		ORG		0X40-4
+003C  -         		
+003C  -  4CFF   		WORD	0X4CFF			; MARK
+003D  -  0040   		WORD	PINIT			; DESTINATION ADDRESS
+003E  -  01BC   		WORD	PEND-PINIT		; SIZE (WORDS)
+003F  -  0128   		WORD	PSTART			; EXECUTION ADDRESS
+0040  -         
+0040  -         ;--------------------------------------
+0040  -         ;------------- CODE -----------------
+0040  -         ;--------------------------------------
+0040  -         PINIT:
+0040  -         
+0040  -         ;------------------------------------------------------------------------
+0040  -         ; ESPACIO PARA VARIABLES DE ACCESO RáPIDO (LA DIRECCIóN SE CARGA CON LDI)
+0040  -         ;------------------------------------------------------------------------
+0040  -         		ORG		0X40
+0040  -         VARS:
+0040  -  0000   SEGS:	WORD	0
+0041  -  5BE9   NINTS:	WORD	(6000000/255)
+0042  -         
+0042  -         ;-------------------------------------------------------------------
+0042  -         ; INTERRUPTS
+0042  -         ;-------------------------------------------------------------------
+0042  -         		ORG	0X100
+0100  -         IRQ0:	
+0100  -         		ORG	0X104
+0104  -         IRQ1:	
+0104  -         		ORG	0X108
+0108  -         IRQ2:	
+0108  -         		ORG	0X10C
+010C  -  F007   		JR		PWMIRQ
+010D  -         IRQ3:
+010D  -         		ORG	0X110
+0110  -         IRQ4:
+0110  -         		ORG	0X114
+0114  -  1F02   PWMIRQ:	SUBI	R7,2
+0115  -  68E0   		ST		(R7),R0
+0116  -  69E1   		ST		(R7+1),R1
+0117  -  5120   		LDI		R1,IOBASE
+0118  -  5000   		LDI		R0,0
+0119  -  6821   		ST		(R1+PWM-IOBASE),R0
+011A  -  5140   		LDI		R1,VARS
+011B  -  6021   		LD		R0,(R1+NINTS-VARS)
+011C  -  1801   		SUBI	R0,1
+011D  -  9005   		JNZ		PWIR2
+011E  -  6020   		LD		R0,(R1+SEGS-VARS)
+011F  -  1001   		ADDI	R0,1
+0120  -  6820   		ST		(R1+SEGS-VARS),R0
+0121  -  58E0   		LDPC	R0
+0122  -  5BE9   		WORD	(6000000/255)
+0123  -  6821   PWIR2:	ST		(R1+NINTS-VARS),R0		
+0124  -  60E0   		LD		R0,(R7)
+0125  -  61E1   		LD		R1,(R7+1)
+0126  -  1702   		ADDI	R7,2
+0127  -  58E3   		RETI
+0128  -         
+0128  -         
+0128  -         ;-------------------------------------------------------------------
+0128  -         ;		INICIO
+0128  -         ;-------------------------------------------------------------------
+0128  -         
+0128  -         
+0128  -         X0VAL=	-4080
+0128  -         Y0VAL=	2400
+0128  -         DELTA=  8
+0128  -         PSTART:
+0128  -  5FE0   		LDPC	R7		; PUNTERO DE PILA AL FINAL DE RAM
+0129  -  7FFF   		WORD	0X7FFF	; SPACE FOR SINGLE VARIABLE AFTER STACK
+012A  -         
+012A  -         RESTART:
+012A  -         
+012A  -  58E0   		LDPC	R0			; PGM FILE HEADER
+012B  -  0156   		WORD	TXT1
+012C  -  7042   		JAL		PUTSLE	
+012D  -         
+012D  -         		; PWM IRQS FOR TIME MEASUREMENT
+012D  -  5000   		LDI		R0,0
+012E  -  5140   		LDI		R1,VARS
+012F  -  6820   		ST		(R1+SEGS-VARS),R0
+0130  -  5120   		LDI		R1,IOBASE
+0131  -  6020   		LD		R0,(R1+IRQEN-IOBASE)
+0132  -  3808   		ORI		R0,8
+0133  -  6820   		ST		(R1+IRQEN-IOBASE),R0
+0134  -         
+0134  -  5DE0   		LDPC	R5			; Y0 = 1
+0135  -  0960   		WORD	Y0VAL
+0136  -  58E0   		LDPC	R0
+0137  -  0258   		WORD	600
+0138  -  68E0   		ST		(R7),R0		; ITERACIONES Y
+0139  -         
+0139  -  5CE0   BUC1:	LDPC	R4			; X0 = -2.34
+013A  -  F010   		WORD	X0VAL	
+013B  -  5BE0   		LDPC	R3			; ITERACIONES X		
+013C  -  0320   		WORD	800
+013D  -         BUC2:
+013D  -  0891   		OR		R0,R4,R4
+013E  -  09B5   		OR		R1,R5,R5
+013F  -  708D   		JAL		MANDEL_ITER
+0140  -  7041   		JAL		PUTCH
+0141  -         
+0141  -  5008   		LDI		R0,DELTA		; DX
+0142  -  0480   		ADD		R4,R4,R0
+0143  -  1B01   		SUBI	R3,1
+0144  -  9FF8   		JNZ		BUC2
+0145  -         
+0145  -  5008   		LDI		R0,DELTA		; DY
+0146  -  05A1   		SUB		R5,R5,R0
+0147  -  60E0   		LD		R0,(R7)
+0148  -  1801   		SUBI	R0,1
+0149  -  68E0   		ST		(R7),R0
+014A  -  9FEE   		JNZ		BUC1
+014B  -         
+014B  -         MBUC:	
+014B  -  5541   		LDI		R5,NINTS		; TIEMPO EN SEGUNDOS
+014C  -  58E0   		LDPC	R0
+014D  -  0168   		WORD	TXT2
+014E  -  7020   		JAL		PUTSLE
+014F  -  5140   		LDI		R1,VARS
+0150  -  6020   		LD		R0,(R1+SEGS-VARS)
+0151  -  703D   		JAL		PRTDEC
+0152  -  58E0   		LDPC	R0
+0153  -  016A   		WORD	TXT3
+0154  -  701A   		JAL		PUTSLE
+0155  -         
+0155  -  FFFF   		JR		.
+0156  -         
+0156  -  3550   TXT1:	ASCZLE "P5\n#Mandelbrot GUS16v6\n800 600\n255\n"
+0157  -  230A   
+0158  -  614D   
+0159  -  646E   
+015A  -  6C65   
+015B  -  7262   
+015C  -  746F   
+015D  -  4720   
+015E  -  5355   
+015F  -  3631   
+0160  -  3676   
+0161  -  380A   
+0162  -  3030   
+0163  -  3620   
+0164  -  3030   
+0165  -  320A   
+0166  -  3535   
+0167  -  000A   
+0168  -  230A   TXT2:	ASCZLE "\n# "
+0169  -  0020   
+016A  -  7320   TXT3:	ASCZLE " seconds\n"
+016B  -  6365   
+016C  -  6E6F   
+016D  -  7364   
+016E  -  000A   
+016F  -         
+016F  -         ;----------------------------------------------------
+016F  -         ; ENVíA CADENA DE CARACTERES EMPAQUETADOS AL TERMINAL
+016F  -         ; PARáMETROS:
+016F  -         ;	R0: PUNTERO A LA CADENA DE CARACTERES
+016F  -         ;	R6: DIRECCIóN DE RETORNO
+016F  -         ; RETORNA:
+016F  -         ; 	R0-R2: MODIFICADOS
+016F  -         
+016F  -  1F02   PUTSLE:	SUBI	R7,2
+0170  -  6BE0   		ST		(R7),R3
+0171  -  6EE1   		ST		(R7+1),R6
+0172  -  0B01   		OR		R3,R0,R0
+0173  -         PUTSLE1:
+0173  -  6060   		LD		R0,(R3)
+0174  -  30FF   		ANDI	R0,0XFF
+0175  -  8008   		JZ		PUTSLE3
+0176  -  700B   		JAL		PUTCH
+0177  -         		
+0177  -  6060   		LD		R0,(R3)
+0178  -  5840   		RORI	R0,R0,8
+0179  -  30FF   		ANDI	R0,0XFF
+017A  -  8003   		JZ		PUTSLE3
+017B  -  7006   		JAL		PUTCH
+017C  -  1301   		ADDI	R3,1
+017D  -  FFF5   		JR		PUTSLE1
+017E  -         
+017E  -         PUTSLE3:
+017E  -  63E0   		LD		R3,(R7)
+017F  -  66E1   		LD		R6,(R7+1)
+0180  -  1702   		ADDI	R7,2
+0181  -  58FA   		JIND	R6
+0182  -         ;----------------------------------------------
+0182  -         ; ENVíA CARACTER AL TERMINAL
+0182  -         ; PARáMETROS:
+0182  -         ;	R0: DATO A ENVIAR
+0182  -         ;	R6: DIRECCIóN DE RETORNO
+0182  -         ; RETORNA:
+0182  -         ; 	R1: MODIFICADO
+0182  -         
+0182  -  5120   PUTCH:	LDI		R1,IOBASE
+0183  -  6121   		LD		R1,(R1+PFLAGS-IOBASE)
+0184  -  3102   		ANDI	R1,2
+0185  -  8FFC   		JZ		PUTCH
+0186  -  5120   		LDI		R1,IOBASE
+0187  -  6822   		ST		(R1+UARTDAT-IOBASE),R0		; ENVíA DATO
+0188  -  58FA   		JIND	R6			; Y RETORNAMOS
+0189  -         
+0189  -         ;----------------------------------------------
+0189  -         ; RECIBE CARACTER DEL TERMINAL
+0189  -         ; PARáMETROS:
+0189  -         ;	R6: DIRECCIóN DE RETORNO
+0189  -         ; RETORNA:
+0189  -         ;	R0: DATO RECIBIDO
+0189  -         ; 	R1: MODIFICADO
+0189  -         
+0189  -  5120    GETCH:	LDI		R1,IOBASE
+018A  -  6021   		LD		R0,(R1+PFLAGS-IOBASE)
+018B  -  3001   		ANDI	R0,1
+018C  -  8FFC   		JZ		GETCH
+018D  -  6022    		LD		R0,(R1+UARTDAT-IOBASE)		; LEEMOS DATO
+018E  -  58FA    		JIND	R6			; Y RETORNAMOS
+018F  -         
+018F  -         ;----------------------------------------------
+018F  -         ; IMPRIME R0 EN DECIMAL
+018F  -         ; RETORNA: R0 Y R1 MODIFICADOS
+018F  -         ; USA LA PILA PARA EL ALMACENAMIENTO TEMPORAL DE DíGITOS
+018F  -         
+018F  -         PRTDEC:
+018F  -         		; PRóLOGO
+018F  -  1F01   		SUBI	R7,1
+0190  -  6EE0   		ST		(R7),R6
+0191  -         		;
+0191  -  5100   		LDI		R1,0		; MARCA DE FINAL DE CADENA
+0192  -  1F01   		SUBI	R7,1		; A LA PILA
+0193  -  69E0   		ST		(R7),R1
+0194  -  5100   PRTD0:	LDI		R1,0		; R0=R0/10, R1=RESTO
+0195  -  5610   		LDI		R6,16		; CONTADOR
+0196  -  0000   PRTD1:	ADD		R0,R0,R0
+0197  -  0126   		ADC		R1,R1,R1
+0198  -  490A   		CMPI	R1,10
+0199  -  B002   		JNC		PRTD2
+019A  -  190A   		SUBI	R1,10
+019B  -  1001   		ADDI	R0,1
+019C  -  1E01   PRTD2:	SUBI	R6,1
+019D  -  9FF8   		JNZ		PRTD1
+019E  -  5630   		LDI		R6,'0'		; RESTO A LA PILA
+019F  -  0138   		ADD		R1,R1,R6
+01A0  -  1F01   		SUBI	R7,1
+01A1  -  69E0   		ST		(R7),R1
+01A2  -  0801   		OR		R0,R0,R0	; HASTA QUE EL COCIENTE SEA 0
+01A3  -  9FF0   		JNZ		PRTD0
+01A4  -         
+01A4  -  60E0   PRTD3:	LD		R0,(R7)		; CARACTER DESDE LA PILA
+01A5  -  8003   		JZ		PRTD9		; FINAL DE CADENA?
+01A6  -  1701   		ADDI	R7,1
+01A7  -  7FDA   		JAL		PUTCH
+01A8  -  FFFB   		JR		PRTD3
+01A9  -         
+01A9  -  1701   PRTD9:	ADDI	R7,1
+01AA  -         		; EPíLOGO
+01AA  -  66E0   		LD		R6,(R7)
+01AB  -  1701   		ADDI	R7,1
+01AC  -  58FA   		JIND	R6
+01AD  -         
+01AD  -         
+01AD  -         ;-------------------------------------------------------------------
+01AD  -         ;		MULTIPLICACIóN FRACCIONAL
+01AD  -         ; DATOS DE 16 BITS CON 11 BITS FRACCIONALES VAL = DATO/2048
+01AD  -         ;		R0 = (R0 * R1) >> 11
+01AD  -         ;  NOTA: EL VALOR DE R2 SE CONSERVA
+01AD  -         ;-------------------------------------------------------------------
+01AD  -         
+01AD  -  1F01   FMUL11:	SUBI	R7,1
+01AE  -  6EE0   		ST		(R7),R6
+01AF  -  0E01   		OR		R6,R0,R0
+01B0  -  D002   		JPL		FML2			; MULTIPLICANDO (R6) SIEMPRE POSITIVO
+01B1  -  5EB9   		NEG		R6,R6
+01B2  -  59A5   		NEG		R1,R1
+01B3  -  5000   FML2:	LDI		R0,0
+01B4  -  06D8   		ADD		R6,R6,R6		; BIT 14 (*8)
+01B5  -  D003   		JPL		FML3
+01B6  -  0024   		ADD		R0,R1,R1
+01B7  -  0000   		ADD		R0,R0,R0
+01B8  -  0000   		ADD		R0,R0,R0
+01B9  -  06D8   FML3:	ADD		R6,R6,R6		; BIT 13 (*4)
+01BA  -  D004   		JPL		FML5
+01BB  -  0004   		ADD		R0,R0,R1
+01BC  -  0004   		ADD		R0,R0,R1
+01BD  -  0004   		ADD		R0,R0,R1
+01BE  -  0004   		ADD		R0,R0,R1
+01BF  -  06D8   FML5:	ADD		R6,R6,R6		; BIT 12 (*2)
+01C0  -  D004   		JPL		FML7
+01C1  -  0004   		ADD		R0,R0,R1
+01C2  -  0004   		ADD		R0,R0,R1
+01C3  -  F001   		JR		FML7
+01C4  -         
+01C4  -  5986   FML4:	SHRA	R1,R1			; RESTO DE BITS
+01C5  -  06D8   FML7:	ADD		R6,R6,R6
+01C6  -  8003   		JZ		FML6
+01C7  -  DFFC   		JPL		FML4
+01C8  -  0004   		ADD		R0,R0,R1
+01C9  -  FFFA   		JR		FML4
+01CA  -  66E0   FML6:	LD		R6,(R7)
+01CB  -  1701   		ADDI	R7,1
+01CC  -  58FA   		JIND	R6
+01CD  -         
+01CD  -         ;-------------------------------------------------------------------
+01CD  -         ; ITERACIóN MANDELBROT
+01CD  -         ;  CALCULA ZR = ZR*ZR - ZI*ZI + CR
+01CD  -         ;          ZI = 2*ZR*ZI + CI
+01CD  -         ;    MIENTRAS (ZR*ZR + ZI*ZI)<4
+01CD  -         ;  PARáMETROS: R0: CR, R1: CI
+01CD  -         ;  RETORNA EL Nº DE ITERACIONES (MAX 255)
+01CD  -         ;-------------------------------------------------------------------
+01CD  -         
+01CD  -         MANDEL_ITER:
+01CD  -  1F08   		SUBI	R7,8		; 4 REGS + 4 VARIABLES
+01CE  -  6EE7   		ST		(R7+7),R6
+01CF  -  6DE6   		ST		(R7+6),R5
+01D0  -  6CE5   		ST		(R7+5),R4
+01D1  -  6BE4   		ST		(R7+4),R3
+01D2  -         
+01D2  -         
+01D2  -  0C01   		OR		R4,R0,R0	; R4 = CR
+01D3  -  0D25   		OR		R5,R1,R1	; R5 = CI
+01D4  -         
+01D4  -  0A91   		OR		R2,R4,R4	; R2 = ZR = CR
+01D5  -  0BB5   		OR		R3,R5,R5	; R3 = ZI = CI
+01D6  -  5000   		LDI		R0,0		; I = 0
+01D7  -  68E0   		ST		(R7),R0
+01D8  -         
+01D8  -  0849   MITR1:	OR		R0,R2,R2	; ZRI=FMUL11(ZR,ZI);
+01D9  -  096D   		OR		R1,R3,R3
+01DA  -  7FD2   		JAL		FMUL11
+01DB  -  0000   		ADD		R0,R0,R0	; ZRI= 2*ZR*ZI
+01DC  -  68E3   		ST		(R7+3),R0
+01DD  -         
+01DD  -  0849   		OR		R0,R2,R2	; ZR2=FMUL11(ZR,ZR);
+01DE  -  0949   		OR		R1,R2,R2
+01DF  -  7FCD   		JAL		FMUL11
+01E0  -  68E1   		ST		(R7+1),R0
+01E1  -         
+01E1  -  086D   		OR		R0,R3,R3	; ZI2=FMUL11(ZI,ZI);
+01E2  -  096D   		OR		R1,R3,R3
+01E3  -  7FC9   		JAL		FMUL11
+01E4  -  68E2   		ST		(R7+2),R0
+01E5  -         
+01E5  -  61E1   		LD		R1,(R7+1)	; ESCAPE: (ZR2 + ZI2) > (4<<11)
+01E6  -  0120   		ADD		R1,R1,R0
+01E7  -  5EE0   		LDPC	R6
+01E8  -  2000   		WORD	4<<11
+01E9  -  0639   		SUB		R6,R1,R6
+01EA  -  A00A   		JC		MITR9
+01EB  -         
+01EB  -  61E1   		LD		R1,(R7+1)
+01EC  -  0021   		SUB		R0,R1,R0
+01ED  -  0210   		ADD		R2,R0,R4	; ZR = ZR2 - ZI2 + CR
+01EE  -         
+01EE  -  60E3   		LD		R0,(R7+3)
+01EF  -  0314   		ADD		R3,R0,R5	; ZI = 2ZRI + CI
+01F0  -         
+01F0  -  60E0   		LD		R0,(R7)		; I++
+01F1  -  1001   		ADDI	R0,1
+01F2  -  30FF   		ANDI	R0,255		; WHILE (I!=256)
+01F3  -  68E0   		ST		(R7),R0
+01F4  -  9FE3   		JNZ		MITR1
+01F5  -         
+01F5  -  60E0   MITR9:	LD		R0,(R7)		; RETURN I
+01F6  -  63E4   		LD		R3,(R7+4)
+01F7  -  64E5   		LD		R4,(R7+5)
+01F8  -  65E6   		LD		R5,(R7+6)
+01F9  -  66E7   		LD		R6,(R7+7)
+01FA  -  1708   		ADDI	R7,8
+01FB  -  58FA   		JIND	R6
+01FC  -         PEND:
+01FC  -         
