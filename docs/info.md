@@ -18,7 +18,7 @@ For more complete tests an external board with SRAM memory and address latches h
 
 ## External hardware
 
-A memory board has to be attached to user PMOD connectors (see "memory_board" folder)
+A memory board has to be attached to user PMOD connectors (see memory_board folder)
 
 ## More docs
 https://www.ele.uva.es/~jesus/cpu_v2.pdf  (older designs, spanish)
