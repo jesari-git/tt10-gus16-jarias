@@ -247,5 +247,5 @@ async def test_project(dut):
     # Change it to match the actual expected output of your module:
     assert dut.rst_n.value == 1
 
-    # Keep testing the module by changing the input values, waiting for
+    # Keep testing the module by  changing the input values, waiting for
     # one or more clock cycles, and asserting the expected output values.
