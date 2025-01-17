@@ -5,6 +5,7 @@
 
 `default_nettype none
 
+//`define EN_TIMER
 `define EN_PWM
 
 //`include "cpuV6.v"
@@ -140,8 +141,9 @@ wire [3:0]flag0;
 // Interrupts
 
 // IRQS
-wire [4:0]irqs={(~imode) & irqen[4], pwmirq & irqen[3] ,tflag & irqen[2],
-				uflags[1] & irqen[1], uflags[0] & irqen[0]};
+wire sspirq = ((~imode) & irqen[4]) | (ctlc & irqen[5]); // Single-Step pending IRQ
+wire [4:0]irqs={sspirq, pwmirq & irqen[3] ,tflag & irqen[2],	
+				uflags[1] & irqen[1], uflags[0] & irqen[0]}; // pending IRQs
 wire irq = (|irqs)&(~stopcpu); // some flags aren't synchronous with cclk
 wire [2:0]ivector = irqs[0] ? 3'd0 : (irqs[1]? 3'd1 : ( irqs[2]? 3'd2: (irqs[3] ? 3'd3: 3'd4)));
 
@@ -167,10 +169,10 @@ wire iore3=(~stopcpu)&(~we)&(iocs)&(ca[2:0]==3);
 
 ///////////////////////////////
 // IRQEN reg
-reg [4:0]irqen=0;	
+reg [5:0]irqen=0;	
 always @(posedge cclk or posedge reset ) 
 	if (reset) irqen<=0;
-	else irqen <= iowe0 ? cdo[4:0] : irqen;
+	else irqen <= iowe0 ? cdo[5:0] : irqen;
 
 ///////////////////////////////
 // Timer
@@ -246,7 +248,7 @@ always @(posedge cclk ) gpo <= iowe4 ? cdo[0] : gpo;
 reg [15:0]iodo;
 always@*
   case (ca[2:0])
-     0 : iodo <=  {15'h0,irqen}; // IRQ Enable
+     0 : iodo <=  {10'h0,irqen}; // IRQ Enable
      1 : iodo <=  {tflag,8'h0,ctlc,sdty,pwmirq,uflags}; // PFLAGS
      2 : iodo <=  {8'h0,urxdata}; // UART data
      3 : iodo <=  timer;
