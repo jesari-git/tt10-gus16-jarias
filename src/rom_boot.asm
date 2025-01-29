@@ -50,15 +50,16 @@ buc1:	ld		r0,(r7)
 		st		(r7),r0
 		jal		getw
 		or		r2,r0,r0		; address
-		jal		getw
-		or		r3,r0,r0		; count
+		jal		getw			; + word count
+		add		r3,r2,r0		; = last address
 		jal		getw
 		or		r4,r0,r0		; entry point
-
+		jr		buc2e
+		
 buc2:	jal		getw
 		st		(r2),r0
 		addi	r2,1
-		subi	r3,1
+buc2e:	sub		r0,r3,r2		; compare address
 		jnz		buc2
 		jind	r4
 

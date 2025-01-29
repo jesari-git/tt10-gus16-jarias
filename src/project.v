@@ -58,28 +58,30 @@ wire [15:0]romdo = irom[ca[4:0]];
 
 //initial $readmemh("rom_boot.hex", irom);
 initial begin
+
 irom[ 0]=16'h5722;
 irom[ 1]=16'h60E0;
 irom[ 2]=16'h484C;
 irom[ 3]=16'h9FFD;
 irom[ 4]=16'h68E0;
-irom[ 5]=16'h700B;
+irom[ 5]=16'h700C;
 irom[ 6]=16'h0A01;
-irom[ 7]=16'h7009;
-irom[ 8]=16'h0B01;
-irom[ 9]=16'h7007;
+irom[ 7]=16'h700A;
+irom[ 8]=16'h0340;
+irom[ 9]=16'h7008;
 irom[10]=16'h0C01;
-irom[11]=16'h7005;
-irom[12]=16'h6840;
-irom[13]=16'h1201;
-irom[14]=16'h1B01;
-irom[15]=16'h9FFB;
-irom[16]=16'h58F2;
-irom[17]=16'h60E0;
-irom[18]=16'h61E0;
-irom[19]=16'h5944;
-irom[20]=16'h0805;
-irom[21]=16'h58FA;
+irom[11]=16'hF003;
+irom[12]=16'h7005;
+irom[13]=16'h6840;
+irom[14]=16'h1201;
+irom[15]=16'h0069;
+irom[16]=16'h9FFB;
+irom[17]=16'h58F2;
+irom[18]=16'h60E0;
+irom[19]=16'h61E0;
+irom[20]=16'h5944;
+irom[21]=16'h0805;
+irom[22]=16'h58FA;
 end
 	
 ////////////////////////////////////////////////
